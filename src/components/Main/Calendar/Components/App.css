@@ -1,0 +1,53 @@
+
+.hour::after {
+  position: absolute;
+  z-index: 0;
+  content: "h";
+  font-size: 14px;
+  top: 10%;
+  left: 55%;
+  height: 0;
+  width: 0;
+}
+
+.hour:hover:after {
+  position: absolute;
+  z-index: 0;
+  content: "";
+  height: 0;
+  width: 0;
+}
+.hour:active:after {
+  position: absolute;
+  z-index: 0;
+  content: "";
+  height: 0;
+  width: 0;
+}
+
+
+.min::after {
+  position: absolute;
+  z-index: 0;
+  content: "min";
+  font-size: 14px;
+  top: 10%;
+  left: 51%;
+  height: 0;
+  width: 0;
+}
+
+.min:hover:after {
+  position: absolute;
+  z-index: 0;
+  content: "";
+  height: 0;
+  width: 0;
+}
+.min:active:after {
+  position: absolute;
+  z-index: 0;
+  content: "";
+  height: 0;
+  width: 0;
+}
