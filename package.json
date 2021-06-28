@@ -41,6 +41,7 @@
     "react-virtualized-auto-sizer": "^1.0.5",
     "react-window": "^1.8.6",
     "redux": "^4.1.0",
+    "redux-persist": "^6.0.0",
     "screenfull": "^5.1.0",
     "styled-components": "^5.2.1",
     "uuid": "^8.3.2",

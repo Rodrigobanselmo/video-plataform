@@ -20,6 +20,9 @@ const useStyles = makeStyles((theme) => ({
   paperDark: {
     backgroundColor:theme.palette.type !== 'dark' ?theme.palette.background.paper:theme.palette.background.paperModal,
   },
+  paperDarkModal: {
+    backgroundColor:'#202024',
+  },
   paperGrey: {
     backgroundColor:theme.palette.background.contrast,
   },
@@ -90,6 +93,28 @@ const useStyles = makeStyles((theme) => ({
     '&[x-placement*="left"] $arrow': {
       '&::before': {
         borderColor: `transparent transparent transparent ${theme.palette.type !== 'dark' ?theme.palette.background.paper:theme.palette.background.paperModal}`,
+      },
+    },
+  },
+  popperDarkModal: {
+    '&[x-placement*="bottom"] $arrow': {
+      '&::before': {
+        borderColor: `transparent transparent #202024 transparent`,
+      },
+    },
+    '&[x-placement*="top"] $arrow': {
+      '&::before': {
+        borderColor: `#202024 transparent transparent transparent`,
+      },
+    },
+    '&[x-placement*="right"] $arrow': {
+      '&::before': {
+        borderColor: `transparent #202024 transparent transparent`,
+      },
+    },
+    '&[x-placement*="left"] $arrow': {
+      '&::before': {
+        borderColor: `transparent transparent transparent #202024`,
       },
     },
   },
@@ -186,6 +211,7 @@ const useStyles = makeStyles((theme) => ({
           [classes.popperDark]: background=='dark',
           [classes.popperGrey]: background=='grey',
           [classes.popperGreyLight]: background=='greyLight',
+          [classes.popperDarkModal]: background=='darkModal',
         })}
         anchorEl={anchorRef.current}
         placement={placement}
@@ -208,7 +234,8 @@ const useStyles = makeStyles((theme) => ({
               [classes.paperDark]: background=='dark',
               [classes.paperGrey]: background=='grey',
               [classes.paperGreyLight]: background=='greyLight',
-            })}>
+              [classes.paperDarkModal]: background=='darkModal',
+        })}>
                 <ClickAwayListener onClickAway={onClose}>
                     <div>
                   {arrow ? (

@@ -8,7 +8,7 @@ z-index: 10;
 min-width: 6px;
 height: ${({item})=>2+12*item}px;
 transform: translateX(-3px);
-background-image: linear-gradient(to right,${({theme})=>theme.palette.primary.main} 50%,#6f7070 50%);
+background-image: linear-gradient(to right,${({theme})=>theme.palette.primary.light} 50%,#6f7070 50%);
 
 &:hover {
   height: ${({item})=>item*12+4}px;
@@ -43,7 +43,7 @@ align-items: flex-end;
 
 export const IconCog = styled(FaCog)`
 transform:rotate(${({rotateCog})=>rotateCog?30:0}deg);
-margin:0 10px 0 5px;
+margin:0 7px 0 10px;
 `;
 
 export const PlayView = styled.div`
@@ -87,7 +87,7 @@ align-items: center;
 svg {
   font-size:24px;
   &:hover {
-    color: ${({theme})=>theme.palette.primary.main};
+    color: ${({theme})=>theme.palette.primary.light};
   }
 
 }
@@ -241,6 +241,21 @@ background-color: #6f7070;
 height:9px;
 transition:width 0.250s linear;
 
+`;
+
+export const MarkLast = styled.div`
+position: absolute;
+width: 2px;
+height:9px;
+top: 1px;
+left: -1px;
+background-color: #ffff00;
+z-index:100;
+opacity:1;
+
+${props => props.hideMark && css`
+  opacity:0;
+`}
 `;
 
 export const ControlsWrapper = styled.div`

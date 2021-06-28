@@ -13,7 +13,8 @@ export const NavLogo = React.memo(({isOpen,...props}) => {
   const dispatch = useDispatch()
   return (
     <NavLogoSCDiv   {...props} onClick={()=>{}} >
-          re<span style={{color:isOpen?'#000':'#000'}}>conecta</span>
+          {/* re<span style={{color:isOpen?'#000':'#000'}}>conecta</span> */}
+      <Images src="/images/logoRealiza.png" alt="logo" />
     </NavLogoSCDiv>
   );
 })

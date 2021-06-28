@@ -1,5 +1,6 @@
 export { default as HomeAdmin } from './admin/home';
-export { default as Video } from './admin/video';
+export { default as AllVideo } from './admin/video';
+export { default as Video } from './admin/video/modules';
 export { default as Download } from './admin/download';
 export { default as Calendar } from './admin/calendar/Pessoal';
 export { default as CalendarConector } from './admin/calendar/Conector';

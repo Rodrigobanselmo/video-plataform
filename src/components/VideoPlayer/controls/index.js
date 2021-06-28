@@ -3,7 +3,9 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
-import BookmarkIcon from "@material-ui/icons/Bookmark";
+import AvTimerIcon from '@material-ui/icons/AvTimer';
+import TimerRoundedIcon from '@material-ui/icons/TimerRounded';
+import AccessTimeSharpIcon from '@material-ui/icons/AccessTimeSharp';
 import FastRewindIcon from "@material-ui/icons/FastRewind";
 import FastForwardIcon from "@material-ui/icons/FastForward";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
@@ -19,7 +21,62 @@ import Popover from "@material-ui/core/Popover";
 import { useResizeDetector } from 'react-resize-detector';
 import useKeypress from 'react-use-keypress';
 import { useGesture } from 'react-use-gesture'
-import { ProgressBar,BottomCrontols,ControlsWrapper,SoundFill,SoundView,SoundColumn,IconCog,PlayView,ProgressView,TooltipSpan,TooltipMouseSpan,ProgressInput,ProgressContainer, } from './style'
+import { IoTimerOutline } from 'react-icons/io5';
+import { FiCamera } from 'react-icons/fi';
+import RichTooltip from '../../Dashboard/Components/MultUsage/RichTooltip'
+
+import { ProgressBar,BottomCrontols,MarkLast,ControlsWrapper,SoundFill,SoundView,SoundColumn,IconCog,PlayView,ProgressView,TooltipSpan,TooltipMouseSpan,ProgressInput,ProgressContainer, } from './style'
+import styled from "styled-components";
+
+const ButtonRate = styled.div`
+    color: #fff;
+    margin:6px;
+    font-weight:600;
+    cursor:pointer;
+
+    &:first-child {
+      margin-top:12px;
+    }
+
+    &:last-child {
+      margin-bottom:12px;
+    }
+
+    &:hover {
+      color: ${({theme})=>theme.palette.primary.light};
+    }
+
+    p {
+      text-align: center;
+      font-size: 15px;
+    }
+
+    span {
+      font-size: 10px;
+      margin-left:1px;
+    }
+`;
+
+
+const ButtonPlayRate = styled.div`
+    color: #fff;
+    margin:0 14px 0 10px;
+    font-weight:600;
+    cursor:pointer;
+    &:hover {
+      color: ${({theme})=>theme.palette.primary.light};
+    }
+
+    p {
+      text-align: center;
+      font-size: 15px;
+    }
+
+    span {
+      font-size: 10px;
+      margin-left:1px;
+    }
+`;
 
 //https://www.youtube.com/watch?v=Y-OLcnr8eNo&list=PL4OKShK9gkQca9QVqmnPMzT6QYM2LHaqt&index=8
 
@@ -29,6 +86,7 @@ const Controls = forwardRef(
       progressRef,
       progressTimeRef,
       progressLoadRef,
+      progressMark,
       playerRef,
       format,
       onSeek,
@@ -49,18 +107,22 @@ const Controls = forwardRef(
       onToggleFullScreen,
       volume,
       onVolumeChange,
-      onBookmark,
+      hideMark,
     },
     ref
   ) => {
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const anchorRef = React.useRef(null);
+    const [openRate, setOpenRate] = React.useState(false);
     const progressMouseRef = useRef(null);
     const soundRef = useRef(null)
     const { width, height, ref:resizeRef } = useResizeDetector();
 
     React.useEffect(() => {
-      progressTimeRef.current.style.transform = totalDuration
-      progressTimeRef.current.style.transform = `translateX(${progressRef.current.value/400*progressRef.current.offsetWidth}px)`
+      // console.log('totalDuration',totalDuration)
+      // if (totalDuration) progressTimeRef.current.style.transform = totalDuration
+        // const getProgress = progress ? progress.percentage : 0
+        progressMark.current.style.transform = `translateX(${progressMark.current.value*progressRef.current.offsetWidth}px)`
+        progressTimeRef.current.style.transform = `translateX(${progressRef.current.value/400*progressRef.current.offsetWidth}px)`
     }, [width])
 
     React.useEffect(() => {
@@ -71,17 +133,12 @@ const Controls = forwardRef(
       }
     }, [volume,muted])
 
-    const handleClick = (event) => {
-      setAnchorEl(event.currentTarget);
-    };
-
-
-    const handleClose = () => {
-      setAnchorEl(null);
-    };
-
     const handleProgressChange = (e) => {
-      console.log(parseFloat(e.target.value/400))
+      // console.log(parseFloat(e.target.value/400))
+      if (progressMark.current.value < e.target.value/400  && !hideMark) {
+
+        return null
+      }
       playerRef.current.seekTo(parseFloat(e.target.value/400),'fraction');
       progressTimeRef.current.style.transform = `translateX(${e.target.value/400*progressRef.current.offsetWidth}px)`
 
@@ -104,10 +161,6 @@ const Controls = forwardRef(
     const hanldeMouseLeave = () => {
         progressMouseRef.current.style.opacity = '0';
     };
-
-    const open = Boolean(anchorEl);
-    const id = open ? "simple-popover" : undefined;
-
 
     function onSetSound(percentage) {
 
@@ -201,8 +254,11 @@ const Controls = forwardRef(
       },
     })
 
+
     return (
       <ControlsWrapper ref={ref} >
+          <img style={{width:100,resize:'cover',margin:25,alignSelf:'flex-end'}} src="/images/logoRealiza.png" alt="logo" />
+
           <div style={{display:'flex',flex:1}} onDoubleClick={onToggleFullScreen} onClick={onPlayPause}/>
           <BottomCrontols onClick={()=>{}} >
             <PlayView onDoubleClick={onToggleFullScreen} onClick={onPlayPause}>
@@ -216,6 +272,7 @@ const Controls = forwardRef(
               <ProgressContainer ref={resizeRef}>
                 <TooltipMouseSpan ref={progressMouseRef}>00:00</TooltipMouseSpan>
                 <TooltipSpan ref={progressTimeRef} >00:00</TooltipSpan>
+                <MarkLast hideMark={hideMark} ref={progressMark} />
                 <ProgressBar ref={progressLoadRef}/>
                 <ProgressInput style={{margin:0,padding:0}} onMouseMove={handleMouseMove} onMouseLeave={hanldeMouseLeave} onChange={handleProgressChange} defaultValue={0} ref={progressRef} type="range" min="1" max="400"/>
               </ProgressContainer>
@@ -228,63 +285,36 @@ const Controls = forwardRef(
                   );
                 })}
               </SoundView>
-              <IconCog onClick={()=>{soundRef.current.name = 10}} style={{fontSize:20}} rotateCog={true} />
+              {/* <AccessTimeSharpIcon onClick={()=>{}} style={{fontSize:19,margin:'0 10px 0 5px'}}/> */}
+              <IconCog onClick={()=>{}} style={{fontSize:20}} rotateCog={true} />
+              <ButtonPlayRate
+                ref={anchorRef}
+                onClick={()=>setOpenRate(true)}
+              >
+                <p>
+                  {playbackRate}<span>X</span>
+                </p>
+              </ButtonPlayRate>
               <FullScreen onClick={onToggleFullScreen}/>
             </ProgressView>
           </BottomCrontols>
-{/*
-          <Grid
-            container
-            direction="row"
-            justify="space-between"
-            alignItems="center"
-            style={{ padding: 16 }}
-          >
-            <Grid item>
-              <Button
-                onClick={handleClick}
-                aria-describedby={id}
-                className={classes.bottomIcons}
-                variant="text"
-              >
-                <Typography>{playbackRate}X</Typography>
-              </Button>
 
-              <Popover
-                container={ref.current}
-                open={open}
-                id={id}
-                onClose={handleClose}
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-                transformOrigin={{
-                  vertical: "bottom",
-                  horizontal: "left",
-                }}
-              >
-                <Grid container direction="column-reverse">
-                  {[0.5, 1, 1.5, 2].map((rate) => (
-                    <Button
+
+          <RichTooltip placement={'top'} background={'darkModal'} translateY={-5} anchorRef={anchorRef} width={80} open={openRate} setOpen={setOpenRate}>
+              <div style={{display:'flex',flexDirection:'column'}}>
+                  {[0.25,0.5,0.75, 'normal', 1.25, 1.5, 1.75 , 2].map((rate) => (
+                    <ButtonRate
                       key={rate}
-                      //   onClick={() => setState({ ...state, playbackRate: rate })}
-                      onClick={() => onPlaybackRateChange(rate)}
-                      variant="text"
+                      onClick={() =>{onPlaybackRateChange(rate=='normal'?1:rate); setOpenRate(false)}}
                     >
-                      <Typography
-                        color={rate === playbackRate ? "secondary" : "inherit"}
-                      >
-                        {rate}X
-                      </Typography>
-                    </Button>
+                      <p>
+                        {rate}{rate !== 'normal' && <span>X</span>}
+                      </p>
+                    </ButtonRate>
                   ))}
-                </Grid>
-              </Popover>
-            </Grid>
-          </Grid>
-         */}
+                </div>
+          </RichTooltip>
+
       </ControlsWrapper>
     );
   }

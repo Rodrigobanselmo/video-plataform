@@ -47,7 +47,7 @@ export const LoaderDashboard = ({ children, open = true }) => {
     <>
       {loaderDash && (
         <LoadDashboard open={open}>
-          <Image src="/images/logore.jpg" alt="logo" />
+          <Image src="/images/iconRealiza.png" alt="logo" />
         </LoadDashboard>
       )}
       {children}

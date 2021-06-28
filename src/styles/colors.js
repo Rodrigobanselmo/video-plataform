@@ -3,7 +3,11 @@ export default {
   palette: {
     type: 'light',
     primary: {
-      main: '#387b85',
+      main: '#990829',
+      dark: '#820924',
+      light: '#cb0535',
+      greyRealiza: '#8c8f8c',
+      greyDarkRealiza: '#5A5E5B',
       mainBlue: '#38568a',
       mainGreen: '#387b85',
       mainPurple: '#b9bbea',
@@ -17,7 +21,7 @@ export default {
     background: {
       paper: '#fff',
       paperModal: '#fafafa',
-      default: '#e4dfdb',
+      default: '#eee',
       paperHighlight: '#387b8533',
       inactive: '#a3a3a9',
       line: '#A8A8B355',
@@ -40,14 +44,14 @@ export default {
     text: {
       dark: '#000',
       light: '#fff',
-      primary: '#000',
-      secondary: '#303035',
-      third: '#97969b',
+      primary: '#202024',
+      secondary: '#20202488',
+      third: '#20202466',
       tabsText: '#303035',
       primaryNav: '#00000088',
     },
     status: {
-      success: '#5cb85c',
+      success: '#16a41b',
       fail: '#bb2011',
       warn: '#cfd220',
       info: '#5bc0de',

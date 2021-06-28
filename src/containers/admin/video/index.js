@@ -5,102 +5,127 @@ import {useLoaderDashboard} from '../../../context/LoadDashContext'
 import { ReactComponent as Logo } from './undraw_mobile_testing_reah.svg';
 import {NormalizeData} from '../../../helpers/DataHandler';
 import {onGetHomeData} from './func'
-import styled from "styled-components";
-
+import styled, {css} from "styled-components";
+import { Collapse } from '@material-ui/core';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 import { VideoPlayer } from '../../../components/VideoPlayer';
+import { SideVideoBar } from '../../../components/VideoPlayer/sidebar';
+import {Container} from './style'
+import { useParams } from 'react-router-dom';
+import { CreateCursoData,GetCursoDataValidatePage,UpdateStudentProgress } from '../../../services/firestoreVideo'
+import {useAuth} from '../../../context/AuthContext'
+import { useHistory,useLocation } from "react-router-dom"
 
-const CardClient = styled.div`
-    background-color: red;
-    min-height:40px;
-    width:100%;
-    overflow-y:auto;
-    padding: 8px 10px;
-    border-radius:5px;
-    background-color: ${({theme})=>theme.palette.primary.mainPurple};
-    -webkit-box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.23);
-    box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.23);
+import { useSelector,useDispatch } from 'react-redux'
 
-    & .name {
-      font-size:16px;
-      font-family: sans-serif , Arial;
-      margin:0px;
-      padding:0px;
-      margin-bottom:3px;
-    }
-
-    & .plan {
-      font-size:12px;
-      font-family: sans-serif , Arial;
-      padding:0px;
-      margin:0px;
-    }
-
-    & .planStart {
-      font-size:10px;
-      display:inline-block;
-      font-family: sans-serif , Arial;
-      margin:0px;
-      padding:0px;
-    }
-
-    &:hover {
-        opacity:0.8;
-    }
-    &:active {
-      opacity:0.9;
-    }
-
+const GradientView = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 200px;
+  /* background-image: linear-gradient(to top, #202026, transparent); */
+  background-image: linear-gradient(to bottom right, #d2d5d5, #bdbec3);
 `;
 
 
-const ContainerRight = styled.div`
+const CursoCard = styled.div`
+  box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.29);
+  position: relative;
   display: flex;
-  flex: 1;
-  background-color: ${({theme})=>theme.palette.background.paper};
-  -webkit-box-shadow: 3px 3px 5px 1px rgba(0,0,0,0.23);
-  box-shadow: 3px 3px 5px 1px rgba(0,0,0,0.23);
-  border-radius:10px;
-  padding: 10px 0px;
-  flex-direction:column;
-  overflow-x:visible;
+  width: fit-content;
+  overflow: hidden;
+  flex-direction: column;
+  border-radius: 10px;
+  cursor: pointer;
 
-  p {
-   font-size:18px;
-   font-family: sans-serif , Arial;
-   margin: 0px 20px;
-   margin-bottom:10px;
+  &:hover {
+    img {
+      transform: scale(1.05);
+    }
   }
-
-  & .scrollView {
-    height:100%;
-    padding: 5px 20px;
-    width:100%;
-    overflow-y:auto;
-    overflow-x:visible;
-  }
-
 
 `;
+
 
 
 export default function Video() {
 
   const { setLoaderDash } = useLoaderDashboard();
   const notification = useNotification();
+  const {currentUser} = useAuth();
+  const modules = useSelector(state => state.modules)
+  const history = useHistory()
+  const dispatch = useDispatch()
+  // const { pathname } = useLocation();
+
+
+
+  const pathname = '/app/admin/video'
+
+  function onError(error) {
+    notification.error({message:error})
+    setLoaderDash(false)
+  }
+
+  function onSetRouteVideo(data,curso) {
+    if (data?.nextModule) {
+      history.push(pathname+'/'+data.nextModule+'/'+data.nextClass)
+    } else {
+      history.push(pathname+'/'+curso.modules[0].id+'/'+curso.modules[0].classes[0].id)
+    }
+
+  }
+
+  function onSuccessGetCurso(data,userData) {
+    if (Array.isArray(userData)) {
+      history.push(pathname+'/'+userData[0].moduleId+'/'+userData[0].aulaId)
+    } else {
+      updateModules(userData,data)
+      setCurso(data)
+      setLoaderDash(false)
+    }
+  }
+
+  function updateModules(userData,curso) {
+    // // console.log('update',userData)
+    // dispatch({ type: 'MODULE_WRITE', payload: data })
+    // dispatch({ type: 'PROGRESS_LOGOUT', payload: data })
+    // UpdateStudentProgress(data,currentUser,()=>{},onError)
+
+    if (('percentage' in modules && modules.percentage < userData.percentage) || !('percentage' in modules)) {
+      dispatch({ type: 'MODULE_WRITE', payload: userData })
+      onSetRouteVideo(userData,curso)
+      console.log('update modules')
+    } else if (modules?.percentage && modules.percentage > userData.percentage) {
+      onSetRouteVideo(modules,curso)
+      UpdateStudentProgress(modules,currentUser,()=>{},onError)
+      console.log('update student')
+    } else {
+      onSetRouteVideo(modules,curso)
+    }
+  }
 
   useEffect(() => {
+    // CreateCursoData(modulesAll,()=>notification.success({message:'Curso criado com sucesso'}),(e)=>notification.error({message:e}))
+    // UpdateStudentProgress(modules,currentUser,()=>{},()=>{})
+    // GetCursoDataValidatePage(cursoId,currentUser,onSuccessGetCurso,onError)
     setLoaderDash(false)
   }, [])
 
-
   return (
-    <div style={{display:'flex',flexDirection:'row',flex:1,height:'88%'}}>
-      <VideoPlayer/>
-    </div>
+    <Container >
+      <h1 style={{marginBottom:10}}>Seus cursos</h1>
+      <CursoCard onClick={()=>{}} >
+        <GradientView />
+        <img width={320} height={200} style={{resizeMode:'cover'}} src='https://prometalepis.com.br/wp-content/uploads/2019/08/5d62c7fc90649bc6d856ef7ff9a174bd.jpg' />
+        <div style={{display:'flex',backgroundColor:'#202026',width:'320px',padding:'0 15px 10px 15px',height:'fit-content',flexDirection:'column',top:150,left:20}}>
+          <p style={{fontWeight:'bold',fontSize:'27px',color:'#eee',marginTop:-30,zIndex:10}} >NR 17 - Ergonomia - Teleatendimento </p>
+        </div>
+      </CursoCard>
+    </Container>
   );
 }
+
 
 
 //https://www.codingdeft.com/posts/react-upload-file-progress-bar/

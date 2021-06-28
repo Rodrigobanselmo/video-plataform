@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   content: {
     position:'relative',
     flexGrow: 1,
-    padding: theme.spacing(7,8),
+    padding: theme.spacing(6,7),
     height:'auto',
     overflowY: 'scroll',
     backgroundColor:theme.palette.background.default,
@@ -60,7 +60,7 @@ export default function MiniDrawer({children}) {
           <>
             <CssBaseline />
             <NavSystem  open={open} setOpen={openNavDrawer}/>
-            <Sidebar open={open} setOpen={setOpen} lock={lock} onTimeOut={onTimeOut} onClearTimeOut={onClearTimeOut} setLock={setLock}/>
+            {/* <Sidebar open={open} setOpen={setOpen} lock={lock} onTimeOut={onTimeOut} onClearTimeOut={onClearTimeOut} setLock={setLock}/> */}
           </>
          : null }
         <main id = "someRandomID" className={classes.content}>
