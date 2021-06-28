@@ -19,12 +19,34 @@ import { useHistory,useLocation } from "react-router-dom"
 
 import { useSelector,useDispatch } from 'react-redux'
 
+const BottomView = styled.div`
+  display: flex;
+  z-index: 2;
+  background-color: #202026;
+  width: 320px;
+  padding: 0 15px 10px 15px;
+  height: fit-content;
+  flex-direction: column;
+
+  P {
+    /* transition: transform 0.5s ease; */
+  }
+`;
+
+
+const Image = styled.img`
+  resize-mode: cover;
+  transition: transform 0.5s ease;
+`;
+
+
 const GradientView = styled.div`
   position: absolute;
   width: 100%;
   height: 200px;
-  /* background-image: linear-gradient(to top, #202026, transparent); */
-  background-image: linear-gradient(to bottom right, #d2d5d5, #bdbec3);
+  background-image: linear-gradient(to top, #202026, transparent);
+  z-index:1;
+  /* transition: background-image 0.5s ease; */
 `;
 
 
@@ -39,10 +61,22 @@ const CursoCard = styled.div`
   cursor: pointer;
 
   &:hover {
-    img {
-      transform: scale(1.05);
+    & ${Image} {
+      z-index:0;
+      transform: scale(1.1);
     }
+    /* & ${GradientView} { */
+      /* background-image: linear-gradient(to top,  #202026, transparent); */
+    /* } */
+
+    /* & ${BottomView} {
+      p {
+        transform: scale(1.03) translateX(2px);
+      }
+    } */
+    /* opacity:1; */
   }
+
 
 `;
 
@@ -69,16 +103,16 @@ export default function Video() {
 
   function onSetRouteVideo(data,curso) {
     if (data?.nextModule) {
-      history.push(pathname+'/'+data.nextModule+'/'+data.nextClass)
+      history.replace(pathname+'/'+data.nextModule+'/'+data.nextClass)
     } else {
-      history.push(pathname+'/'+curso.modules[0].id+'/'+curso.modules[0].classes[0].id)
+      history.replace(pathname+'/'+curso.modules[0].id+'/'+curso.modules[0].classes[0].id)
     }
 
   }
 
   function onSuccessGetCurso(data,userData) {
     if (Array.isArray(userData)) {
-      history.push(pathname+'/'+userData[0].moduleId+'/'+userData[0].aulaId)
+      history.replace(pathname+'/'+userData[0].moduleId+'/'+userData[0].aulaId)
     } else {
       updateModules(userData,data)
       setCurso(data)
@@ -115,12 +149,12 @@ export default function Video() {
   return (
     <Container >
       <h1 style={{marginBottom:10}}>Seus cursos</h1>
-      <CursoCard onClick={()=>{}} >
+      <CursoCard onClick={()=>history.push(pathname+'/dyuwqf2')} >
         <GradientView />
-        <img width={320} height={200} style={{resizeMode:'cover'}} src='https://prometalepis.com.br/wp-content/uploads/2019/08/5d62c7fc90649bc6d856ef7ff9a174bd.jpg' />
-        <div style={{display:'flex',backgroundColor:'#202026',width:'320px',padding:'0 15px 10px 15px',height:'fit-content',flexDirection:'column',top:150,left:20}}>
+        <Image width={320} height={200}  src='https://prometalepis.com.br/wp-content/uploads/2019/08/5d62c7fc90649bc6d856ef7ff9a174bd.jpg' />
+        <BottomView >
           <p style={{fontWeight:'bold',fontSize:'27px',color:'#eee',marginTop:-30,zIndex:10}} >NR 17 - Ergonomia - Teleatendimento </p>
-        </div>
+        </BottomView>
       </CursoCard>
     </Container>
   );

@@ -1,4 +1,5 @@
-export { default as HomeAdmin } from './admin/home';
+// export { default as HomeAdmin } from './admin/home';
+export { default as HomeAdmin } from './admin/video';
 export { default as AllVideo } from './admin/video';
 export { default as Video } from './admin/video/modules';
 export { default as Download } from './admin/download';

@@ -15,7 +15,7 @@ import styled from "styled-components";
 
 const Half = styled.div`
   width: 100%;
-  background-color: ${({theme})=> theme.palette.primary.mainBlue};
+  background-color: ${({theme})=> theme.palette.primary.main};
 
   @media screen and (max-width: 820px) {
     display:none;

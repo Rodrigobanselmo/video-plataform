@@ -11,10 +11,9 @@ import { saveAs } from 'file-saver';
 import { VideoPlayer } from '../../../../components/VideoPlayer';
 import { SideVideoBar } from '../../../../components/VideoPlayer/sidebar';
 import {Title,ContainerPlayer,SideVideoBarTry,ProgressContainer,PercentageSpan,Shadow,ProgressWrapper,CircleView,ProgressBar} from './style'
-import { useParams } from 'react-router-dom';
 import { CreateCursoData,GetCursoDataValidatePage,UpdateStudentProgress } from '../../../../services/firestoreVideo'
 import {useAuth} from '../../../../context/AuthContext'
-import { useHistory,useLocation } from "react-router-dom"
+import { useHistory,useParams,useLocation } from "react-router-dom"
 
 import { useSelector,useDispatch } from 'react-redux'
 
@@ -99,16 +98,16 @@ export default function Video() {
 
   function onSetRouteVideo(data,curso) {
     if (data?.nextModule) {
-      history.push(pathname+'/'+data.nextModule+'/'+data.nextClass)
+      history.replace(pathname+'/'+data.nextModule+'/'+data.nextClass)
     } else {
-      history.push(pathname+'/'+curso.modules[0].id+'/'+curso.modules[0].classes[0].id)
+      history.replace(pathname+'/'+curso.modules[0].id+'/'+curso.modules[0].classes[0].id)
     }
 
   }
 
   function onSuccessGetCurso(data,userData) {
     if (Array.isArray(userData)) {
-      history.push(pathname+'/'+userData[0].moduleId+'/'+userData[0].aulaId)
+      history.replace(pathname+'/'+userData[0].moduleId+'/'+userData[0].aulaId)
     } else {
       updateModules(userData,data)
       setCurso(data)
@@ -203,3 +202,5 @@ export default function Video() {
 //https://www.codingdeft.com/posts/react-upload-file-progress-bar/
 //https://quantizd.com/building-a-video-converter-app-with-node-js-express-and-react/
 {/* <Logo  height="400px" width="400px"/> */}
+
+//https://realizaconsultoria.netlify.app/login?email=rodrigobanselmo@gmail.com

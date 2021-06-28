@@ -1,0 +1,7 @@
+&:not(:last-child) {}
+
+&:hover ${Button} {}
+
+&:hover ~ ${ContentB} {} // todos depois do item que forem COMTENTB
+> somente childs diretos do elemento
++ somente o item seguinte a o elemento
