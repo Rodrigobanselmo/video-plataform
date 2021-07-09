@@ -82,8 +82,8 @@ const AddCard = styled.div`
 
 function Team() {
 
-  const  { data, isLoading, error } = useUsers()
-  // const  { data:links, isLoading:linksIsLoading, error:linksError } = useLinks(3)
+  const  { data:users, isLoading:usersIsLoading, error:usersError } = useUsers(5)
+  const  { data:links, isLoading:linksIsLoading, error:linksError } = useLinks(3)
 
   const [open, setOpen] = useState(false)
   const [queryOld, setQueryOld] = useState(false)
@@ -128,8 +128,8 @@ function Team() {
             <Add style={{}}/>
           </IconButtonStyled>
         </AddCard> */}
-        <LinksURLTable filter={false} data={data} isLoading={isLoading}/>
-        <MembersTable data={data} isLoading={isLoading}/>
+        <LinksURLTable filter={false} data={links} isLoading={linksIsLoading}/>
+        <MembersTable data={users} isLoading={usersIsLoading}/>
 
         <AddMemberModal setUsersRows={setUsersRows} open={open} setOpen={setOpen}/>
       </>
