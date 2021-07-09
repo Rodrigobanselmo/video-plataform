@@ -126,8 +126,8 @@ export const FilterComponents = styled.div`
     display:flex;
     flex-direction:row;
     align-items:center;
-    padding:20px 0px 20px 0px;
-    margin-top:10px;
+    padding:0px 0px 0px 0px;
+    margin-top:0px;
 `;
 
 export const TableTitle = styled.h2`

@@ -19,12 +19,28 @@ import { useHistory,useLocation } from "react-router-dom"
 
 import { useSelector,useDispatch } from 'react-redux'
 
+const NameText = styled.p`
+  font-weight: bold;
+  font-size: 27px;
+  color: #eee;
+  z-index: 10;
+
+  overflow: hidden;
+   text-overflow: ellipsis;
+   display: -webkit-box;
+   -webkit-line-clamp: 2; /* number of lines to show */
+   -webkit-box-orient: vertical;
+`;
+
+
 const BottomView = styled.div`
   display: flex;
+  flex:1;
   z-index: 2;
   background-color: #202026;
+  justify-content:flex-end;
   width: 320px;
-  padding: 0 15px 10px 15px;
+  padding: 0 15px 15px 15px;
   height: fit-content;
   flex-direction: column;
 
@@ -54,6 +70,7 @@ const CursoCard = styled.div`
   box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.29);
   position: relative;
   display: flex;
+  flex:1;
   width: fit-content;
   overflow: hidden;
   flex-direction: column;
@@ -149,13 +166,30 @@ export default function Video() {
   return (
     <Container >
       <h1 style={{marginBottom:10}}>Seus cursos</h1>
-      <CursoCard onClick={()=>history.push(pathname+'/dyuwqf2')} >
-        <GradientView />
-        <Image width={320} height={200}  src='https://prometalepis.com.br/wp-content/uploads/2019/08/5d62c7fc90649bc6d856ef7ff9a174bd.jpg' />
-        <BottomView >
-          <p style={{fontWeight:'bold',fontSize:'27px',color:'#eee',marginTop:-30,zIndex:10}} >NR 17 - Ergonomia - Teleatendimento </p>
-        </BottomView>
-      </CursoCard>
+      <div style={{display:'flex',flexDirection:'row',gap:30}}>
+        <div style={{display:'flex',flexDirection:'column',gap:0}}>
+          <CursoCard onClick={()=>history.push(pathname+'/dyuwqf2')} >
+            <GradientView />
+            <Image width={320} height={200}  src='https://prometalepis.com.br/wp-content/uploads/2019/08/5d62c7fc90649bc6d856ef7ff9a174bd.jpg' />
+            <BottomView >
+              <NameText  >NR 17 - Ergonomia - Teleatendimento do trabalho</NameText>
+            </BottomView>
+          </CursoCard>
+          <p style={{fontSize:'14px',color:'#000',zIndex:10,textAlign:'right',padding:5,paddingRight:0}} >Em andamento com validade até 22/02</p>
+        </div>
+
+        <div style={{display:'flex',flexDirection:'column',gap:0}}>
+          <CursoCard onClick={()=>history.push(pathname+'/dyuwqf2')} >
+            <GradientView />
+            <Image width={320} height={200}  src='https://prometalepis.com.br/wp-content/uploads/2019/08/5d62c7fc90649bc6d856ef7ff9a174bd.jpg' />
+            <BottomView >
+              <NameText style={{fontWeight:'bold',fontSize:'27px',color:'#eee',marginTop:-40,zIndex:10}} >NR 17 - Ergonomia</NameText>
+            </BottomView>
+          </CursoCard>
+          <p style={{fontSize:'14px',color:'#000',zIndex:10,textAlign:'right',padding:5,paddingRight:0}} >Em andamento com validade até 22/02</p>
+        </div>
+
+      </div>
     </Container>
   );
 }

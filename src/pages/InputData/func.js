@@ -2,22 +2,16 @@ import {AddUserData,UpdateProfile} from '../../services/firestoreUser'
 import {SeeIfCEPExists} from '../../services/nodeCalls'
 import {wordUpper,keepOnlyNumbers,formatCPFeCNPJeCEPeCNAE} from '../../helpers/StringHandle'
 
-export function onAddUserData({unform,currentUser,setCurrentUser,setLoad,notification}) {
+export function onAddUserData({data,createCompany,currentUser,setCurrentUser,setLoad,notification}) {
 
-    let formattedData = {...unform}
-    // delete formattedData['complemento']
-    // delete formattedData['logradouro']
-    // delete formattedData['municipio']
-    // delete formattedData['bairro']
-    // delete formattedData['cep']
+    let formattedData = {...data}
     formattedData.name = wordUpper((formattedData.name.trim()).split(" "))
-    formattedData.politics = true
 
     console.log('final',formattedData)
     setLoad(true)
-    AddUserData(formattedData,currentUser.uid,checkSuccess,checkError)
+    AddUserData({data:formattedData,uid:currentUser.uid,createCompany,checkSuccess,checkError})
     // AddUserData(formattedData,currentUser.uid,checkSuccess,checkError,'admin',{creation:currentUser.creation,uid:currentUser.uid,name:formattedData.name,cpf:formattedData.cpf,email:formattedData.email})
-    console.log('unform',unform)
+    console.log('unform',data)
     console.log('unform',formattedData)
     function checkSuccess() {
         setCurrentUser(currentUser=>({...currentUser,...formattedData}))

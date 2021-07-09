@@ -1,17 +1,19 @@
 import React, {useState,useRef,useEffect} from 'react';
 import { Collapse } from '@material-ui/core';
-import Sign from './comp'
+import Sign, {PolicyTerms,ContinueButton} from './comp'
 import { Base, Title,Form} from './styles';
 import {handleEmailChange,handlePasswordChange,confirmHandlePasswordChange} from './valid'
 import {onCheckEmail,onLoginUser,onCreateAccount,onRecoveryEmail} from './func'
 import { useHistory } from "react-router-dom"
 import { useAuth } from "../../../context/AuthContext"
+import { useLoaderDashboard } from '../../../context/LoadDashContext';
 import {useLoaderScreen} from '../../../context/LoaderContext'
 import useFade from '../../../hooks/useFadeInOut'
 import useTimeOut from '../../../hooks/useTimeOut';
 import {useNotification} from '../../../context/NotificationContext'
 import {DASHBOARD} from '../../../routes/routesNames'
 import styled from "styled-components";
+import { useLink } from '../../../services/hooks/get/useLink';
 
 const Half = styled.div`
   width: 100%;
@@ -22,7 +24,7 @@ const Half = styled.div`
   }
 `;
 
-export default function SignIn({emailQuery}) {
+export default function SignIn({emailQuery,codeQuery}) {
 
   const initialState = {
     //emailAddress: emailQuery ? emailQuery:'rodrigobanselmo@gmail.com',
@@ -41,6 +43,8 @@ export default function SignIn({emailQuery}) {
   const [login, setLogin] = useState(false); //tels us with state the component is // Enter-Login-Register
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(initialState);
+  const [checked, setChecked] = useState(false);
+  const [code, setCode] = useState(0);
 
   const [update, setUpdate] = useState(false); // will tell us if need to check the email input
 
@@ -49,24 +53,31 @@ export default function SignIn({emailQuery}) {
 
   const { currentUser } = useAuth()
   const {load,setLoad} = useLoaderScreen();
+  const { setLoaderDash,  } = useLoaderDashboard();
   const notification = useNotification();
 
   const [fade,change,fadeInOut] = useFade('Entrar')
   const [onTimeOutReset] = useTimeOut() //to undo an error message and if i sent a new error will erase the old setTimeout to undo it
   const [onTimeOutR,onClearTimeO] = useTimeOut()  //to see if email is valid and if user stopped texting
 
+  const { data:linkData } = useLink(codeQuery?codeQuery:0)
+  console.log('linkData',linkData)
+
+  const validCode = Array.isArray(linkData) && linkData.length === 1
+
+  useEffect(() => {
+    if (emailQuery) {
+      setTimeout(() => {onButtonSign()}, 800);
+    }
+  }, [])
 
   useEffect(() => {  //redirect to app if user is logged  and if user email is coming from query it will valid it
     if (currentUser) {
-      setLoad(true)
+      setLoaderDash(true)
       setTimeout(() => {
-        setLoad(false)
+        // setLoaderDash(false)
         history.replace(DASHBOARD)
       }, 1000);
-    } else if (emailQuery) {
-      setTimeout(() => {
-        onButtonSign()
-      }, 800);
     }
   }, [currentUser])
 
@@ -74,11 +85,9 @@ export default function SignIn({emailQuery}) {
     if (error && error !== '') onTimeOutReset(()=>setError(''),4000);
   }, [error])
 
-
   useEffect(() => {  //when email input is lazy and email is valid will call this checkEmail func
     update && onTimeOutR(onButtonSign,1500)
   }, [update])
-
 
   function onChangeAuthMethod(type) { //it will change the title of the form box
     let message= 'Entrar'
@@ -91,12 +100,13 @@ export default function SignIn({emailQuery}) {
     event && event?.preventDefault && event.preventDefault();
     if (!loading) {
       if (login === false ) {
-        onCheckEmail({data,setData,setLoading,setError,onChangeAuthMethod,inputPass,onErrorNotification})
+        onCheckEmail({data,setData,setLoading,setError,onChangeAuthMethod,inputPass,onErrorNotification,validCode})
         onClearTimeO()
       } else if (login === 'login') {
-        onLoginUser({data,setLoad,setError,onErrorNotification})
+        onLoginUser({data,setLoad,setLoaderDash,setError,onErrorNotification})
       } else if (login === 'register') {
-        onCreateAccount({data,setLoad,setError,onErrorNotification})
+        if (!checked) return setError('Preencha todos os campos acima!')
+        onCreateAccount({data,setLoad,setLoaderDash,setError,onErrorNotification})
       }
     }
   };
@@ -119,7 +129,7 @@ export default function SignIn({emailQuery}) {
 
 
   function onFocusEmail(value) { //every time I focus the email will disappear the others inputs
-    if (login !== false  ) {
+    if (login !== false) {
       setData({...initialState,emailAddress:value})
       setLogin(false)
     }
@@ -174,7 +184,12 @@ export default function SignIn({emailQuery}) {
               login={login}
               setRecoveryModal={setRecoveryModal}
             />
-          <Sign.ContinueButton
+            <PolicyTerms
+              handleChange={()=>setChecked(!checked)}
+              checked={checked}
+              login={login}
+            />
+          <ContinueButton
             handleSignIn={onButtonSign}
             login={login}
             data={data}

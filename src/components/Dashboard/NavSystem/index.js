@@ -34,8 +34,64 @@ import {DASHBOARD,ADMIN_PERFIL} from '../../../routes/routesNames'
 import {AbreviarNome,InitialsName} from '../../../helpers/StringHandle'
 import usePersistedState from '../../../hooks/usePersistedState.js';
 import {useLoaderDashboard} from '../../../context/LoadDashContext'
-import { useHistory } from "react-router-dom"
+import { useHistory,useLocation } from "react-router-dom"
 import {ThemeContext} from "styled-components";
+import { menuList } from '../../../constants/menuList';
+import styled, {css} from "styled-components";
+import { AvatarView } from '../../Main/Avatar';
+
+const BottomBar = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: ${({theme})=> theme.palette.primary.main };
+  height: 3px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+`;
+
+
+const NaveLink = styled(Link)`
+  margin: 0px 20px;
+  position: relative;
+  min-width: 40px;
+  display: flex;
+  height: 60px;
+  font-size: 16px;
+  text-decoration: none;
+  color: ${({theme})=> theme.palette.text.primary };
+  justify-content: center;
+  align-items: center;
+  opacity:0.7;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity:1;
+    p {
+      transform: scale(1.06);
+    }
+  }
+
+  p {
+    transition: transform 0.3s ease;
+  }
+
+  ${props => props.active === 'true' && css`
+    font-weight: bold;
+    opacity:0.85;
+    p {
+      transform: scale(1.06) translateX(1px);
+    }
+    &:hover {
+    opacity:1;
+      p {
+        transform: scale(1.06) translateX(1px);
+      }
+    }
+
+  `}
+
+`;
 
 export default function NavBar({open,setOpen}) {
 
@@ -44,6 +100,7 @@ export default function NavBar({open,setOpen}) {
   const anchorRef = React.useRef(null);
   const { setLoaderDash } = useLoaderDashboard();
   const history = useHistory()
+  const { pathname } = useLocation();
 
   const {load,setLoad} = useLoaderScreen();
   //const {setLoadDash,loadDash}= useLoaderDash();
@@ -70,14 +127,6 @@ export default function NavBar({open,setOpen}) {
 
   const classes = useStyles();
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
   function onProfileClick(action) {
     if (action === 'logout') onLogout({setLoad,notification})
     if (action === 'perfil') {
@@ -85,10 +134,6 @@ export default function NavBar({open,setOpen}) {
       setOpenProfile(false)
       setLoaderDash(true)
     }
-  };
-
-  const handleDarkModeChange = () => {
-    setTheme(theme =='dark' ? 'light' : 'dark')
   };
 
   return (
@@ -99,27 +144,35 @@ export default function NavBar({open,setOpen}) {
           [classes.appBarShift]: open,
         })}
       >
-        <Toolbar style={{backgroundColor:themes.palette.background.nav}}>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={open ? handleDrawerClose:handleDrawerOpen}
-            edge="start"
-            className={clsx(classes.menuButton)}
-          >
-            {open ?
-            <MenuOpen />
-            :
-            <MenuIcon />
-            }
-          </IconButton>
+        {/* <div style={{backgroundColor:themes.palette.background.nav}}> */}
+        <div style={{backgroundColor:themes.palette.background.nav,display:'flex',flexDirection:'row',alignItems:'center',height:'60px',padding:'2px 25px'}}>
           <NavLogo to={DASHBOARD} small='true' />
-          <div className={classes.grow} />
+
+
+          <div style={{display:'flex',flex:1,marginLeft:60,justifyContent:'flex-start',flexDirection:'row'}}>
+          {menuList.map((item, index) => {
+            const isActive = pathname==item.route
+
+            return (
+              <>
+                { (item.visible === 'all' || (currentUser?.access && item.visible.includes(currentUser.access))) &&
+                  <NaveLink key={item.text} active={isActive.toString()} to={item.route}>
+                    <p>{item.text}</p>
+                    {isActive && <BottomBar />}
+                  </NaveLink>
+                }
+              </>
+            )
+          })}
+          </div>
+
+
+          {/* <div className={classes.grow} /> */}
           <div className={classes.sectionDesktop}>
             {navList.map((item, index) => (
-              <div key={index}>
+              <div key={String(index)}>
               { item.visible === 'all' || (currentUser?.access && item.visible.includes(currentUser.access)) ?
-                <ReactLink onClick={item?.onClick ?()=>notification.modal({title: 'Notifição',text:'Notifição padrão do sistema',open:true,onClick:()=>console.log('notification confirm')}):()=>notification.success({message:'Em construção'})} to={item.to} style={{margin:'0px 5px'}}>
+                <ReactLink onClick={item?.onClick ?()=>notification.modal({title: 'Notifição',type:'inform',icon:'success',text:'Notifição padrão do sistema',open:true,onClick:()=>console.log('notification confirm')}):()=>notification.success({message:'Em construção'})} to={item.to} style={{margin:'0px 5px'}}>
                   <BootstrapTooltip placement="bottom" TransitionProps={{ timeout: {enter:500, exit: 50} }} title={item.text} styletooltip={{transform: 'translateY(10px)'}}>
                     <IconButton aria-label={item.text}>
                       <Badge badgeContent={0} color="secondary">
@@ -146,28 +199,32 @@ export default function NavBar({open,setOpen}) {
             <p className={classes.profileName} style={{fontSize:17}}>
               {currentUser?.name ? AbreviarNome(currentUser.name,22) : 'Sem Identificação'}
             </p>
-            <p className={classes.profileName} style={{fontSize:8}}>
+            {/* <p className={classes.profileName} style={{fontSize:8}}>
               {currentUser?.company && currentUser.company?.name ? currentUser.company.name : 'Individual'}
-            </p>
+            </p> */}
           </div>
-          <div ref={anchorRef} onClick={()=>setOpenProfile(true)} className={classes.profileContainer}>
-            <div className={classes.profile}>
-                {!currentUser?.photoURL ?
-              <div>
-                <p className={classes.profileCircleName} style={{fontSize:17}}>
-                  {currentUser?.name ? InitialsName(currentUser.name,22) : 'SI'}
-                </p>
-              </div>
-            :
-              <img style={{height:44,width:44,borderRadius:'50%'}} src={currentUser.photoURL} alt={'perfil_photo'} />
-            }
-                {/* <Icons className={classes.profileCircleName} type={'Person'}/> */}
-            </div>
-          </div>
+          <AvatarView forwardRef={anchorRef} onClick={()=>setOpenProfile(true)} navbar user={currentUser}/>
 
 
-        </Toolbar>
+
+        </div>
       </AppBar>
   );
 }
 
+// <div ref={anchorRef} onClick={()=>setOpenProfile(true)} className={classes.profileContainer}>
+//   {!currentUser?.photoURL ?
+//     <div className={classes.profile}>
+//       <div>
+//         <p className={classes.profileCircleName} style={{fontSize:17}}>
+//           {currentUser?.name ? InitialsName(currentUser.name,22) : 'SI'}
+//         </p>
+//       </div>
+//         {/* <Icons className={classes.profileCircleName} type={'Person'}/> */}
+//     </div>
+//   :
+    // <div className={classes.profileImg}>
+    //   <img style={{height:52,width:52,borderRadius:50}} src={currentUser.photoURL} alt={'perfil_photo'} />
+    // </div>
+  // }
+// </div>

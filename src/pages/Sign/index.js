@@ -10,7 +10,7 @@ const Div = styled.div`
 
 function useQuery() {
   return new URLSearchParams(useLocation().search)
-}
+}//r9f2dymal6yzj35z
 
 function SignInPage() {
 
@@ -20,6 +20,7 @@ function SignInPage() {
 
   React.useEffect(() => {
     setLoad(false)
+    console.log('diyuy')
   }, [])
 
   function name(params) {
@@ -32,10 +33,11 @@ function SignInPage() {
     })
     // notification.success({message:'Usuário criado com sucesso'})
   }
+    console.log('diyuy')
 
   return (
     <Div>
-      <SignIn emailQuery={query.get('email')} />
+      <SignIn emailQuery={query.get('email')} codeQuery={query.get('code')} />
     </Div>
   );
 }

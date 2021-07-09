@@ -60,5 +60,5 @@ export function BootstrapTooltip(props) {
 
     var classesType = props.sign ? classesSign : classes
 
-    return <Tooltip TransitionComponent={Fade} TransitionProps={{ timeout: {enter:500, exit: 50} }} arrow classes={{tooltip: classesType.tooltip,arrow: classesType.arrow}} {...props} />;
+    return <Tooltip TransitionComponent={Fade} placement="bottom" TransitionProps={{ timeout: {enter:500, exit: 50} }} arrow classes={{tooltip: classesType.tooltip,arrow: classesType.arrow}} {...props} />;
   }

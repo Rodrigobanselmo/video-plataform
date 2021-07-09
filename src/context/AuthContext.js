@@ -3,6 +3,7 @@ import { auth } from "../lib/firebase.prod"
 import { useHistory,useLocation } from "react-router-dom"
 import {DASHBOARD,SIGN} from '../routes/routesNames'
 import {useNotification} from './NotificationContext'
+import { useLoaderDashboard } from './LoadDashContext';
 import {useLoaderScreen} from './LoaderContext'
 import {GetUserData} from '../services/firestoreUser'
 import {LogOut} from '../services/firebaseAuth'
@@ -18,7 +19,8 @@ export function AuthProvider({ children }) {
 
   const location = useLocation();
   const history = useHistory()
-  const {setLoad} = useLoaderScreen();
+  const { setLoaderDash } = useLoaderDashboard();
+  const { setLoad } = useLoaderScreen();
   const notification = useNotification();
 
   function checkSuccess(doc,user,newUser) {
@@ -26,13 +28,12 @@ export function AuthProvider({ children }) {
       displayName:user?.displayName,
       emailVerified:user?.emailVerified,
       email:user?.email,
-      photoURL:user?.photoURL,
       uid:user?.uid,
     }
-    setCurrentUser({...importantData,...doc})
-    setLoad(false)
+    setCurrentUser({photoURL:user?.photoURL,...doc,...importantData})
+    setLoaderDash(false)
     console.log('user',{...doc})
-    if (location.pathname.includes(SIGN)) history.replace(DASHBOARD)
+    // if (location.pathname.includes(SIGN)) history.replace(DASHBOARD)
     if (newUser) {
       setTimeout(() => {
         notification.simple({message:'Seja bem-vindo!'})
@@ -50,7 +51,7 @@ export function AuthProvider({ children }) {
       notification.error({message:error,modal:true})
     }, 600);
     LogOut(()=>{},()=>{})
-    setLoad(false)
+    setLoaderDash(false)
     setCurrentUser(null)
   }
 
@@ -59,9 +60,9 @@ export function AuthProvider({ children }) {
       // console.log('user',user)
       if (!user) {
         setCurrentUser(user)
-        setLoad(false)
+        setLoaderDash(false)
       }
-      // setLoad(false)
+      // setLoaderDash(false)
       // setCurrentUser(user)
       console.log('user1',user)
       if (user) GetUserData(user,checkSuccess,checkError)
@@ -90,7 +91,7 @@ export function AuthProvider({ children }) {
   //     },
   //    name: "Rodrigo Barbosa Anselmo"
   // })
-  // setLoad(false)
+  // setLoaderDash(false)
   }, [])
 
   return (

@@ -22,6 +22,6 @@ export const LoadDashboard = styled.div`
   position: fixed;
   width: 100%;
   height: 100%;
-  margin-left: ${(props/* : LoadProps */) => (props.open ? '120px' : '40px')};
+  // margin-left: ${(props/* : LoadProps */) => (props.open ? '120px' : '40px')};
   transition: margin-left 0.2s linear;
 `;

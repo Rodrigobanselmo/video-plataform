@@ -38,11 +38,12 @@ export const AvatarInput = styled.div`
     width: 186px;
     height: 186px;
     border-radius: 50%;
-    background: ${({theme})=>fade(theme.palette.primary.mainLight,0.4)};
+    background: ${({theme})=>theme.palette.background.default};
     border: 2px solid ${({theme})=>(theme.palette.text.third)};
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
   }
   label {
     position: absolute;
@@ -57,6 +58,7 @@ export const AvatarInput = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    background-image: linear-gradient(-10deg, ${({theme})=>theme.palette.primary.main}, ${({theme})=>theme.palette.primary.light});
     input {
       display: none;
     }
@@ -69,7 +71,7 @@ export const AvatarInput = styled.div`
       color: ${({theme})=>(theme.palette.primary.contrastText)};
     }
     &:hover {
-      background: ${({theme})=>fade(theme.palette.primary.main,0.8)};
+      filter: brightness(0.95);
     }
   }
 `;

@@ -3,7 +3,9 @@ import LottieAnimation from '../../../lib/lottie'
 import {NavLogo} from '../../Main/NavLogo'
 import {BootstrapTooltip} from '../../Main/MuiHelpers/Tooltip'
 import {ModalMui} from '../../Main/Modal/ModalMui'
-import styled from "styled-components";
+import styled, {css} from "styled-components";
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 const InputDiv = styled.div`
   display: flex;
@@ -131,7 +133,7 @@ Sign.InputConfirmPass =  function InputConfirmPass(props) {
     )
 }
 
-Sign.ContinueButton =  function ContinueButton(props) {
+export function ContinueButton(props) {
     return(
       <Submit login={props.login} onClick={props.handleSignIn} type="submit" data-testid="sign-in">
         Continuar
@@ -144,6 +146,61 @@ Sign.ForgotPassword =  function ForgotPassword(props) {
       <TextForgotten login={props.login}>
         <TextButton onClick={()=>props.setRecoveryModal(true)} >Esqueceu a senha?</TextButton>
       </TextForgotten>
+    )
+}
+
+
+export const PolicyContainer = styled.div`
+  transition: all 2.85s ease-out;
+  z-index:1000;
+  display:flex;
+  flex:1;
+  flex-direction: row;
+  align-items:center;
+  justify-content: center;
+  margin-top: 10px;
+  opacity:1;
+  height:fit-content;
+  overflow:hidden;
+
+  ${props => props.login !== 'register' && css`
+    height:0;
+    opacity:0;
+  `}
+
+`;
+
+export const FormLabel = styled.p`
+  font-size:0.80rem;
+  margin-top: 8px;
+  opacity:0.8;
+  color: ${({theme})=>theme.palette.text.primary};
+  /* margin-bottom: 20px; */
+  margin-left: 10px;
+`;
+
+export const BoldText = styled.b`
+  color: ${({theme})=>theme.palette.text.primary};
+  cursor:pointer;
+  &:hover {
+    text-decoration:underline;
+  }
+  /* margin-bottom: 20px; */
+`;
+
+export function PolicyTerms(props) {
+    return(
+      <PolicyContainer login={props.login}>
+        <Checkbox
+        style={{margin:0}}
+          size='small'
+          checked={props.checked}
+          onChange={props.handleChange}
+          name="checkedPolicy"
+          color="primary"
+        />
+        <FormLabel>Eu li e concordo com os <BoldText>Termos e Condições</BoldText> e <BoldText>Política de Privacidade</BoldText></FormLabel>
+      </PolicyContainer>
     )
 }
 

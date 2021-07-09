@@ -1,13 +1,15 @@
-import styled, {css} from "styled-components";
+import React from 'react';
+import styled, {ThemeContext} from "styled-components";
 import {ContinueButton} from '../../../Main/MuiHelpers/Button'
-import {Icons} from '../../../Icons/iconsDashboard'
 import { Form } from "@unform/web";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 export const FormContainer = styled(Form)`
   display: flex;
   flex-wrap: wrap;
   width: 100%;
   color: ${({theme})=> theme.palette.text.primary};
+  gap:20px;
 `;
 
 export const HeaderForm = styled.div`
@@ -38,7 +40,6 @@ export const DividerForm = styled.h3`
   color: ${({theme})=>theme.palette.text.third};
 `;
 
-
 export const AddAnotherForm = styled.div`
     max-width:fit-content;
     padding:7px 10px;
@@ -61,13 +62,18 @@ export const AddAnotherForm = styled.div`
     }
 `;
 
-const ButtonF = styled(ContinueButton)`
+const Button = styled(ContinueButton)`
 `;
 
-export function ButtonForm({children,justify='flex-end',...props}) {
+export function ButtonForm({children,loading,justify='flex-end',...props}) {
+  const theme = React.useContext(ThemeContext)
+
   return(
     <div style={{display:'flex',width:'100%',justifyContent:justify,marginTop:10}} >
-        <ButtonF style={{width:200}} {...props} >{children}</ButtonF>
+      <div style={{position: 'relative'}}>
+        <Button disable={String(loading)} style={{width:200}} {...props} >{children}</Button>
+        {loading && <CircularProgress size={24} style={{color: theme.palette.primary.main,position: 'absolute',top: '50%',left: '50%',marginTop: -12,marginLeft: -12,}} />}
+      </div>
     </div>
   )
 }

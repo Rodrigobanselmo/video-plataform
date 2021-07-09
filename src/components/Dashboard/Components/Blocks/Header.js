@@ -27,8 +27,8 @@ const TitleTag = styled.div`
   display:flex;
   align-items:center;
   justify-content:center;
-  -webkit-box-shadow: 3px 3px 11px 1px rgba(0,0,0,0.23);
-  box-shadow: 3px 3px 11px 1px rgba(0,0,0,0.23);
+  -webkit-box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.23);
+  box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.23);
 `;
 
 const Title = styled.h1`
@@ -66,7 +66,7 @@ const HeaderComponent = React.memo(({icons, title,path, video=false,subTitle}) =
                 </div>
                 }
               </div>
-            <p>Dashboard
+            <p>App
               {subTitle && Array.isArray(subTitle) ?
                 subTitle.map((item,index)=>(
                   <span key={index} style={{color:'grey'}}>&nbsp;/&nbsp;{item}</span>

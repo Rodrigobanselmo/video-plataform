@@ -2,7 +2,7 @@ import { db, st } from '../lib/firebase.prod.js';
 import {v4} from "uuid";
 
 
-export const errorCatch = (error) => {
+const errorCatch = (error) => {
   let errorMessage = error;
 
   if (error.code === 'storage/unknown') {

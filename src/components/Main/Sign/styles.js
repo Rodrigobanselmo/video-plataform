@@ -271,8 +271,10 @@ export const Submit = styled.button`
   padding: 10px;
   width:100%;
   border: 0;
-  background: ${({ theme }) => theme.palette.primary.main};
   margin-top:${({login})=>(login === 'register' ? '20px' : '0px')};
+  box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.12);
+  -webkit-box-shadow: 1px 1px 2px 1px rgba(0,0,0,0.13);
+  background-image: linear-gradient(-10deg, ${({theme})=>theme.palette.primary.main}, ${({theme})=>theme.palette.primary.light});
   color: white;
   cursor: pointer;
   z-index:10;

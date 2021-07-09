@@ -1,17 +1,17 @@
-export const AscendentText = function (a, b) {
-  if (a.text.toLowerCase().normalize("NFD").replace(/[^a-zA-Z0-9s]/g, "") > b.text.toLowerCase().normalize("NFD").replace(/[^a-zA-Z0-9s]/g, "")) {
+export const AscendentObject = function (a, b, field) {
+  if (a[field].toLowerCase().normalize("NFD").replace(/[^a-zA-Z0-9s]/g, "") > b[field].toLowerCase().normalize("NFD").replace(/[^a-zA-Z0-9s]/g, "")) {
       return 1;
   }
-  if (b.text.toLowerCase().normalize("NFD").replace(/[^a-zA-Z0-9s]/g, "") > a.text.toLowerCase().normalize("NFD").replace(/[^a-zA-Z0-9s]/g, "")) {
+  if (b[field].toLowerCase().normalize("NFD").replace(/[^a-zA-Z0-9s]/g, "") > a[field].toLowerCase().normalize("NFD").replace(/[^a-zA-Z0-9s]/g, "")) {
       return -1;
   }
   return 0;
 };
-export const Decrescent = function (a, b) {
-  if (a.text.toLowerCase().normalize("NFD").replace(/[^a-zA-Z0-9s]/g, "") > b.text.toLowerCase().normalize("NFD").replace(/[^a-zA-Z0-9s]/g, "")) {
+export const Decrescent = function (a, b, field) {
+  if (a[field].toLowerCase().normalize("NFD").replace(/[^a-zA-Z0-9s]/g, "") > b[field].toLowerCase().normalize("NFD").replace(/[^a-zA-Z0-9s]/g, "")) {
       return -1;
   }
-  if (b.text.toLowerCase().normalize("NFD").replace(/[^a-zA-Z0-9s]/g, "") > a.text.toLowerCase().normalize("NFD").replace(/[^a-zA-Z0-9s]/g, "")) {
+  if (b[field].toLowerCase().normalize("NFD").replace(/[^a-zA-Z0-9s]/g, "") > a[field].toLowerCase().normalize("NFD").replace(/[^a-zA-Z0-9s]/g, "")) {
       return 1;
   }
   return 0;

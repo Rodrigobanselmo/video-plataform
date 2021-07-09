@@ -9,6 +9,17 @@ import IconButton from '@material-ui/core/IconButton';
 import {Icons} from '../../Icons/iconsDashboard'
 import {useNotification} from '../../../context/NotificationContext'
 
+const IconLeft = styled(Icons)`
+  color: ${props=>props.theme.palette.text.primary};
+  font-size: 22px;
+  margin-right:10px;
+
+  ${props => props.icon == 'success' && css`
+    color: ${props=>props.theme.palette.status.success};
+  `}
+`;
+
+
 const FullModalContainer = styled.div`
   display: flex;
   align-items: center;
@@ -22,18 +33,30 @@ const FullModalContainer = styled.div`
 `;
 
 
-const Title = styled.p`
+const TitleView = styled.p`
   position: absolute;
   top: 15px;
   left: 20px;
-  color: ${props=>props.theme.palette.text.primary};
-  font-size: 22px;
-  font-weight: bold;
+  display:flex;
+  align-items: center;
+  flex-direction:row;
 
   ${props => props.padding && css`
       left:0;
       position: relative;
       margin: 0 0 30px 0;
+      align-self:left;
+      margin-right:auto;
+  `}
+
+`;
+
+const Title = styled.p`
+  color: ${props=>props.theme.palette.text.primary};
+  font-size: 22px;
+  font-weight: bold;
+
+  ${props => props.padding && css`
       text-align:left;
       align-self:left;
       margin-right:auto;
@@ -122,7 +145,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function ModalMui({children,open,onClose,title,padding}) {
+export function ModalMui({children,open,onClose,title,padding,icon}) {
 
   const classes = useStyles();
 
@@ -145,7 +168,10 @@ export function ModalMui({children,open,onClose,title,padding}) {
 {/*         <Slide direction="up" in={true} mountOnEnter unmountOnExit timeout={600}> */}
           <div style={{padding:padding=='large'?'10px 40px 40px 40px':'60px 23px 20px 20px',maxHeight:'90vh'}} className={classes.paper}>
             {title ?
-            <Title padding={padding}>{title}</Title>
+            <TitleView>
+              {icon &&<IconLeft icon={icon} type={'Check'} />}
+              <Title padding={padding}>{title}</Title>
+            </TitleView>
             : null}
               <IconCloseButton padding={padding}>
                 <IconButton onClick={onCloseModal} aria-label="close">

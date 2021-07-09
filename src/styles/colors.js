@@ -16,7 +16,9 @@ export default {
       contrastText: '#fff',
     },
     secondary: {
-      main: '#990000',
+      main: '#16a41b',
+      dark: '#16a41b',
+      light: '#16a41b',
     },
     background: {
       paper: '#fff',

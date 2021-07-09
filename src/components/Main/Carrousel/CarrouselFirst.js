@@ -15,8 +15,9 @@ const GridCarrousel = styled.div`
 export default function Carrousel({sections=2,position=1,children}) {
 
     let posX = 0 ;
-
-    if (sections % 2 === 0) {
+    if (sections===1) {
+      return <>{children}</>
+    } else if (sections % 2 === 0) {
         posX=`${((sections-1)-(position-1)*2)/(sections*2)*100}%`
     // } else if (sections % 5 === 0) {
     //   posX=`${(-1/sections)*(position-(sections+1)/2)*100}%`
@@ -48,14 +49,15 @@ export default function Carrousel({sections=2,position=1,children}) {
 
 export const PagesDiv = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: center;
   padding:40px 40px 0px 40px;
   -webkit-box-shadow: 3px 3px 11px 1px rgba(0,0,0,0.23);
   box-shadow: 3px 3px 11px 1px rgba(0,0,0,0.23);
   border-radius:15px;
-  max-width: 900px;
-  margin: auto;
+  max-width: 1200px;
+  margin: auto 40px;
+  align-self: center;
+  justify-self: center;
+  flex-direction:column;
   background-color: ${({theme})=>theme.palette.background.paper};
 
   ${props => props.overflowTrue && css`
@@ -63,14 +65,16 @@ export const PagesDiv = styled.div`
     max-height:85vh;
   `}
 
-  @media screen and (min-width: 800px) {
-    min-width: 400px
-  }
+
+
   @media screen and (min-width: 500px) {
     min-width: 300px
   }
+  @media screen and (min-width: 800px) {
+    min-width: 400px
+  }
   @media screen and (min-width: 1000px) {
-    min-width: 600px
+    min-width: 800px
   }
 `;
 

@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Sidebar from '../Sidebar'
 import NavSystem from '../NavSystem'
-import {LoaderDashboard} from '../../../components/Main/Loader/index'
+// import {LoaderDashboard} from '../../../components/Main/Loader/index'
 import {useAuth} from '../../../context/AuthContext'
 import useTimeOut from '../../../hooks/useTimeOut'
 
@@ -54,7 +54,7 @@ export default function MiniDrawer({children}) {
   }
 
   return (
-      <LoaderDashboard open={open}>
+      // <LoaderDashboard open={open}>
       <div className={`classes ${classes.root}`}>
         {currentUser && currentUser?.access && currentUser.access === 'admin' ?
           <>
@@ -62,12 +62,12 @@ export default function MiniDrawer({children}) {
             <NavSystem  open={open} setOpen={openNavDrawer}/>
             {/* <Sidebar open={open} setOpen={setOpen} lock={lock} onTimeOut={onTimeOut} onClearTimeOut={onClearTimeOut} setLock={setLock}/> */}
           </>
-         : null }
+        : null }
         <main id = "someRandomID" className={classes.content}>
             <div className={classes.toolbar} />
               {children}
         </main>
     </div>
-    </LoaderDashboard>
+    // </LoaderDashboard>
   );
 }

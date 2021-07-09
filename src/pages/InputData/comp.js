@@ -31,6 +31,14 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabelCheck from '@material-ui/core/FormLabel';
 import {keepOnlyNumbers,formatCPFeCNPJeCEPeCNAE} from '../../helpers/StringHandle';
 import { FiArrowLeft, FiMail, FiLock, FiUser, FiCamera } from 'react-icons/fi';
+import { FaUserTie } from 'react-icons/fa';
+
+const ContainerFirst = styled.div`
+  display:flex;
+  flex-direction:row;
+  width:100%;
+`;
+
 
 const PhoneDiv = styled.div`
   padding: 12px 15px;
@@ -122,7 +130,6 @@ PageWrapper.IconBack =  function Header({setPosition,setInfoModal}) {
 PageWrapper.Header =  function Header(props) {
   return(
     <HeaderPage center={props.center} >
-        {/* <Title>Politicas de Privacidade</Title> */}
         <Title >{props.text}</Title>
         {props.subText && <SubTitle>{props.subText}</SubTitle>}
     </HeaderPage>
@@ -179,39 +186,26 @@ PageWrapper.Politics =  function Continue({setChecked,checked}) {
   )
 }
 
-export function FirstForm({ onUploadProfile,user,setUnform,unform,notification}) {
+export function FirstForm({ onUploadProfile,setUnform,unform,notification}) {
 
   const [value, setValue] = useState(unform.cell)
-
-  // axios.get('https://brasilapi.com.br/api/cnpj/v1/{}').then(res=>{
-  //     console.log('res',res.data)
-  //   }).catch((error)=>{
-  //     console.log('error',error)
-  // })
 
   const formRef = React.useRef()
 
   const validation = Yup.object({
     name: Yup.string().required('Nome não pode estar em branco.'),
-    cpf: Yup.string().trim().length(14,'CPF incompleto').required('CPF não pode estar em branco.'),
     rg: Yup.string().trim().required('RG não pode estar em branco.'),
-    // cell: Yup.string().trim().length(15,'Número de celular incompleto').required('Número de celular não pode estar em branco.'),
   })
 
-  console.log('value21: ', value)
-  console.log('value1: ', unform.cpf)
   const handleSubmit = React.useCallback(async (formData) => {
     formRef.current.setErrors({})
-    console.log('value',value)
     if (!value||(value&&value.length<6)) return notification.warn({message:`Número de celular vazio ou inválido.`})
     try {
       await validation.validate(formData, { abortEarly: false })
       setUnform({...unform,...formData,cell:value})
       console.log('submitted: ', formData)
     } catch (error) {
-      console.log('error',error);
       const errors = {}
-      console.log('submittedError: ', formData)
       error?.inner?.forEach((err) => {
         errors[err.path] = err.message
       })
@@ -222,34 +216,39 @@ export function FirstForm({ onUploadProfile,user,setUnform,unform,notification})
   const handleAvatarChange = React.useCallback(
     (event) => {
       if (event.target.files && event.target.files[0]) {
+        if (event.target.files[0].size > 2*10**6) return notification.error({message:'Sua imagem não pode ser maior que 2 MB'})
         onUploadProfile(event.target.files[0])
       }
     },
     [],
   );
 
+  function onCLick() {
+    document.getElementById('avatarInput').click();
+  }
+
   return(
     <InputsContainer>
       <FormContainer
-         noValidate
-         ref={formRef}
-         onSubmit={handleSubmit}
+        noValidate
+        ref={formRef}
+        onSubmit={handleSubmit}
       >
-        <div style={{display:'flex'}}>
-          <AvatarInput>
-            {!unform?.photoURL ?
+        <ContainerFirst>
+          <AvatarInput onClick={onCLick}>
+            {unform?.photoURL ?
               <div>
-                <Icons style={{fontSize:140}} type={`Avatar`}/>
+                <FaUserTie style={{fontSize:130,transform:'translateY(-5px)'}} />
               </div>
             :
               <img src={unform.photoURL} alt={'perfil_photo'} />
             }
-            <label htmlFor="avatar">
+            <label htmlFor="avatar" id="avatarInput">
               <FiCamera />
               <input accept="image/*" type="file" id="avatar" onChange={handleAvatarChange} />
             </label>
           </AvatarInput>
-          <div>
+          <div style={{width:'100%',displayL:'flex',flex:1}}>
             <InputUnform
               width={'100%'}
               name={'name'}
@@ -261,18 +260,7 @@ export function FirstForm({ onUploadProfile,user,setUnform,unform,notification})
               inputProps={{style: {textTransform: 'capitalize',color:'#000'}}}
             />
             <InputUnform
-              width={'50%'}
-              name={'cpf'}
-              defaultValue={keepOnlyNumbers(unform?.cpf)}
-              labelWidth={30}
-              style={{marginRight:20}}
-              label={'CPF'}
-              variant="outlined"
-              inputProps={{placeholder:'000.000.000-00',style: {textTransform: 'capitalize',color:'#000'}}}
-              inputComponent={NumberFormatCPF}
-            />
-            <InputUnform
-              width={'50%'}
+              width={'100%'}
               name={'rg'}
               defaultValue={keepOnlyNumbers(unform?.rg)}
               labelWidth={20}
@@ -290,40 +278,7 @@ export function FirstForm({ onUploadProfile,user,setUnform,unform,notification})
               />
             </PhoneDiv>
           </div>
-        </div>
-        {/* <InputUnform
-          width={'100%'}
-          name={'cell'}
-          labelWidth={70}
-          label={'WhatsApp'}
-          statusStart={'WhatsApp'}
-          variant="outlined"
-          inputProps={{placeholder:'(__) _____-____',style: {color:'#000'}}}
-          iconStart={'WhatsApp'}
-          inputComponent={NumberFormatCell}
-        /> */}
-        <InputUnform
-          width={'100%'}
-          name={'facebook'}
-          labelWidth={70}
-          defaultValue={unform?.facebook}
-          label={'Facebook'}
-          statusStart={'Facebook'}
-          variant="outlined"
-          inputProps={{placeholder:'https://www.facebook.com/realiza.conecta',style: {color:'#000'}}}
-          iconStart={'Facebook'}
-        />
-        <InputUnform
-          width={'100%'}
-          name={'instagram'}
-          labelWidth={75}
-          defaultValue={unform?.instagram}
-          statusStart={'Instagram'}
-          label={'Instagram'}
-          iconStart={'Instagram'}
-          variant="outlined"
-          inputProps={{placeholder:'https://www.instagram.com/realiza.conecta',style: {color:'#000'}}}
-        />
+        </ContainerFirst>
         <ButtonForm type='submit' jusify='center' primary={'true'} style={{width:'fit-content'}}>
           Proximo
         </ButtonForm>
@@ -409,10 +364,10 @@ export function SecondForm({ user,setUnform,unform,onSecondForm}) {
   return(
     <InputsContainer>
       <FormContainer
-         noValidate
-         ref={formRef}
-         onSubmit={handleSubmit}
-         key={_key}
+        noValidate
+        ref={formRef}
+        onSubmit={handleSubmit}
+        key={_key}
       >
         <InputUnform
         width={'100%'}

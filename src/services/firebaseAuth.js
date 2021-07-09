@@ -36,38 +36,32 @@ const errorCatch = (error) => {
   return errorMessage;
 };
 
-export function CheckEmailExists(
+export async function CheckEmailExists(
   email,
+  validCode,
   checkSuccess,
   checkError,
 ) {
 
-  const usersRef = db.collection('data').doc('emailsPermissions');
+  const usersRef = db.collection('users');
 
-  auth
-  .fetchSignInMethodsForEmail(email)
-  .then((response) => {
+  try {
+    const responseEmail = await auth.fetchSignInMethodsForEmail(email) //.then((response) => {
+    if (responseEmail.length != 0 ) return checkSuccess(responseEmail);
 
-    if (response.length == 0) {
-      usersRef.get().then((docSnapshot) => {
-        if (docSnapshot.exists) {
-          console.log(docSnapshot.data())
-          // if (docSnapshot.data().data.findIndex(i=>i.email==email) == -1) checkError('Este endereço de email não possui permissão para se cadastrar.')
-          if (docSnapshot.data().data.findIndex(i=>i==email) == -1) checkError('Este endereço de email não possui permissão para se cadastrar.')
-          else {
-            checkSuccess(response);
-          }
-        } else {
-          checkError('Este endereço de email não possui permissão para se cadastrar.');
-        }
-      }).catch((error) => {
-        checkError(errorCatch(error));
-      })
-    } else checkSuccess(response);
+    let EMAIL_EXIST = false
+    const response = await usersRef.where('email', '==', email).get()
+    response.forEach(function () {
+      EMAIL_EXIST = true
+    })
 
-  }).catch((error) => {
-    checkError(errorCatch(error));
-  });
+    if (EMAIL_EXIST || validCode) return checkSuccess([]);
+
+    return  checkError('Este endereço de email não possui permissão para se cadastrar.');
+
+  } catch (error) {
+    return checkError(errorCatch(error));
+  }
 }
 
 export function CreateEmail(
@@ -119,6 +113,28 @@ export function RecoveryEmail(
     });
 }
 
+export function SendEmailVerification(checkSuccess,checkError) {
+  var user = auth.currentUser;
+  user.sendEmailVerification()
+  .then(function () {
+    checkSuccess();
+  })
+  .catch(function (error) {
+    checkError(errorCatch(error));
+  });
+}
+
+export function ReloadUser(checkSuccess,checkError) {
+  var user = auth.currentUser;
+  user.reload()
+  .then(function () {
+    checkSuccess(auth.currentUser);
+  })
+  .catch(function (error) {
+    checkError(errorCatch(error));
+  });
+}
+
 export function LogOut(
   checkSuccess,
   checkError,
@@ -126,9 +142,9 @@ export function LogOut(
   auth
     .signOut()
     .then(() => {
-      checkSuccess();
+      checkSuccess && checkSuccess();
     })
     .catch((error) => {
-      checkError(errorCatch(error));
+      checkError && checkError(errorCatch(error));
     });
 }

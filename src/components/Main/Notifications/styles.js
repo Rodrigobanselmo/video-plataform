@@ -114,9 +114,9 @@ export const DivItemModal = styled.div`
     animation-fill-mode: forwards;
     transition: all 0.6s ease;
     color:#fff;
-    -webkit-box-shadow: 1px 1px 9px 1px #00000066;
+    -webkit-box-shadow: 1px 1px 2px 1px #00000026;
     border-radius: 30px;
-    box-shadow: 1px 1px 9px 1px #00000066;
+    box-shadow: 1px 1px 2px 1px #00000026;
     animation: ${SlideTop} 0.4s;
     width:auto;
     max-width: 700px;

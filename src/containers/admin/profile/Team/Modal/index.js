@@ -9,7 +9,19 @@ import {ModalInfo} from '../../../../../components/Main/Modal/ModalInfo'
 import Carrousel, {PagesDiv} from '../../../../../components/Main/Carrousel/CarrouselFirst'
 import {onCreatePendingUser,onCheckUser} from './func'
 import { useSelector,useDispatch } from 'react-redux'
+import { ModalFullScreen } from '../../../../../components/Modal/ModalFullScreen';
+import styled from "styled-components";
 
+export const Container = styled.div`
+    display:flex;
+    z-index:1;
+    flex-direction:column;
+    overflow-x:hidden;
+    justify-content:center;
+    align-items:center;
+    padding:50px 10vw 20px 10vw;
+    min-height: 100vh;
+`;
 
 export default function Modal({open,setOpen,setUsersRows}) {
 
@@ -65,38 +77,38 @@ export default function Modal({open,setOpen,setUsersRows}) {
     }
 
     return (
-            <AddModal open={open} onClose={onClose} infoModal={infoModal} arrow={position >= 2 ? true : false} onGoBack={onGoBack}>
-              <Carrousel sections={3} position={position}>
-                  <div style={{display:'flex',flexDirection:'column',alignItems:'center',maxWidth:550,margin:'auto'}}>
-                      <div style={{alignItems:'center',display:'flex',flexDirection:'column',margin:'0px 20px'}}>
-                          <AddModal.Header
-                            center
-                            text='Adicionar Novos Usuários'
-                            subText='Você poderá mudar as permissões dos novos usuários na proxima sessão.'
-                          />
-                          <AddModal.EmailInput setEmails={setEmails} emails={emails} numInput={numInput} setNumInput={setNumInput} notification={notification} onCheckUser={onCheckUser} companyId={currentUser}/>
-                          <AddModal.Continue disable={!emails.find(i=>i && i?.status && i.status==='Check')} setInfoModal={setInfoModal} notification={notification} setPosition={setPosition}/>
-                      </div>
+      <ModalFullScreen open={open} onClose={onClose} infoModal={infoModal} arrow={position >= 2 ? true : false} onGoBack={onGoBack}>
+        <Container>
+          <Carrousel sections={3} position={position}>
+            <PagesDiv>
+              <AddModal.Header
+                center
+                text='Adicionar Novos Usuários'
+                subText='Você poderá mudar as permissões dos novos usuários na proxima sessão.'
+              />
+              <AddModal.EmailInput setEmails={setEmails} emails={emails} numInput={numInput} setNumInput={setNumInput} notification={notification} onCheckUser={onCheckUser} companyId={currentUser}/>
+              <AddModal.Continue disable={!emails.find(i=>i && i?.status && i.status==='Check')} setInfoModal={setInfoModal} notification={notification} setPosition={setPosition}/>
+            </PagesDiv>
+              <div style={{display:'flex',flexDirection:'column',alignItems:'center',maxWidth:550,margin:'auto'}}>
+                  <div style={{alignItems:'center',display:'flex',flexDirection:'column',margin:'0px 20px'}}>
+                      <AddModal.Header
+                        center
+                        text='Definir permissões'
+                        subText='Defina o tipo dos novos usuários e quais serão suas permissões de uso da plataforma.'
+                      />
+                      <Type onEditForm={onEditForm} noRepeatEmails={noRepeatEmails} emails={emails} setEmails={setEmails} userTypes={userTypes}/>
+                      <AddModal.Continue onSendRequest={onSendRequest} second disable={false} setInfoModal={setInfoModal} setPosition={setPosition}/>
                   </div>
-                  <div style={{display:'flex',flexDirection:'column',alignItems:'center',maxWidth:550,margin:'auto'}}>
-                      <div style={{alignItems:'center',display:'flex',flexDirection:'column',margin:'0px 20px'}}>
-                          <AddModal.Header
-                            center
-                            text='Definir permissões'
-                            subText='Defina o tipo dos novos usuários e quais serão suas permissões de uso da plataforma.'
-                          />
-                          <Type onEditForm={onEditForm} noRepeatEmails={noRepeatEmails} emails={emails} setEmails={setEmails} userTypes={userTypes}/>
-                          <AddModal.Continue onSendRequest={onSendRequest} second disable={false} setInfoModal={setInfoModal} setPosition={setPosition}/>
-                      </div>
-                  </div>
-                  <PagesDiv style={{padding:'0 20px 0px 20px',maxWidth:1100}} overflowTrue>
-                    {position == 3 &&
-                    <div style={{display:'flex',flex:1,width:'100%',flexDirection:'column',margin:'0px 20px'}}>
-                        <Form editEmail={editEmail} notification={notification} unform={unform} setUnform={setUnform} onForm={onForm}/>
-                    </div>
-                    }
-                  </PagesDiv>
-                </Carrousel>
-            </AddModal>
+              </div>
+              <PagesDiv style={{padding:'0 20px 0px 20px',maxWidth:1100}} overflowTrue>
+                {position == 3 &&
+                <div style={{display:'flex',flex:1,width:'100%',flexDirection:'column',margin:'0px 20px'}}>
+                    <Form editEmail={editEmail} notification={notification} unform={unform} setUnform={setUnform} onForm={onForm}/>
+                </div>
+                }
+              </PagesDiv>
+            </Carrousel>
+          </Container>
+        </ModalFullScreen>
     );
 }

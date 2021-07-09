@@ -9,7 +9,7 @@ export const useLoaderScreen = () => {
 };
 
 const LoaderProvider = ({ children }) => {
-  const [load, setLoad] = useState('transparent');
+  const [load, setLoad] = useState(false);
 
   return (
     <LoaderContext.Provider value={{ setLoad, load }}>

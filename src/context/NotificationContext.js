@@ -55,6 +55,7 @@ const NotificationProvider = (props) => {
         })}
       </DivContainerModal>
       <ModalInfo
+        icon={modal?.icon ?? false}
         title={modal?.title ? modal.title : 'Você tem certeza?'}
         text={modal?.text ? modal.text : ''}
         component={modal?.component ? modal.component : false}

@@ -32,8 +32,8 @@ export const Container = styled.div`
 export const InputsContainer = styled.div`
     display:flex;
     flex-direction:column;
-/*     max-width:550px; */
     width:100%;
+    max-width:1000px;
     margin-bottom:20px;
 `;
 
@@ -48,7 +48,7 @@ export const MainTitle = styled.h1`
 `;
 
 export const SubTitle = styled.p`
-    text-align:center;
+    text-align:left;
     margin-top:10px;
     font-size:16px;
     color: ${({theme})=> theme.palette.text.primary };

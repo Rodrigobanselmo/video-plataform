@@ -21,7 +21,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    background: #ddd8d2;
+    background: #eee;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -76,11 +76,18 @@ export const GlobalStyle = createGlobalStyle`
                                   supported by Chrome and Opera */
 }
 
+  .oneLine {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
   .noBreakText {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
+
   .rowCenter {
     display: flex;
     flex-direction: row;

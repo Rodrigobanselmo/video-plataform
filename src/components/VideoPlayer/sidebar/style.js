@@ -93,9 +93,9 @@ export const Line = styled.div`
 
 export const Text = styled.span`
   font-size: 14px;
-  user-select:none;
   margin-right:auto;
 
+  user-select:none;
   -moz-user-select:none;
   -webkit-user-select:none;
   -ms-user-select:none;

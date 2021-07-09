@@ -5,7 +5,7 @@ import React, { createContext, useState, useContext } from 'react';
 const ControllerLoaderContext = createContext();
 
 export const LoaderContext = ({ children }) => {
-  const [loaderDash, setLoaderDash] = useState(false);
+  const [loaderDash, setLoaderDash] = useState(true);
 
   return (
     <ControllerLoaderContext.Provider value={{ loaderDash, setLoaderDash }}>

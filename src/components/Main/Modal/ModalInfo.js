@@ -43,6 +43,7 @@ export function ModalInfo({
             title,
             text,
             type,
+            icon,
             component:Component,
         })
     {
@@ -59,7 +60,7 @@ export function ModalInfo({
   }
 
   return (
-    <ModalMui open={open} onClose={onCloseModal} title={title}>
+    <ModalMui icon={icon} open={open} onClose={onCloseModal} title={title}>
         {Component?
           <DivComp >
             {text && <Text >{text}</Text>}

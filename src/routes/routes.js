@@ -1,11 +1,17 @@
-import { Sign, NotFound, Dashboard, InputData } from '../pages';
-import { SIGN,DASHBOARD,REQUEST_ADMIN_DATA } from './routesNames';
+import { Sign, NotFound, Dashboard, InputData, Verify } from '../pages';
+import { SIGN,DASHBOARD,REQUEST_DATA,VERIFY_EMAIL } from './routesNames';
 
 const routes = [
   {
     path: SIGN,
     component: Sign,
     exact: true,
+  },
+  {
+    path: VERIFY_EMAIL,
+    component: Verify,
+    isPrivate: true,
+    privateRoute: SIGN,
   },
   {
     path: DASHBOARD,
@@ -18,7 +24,7 @@ const routes = [
     // Equal: [false, true],
   },
   {
-    path: REQUEST_ADMIN_DATA,
+    path: REQUEST_DATA,
     component: InputData,
     isPrivate: true,
     // isPrivate: true,

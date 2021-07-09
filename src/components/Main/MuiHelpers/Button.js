@@ -31,25 +31,32 @@ export const ContinueButton = styled(Button)`
     padding: 8px 10px;
     border-radius: 7px;
     min-width: ${(props)=> props.minwidth ? props.minwidth : '90px'};
-    color:${({theme})=>theme.palette.type !== 'dark'?theme.palette.primary.contrastText :theme.palette.text.primary};
+    color:${({theme})=>theme.palette.primary.contrastText };
     font-weight:bold;
     text-transform: none;
     border: none;
-    background-color: ${(props)=> props.primary ? (props.theme.palette.type !== 'dark'? lighten(props.theme.palette.primary.main,0.2) : props.theme.palette.primary.main) : props.theme.palette.background.attention};
+    background-color: ${(props)=> props.primary ? props.theme.palette.primary.main : props.theme.palette.background.attention};
     transition: all 0.5s ease;
     opacity:1;
-/*     width:fit-content; */
+
 
     &:hover {
-      background-color: ${(props)=> props.primary ? (props.theme.palette.type !== 'dark'? lighten(props.theme.palette.primary.main,0.1) : darken(props.theme.palette.primary.main,0.1)) : props.theme.palette.background.attentionHover};
+      background-color: ${(props)=> props.primary ? props.theme.palette.primary.main : props.theme.palette.background.attention};
+      filter: brightness(0.95);
       transition: all 0.2s ease;
     }
 
+    ${props => props.primary && css`
+      box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.12);
+      -webkit-box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.13);
+      background-image: linear-gradient(-10deg, ${({theme})=>theme.palette.primary.main}, ${({theme})=>theme.palette.primary.light});
+    `};
+
     ${props => props.disable === 'true' && css`
       border: 1px ${({theme})=>theme.palette.background.line} solid;
-      background: ${({theme})=>theme.palette.type !== 'dark'?theme.palette.background.inactive :theme.palette.background.inactive};
+      background: ${({theme})=>theme.palette.background.inactive};
       opacity:1;
-      color:${({theme})=>theme.palette.type !== 'dark'?theme.palette.primary.contrastText :theme.palette.text.primary};
+      color:${({theme})=>theme.palette.primary.contrastText};
       pointer-events: none;
       &:hover {
         background-color: ${({theme})=>theme.palette.background.inactive};
@@ -63,25 +70,20 @@ export const ContinueButton = styled(Button)`
 
     ${props => props.primary === 'outlined' && css`
       border: 1px ${({theme})=>theme.palette.background.line} solid;
-      color:${({theme})=>theme.palette.type !== 'dark'?lighten(theme.palette.text.secondary,0.1) :theme.palette.text.secondary};
+      color:${({theme})=>theme.palette.text.secondary};
       &:hover {
         background-color: ${({theme})=>theme.palette.background.line};
       }
       background-color: transparent;
+      background-image: none;
       ${props => props.disable === 'true' && css`
-        color:${({theme})=>theme.palette.type !== 'dark'?theme.palette.text.third :theme.palette.text.secondary};
-        font-weight:${({theme})=>theme.palette.type !== 'dark'?'normal' :'bold'};
-      }
-    `};
-
-/*     ${props => props.primary === 'normal' && css`
-      background-color: ${(props)=> props.primary ? (props.theme.palette.type !== 'dark'? lighten(props.theme.palette.primary.main,0.2) : props.theme.palette.primary.main) : props.theme.palette.background.attention};
-    `}; */
-
+        color:${({theme})=>theme.palette.text.third};
+        font-weight:${({theme})=>'normal'};
+      `};
     `};
 
     > .MuiTouchRipple-root span {
-      background-color: ${({theme})=>theme.palette.type !== 'dark'?'#ffffff44' :'#00000044'};
+      background-color: ${({theme})=>'#ffffff44'};
     }
   }
 

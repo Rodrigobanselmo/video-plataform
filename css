@@ -1,6 +1,6 @@
 &:not(:last-child) {}
 
-&:hover ${Button} {}
+&:hover ${Button} {} //afeta outro elemento no hover
 
 &:hover ~ ${ContentB} {} // todos depois do item que forem COMTENTB
 > somente childs diretos do elemento

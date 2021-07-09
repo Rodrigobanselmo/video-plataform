@@ -1,9 +1,8 @@
 import {checkValidUser,checkConfirmPass,checkPass} from './valid'
-import {CheckEmailExists,CreateEmail,RecoveryEmail,SignInEmail} from '../../../services/firebaseAuth'
-import {DASHBOARD} from '../../../routes/routesNames'
+import {CheckEmailExists,CreateEmail,RecoveryEmail,SignInEmail,SendEmailVerification} from '../../../services/firebaseAuth'
+import {VERIFY_EMAIL} from '../../../routes/routesNames'
 
-
-export function onCheckEmail({data,setData,setLoading,setError,onChangeAuthMethod,inputPass,onErrorNotification}) {
+export function onCheckEmail({data,setData,setLoading,setError,onChangeAuthMethod,inputPass,onErrorNotification,validCode}) {
 
     function checkSuccess(response) {
       if (response.length == 0) {
@@ -26,16 +25,17 @@ export function onCheckEmail({data,setData,setLoading,setError,onChangeAuthMetho
 
     if (checkValidUser(data.emailAddress.toLowerCase(),data,setData,setError)) {
       setLoading(true)
-      CheckEmailExists(data.emailAddress.toLowerCase(),checkSuccess,checkError)
+      CheckEmailExists(data.emailAddress.toLowerCase(),validCode,checkSuccess,checkError)
     } else {
       setError(data.warnMessage.body)
     }
 }
 
-export function onLoginUser({data,setLoad,setError,onErrorNotification}) {
+export function onLoginUser({data,setLoad,setLoaderDash,setError,onErrorNotification}) {
 
   function checkSuccess() {
-/*     history.replace(DASHBOARD) */
+    // history.replace(DASHBOARD)
+    setLoaderDash(true)
     setLoad(false)
   }
 
@@ -51,11 +51,13 @@ export function onLoginUser({data,setLoad,setError,onErrorNotification}) {
 
 }
 
-export function onCreateAccount({data,setLoad,setError,onErrorNotification}) {
+export function onCreateAccount({data,setLoad,setLoaderDash,setError,onErrorNotification}) {
 
     function checkSuccess() {
-/*         history.replace(DASHBOARD) */
-        setLoad(false)
+      // history.replace(VERIFY_EMAIL)
+      setLoaderDash(true)
+      SendEmailVerification(()=>{},onErrorNotification)
+      setLoad(false)
     }
 
     function checkError(error) {

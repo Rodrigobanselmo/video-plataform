@@ -139,7 +139,7 @@ export function VideoPlayer({curso,notification}) {
   useEffect(() => {
     setState({...state,ready:false,playing:false});
     console.log('rate1')
-    setPlaybackRate(1)
+    setPlaybackRate(1.05)
     const time = setTimeout(() => {
       setPlaybackRate(playbackRate)
       console.log('rate')

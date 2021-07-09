@@ -29,11 +29,13 @@ export const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   profileContainer: {
-    padding:2,
+    display:'flex',
+    justifyContent: 'center',
+    alignItems:'center',
     backgroundColor:theme.palette.text.primaryNav,
-    marginLeft:12,
-    height:50,
-    width:50,
+    marginLeft:8,
+    height:60,
+    width:60,
     borderRadius:30,
     flexShrink:0,
     boxSizing:'border-box',
@@ -43,11 +45,21 @@ export const useStyles = makeStyles((theme) => ({
   profile: {
     border: `2.5px solid ${theme.palette.background.nav}`,
     backgroundColor:theme.palette.primary.main,
-    height:46,
-    width:46,
-    borderRadius:25,
+    height:56,
+    width:56,
+    borderRadius:40,
     justifyContent:'center',
     boxSizing:'border-box',alignItems:'center',display:'flex',
+    flexShrink:0
+  },
+  profileImg: {
+    backgroundColor:theme.palette.background.nav,
+    height:56,
+    width:56,
+    borderRadius:40,
+    justifyContent:'center',
+    alignItems:'center',
+    display:'flex',
     flexShrink:0
   },
   profileName: {
@@ -59,7 +71,7 @@ export const useStyles = makeStyles((theme) => ({
     color:theme.palette.primary.contrastText
   },
   divName: {
-    marginTop:8,
+    // marginTop:8,
     marginLeft:20,
     cursor:'pointer'
   },
