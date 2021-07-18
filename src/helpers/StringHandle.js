@@ -135,3 +135,19 @@ export function formatCPFeCNPJeCEPeCNAE(num) {
     }
     return numFormat;
 }
+
+export function BreakLineText({children, ...props}) {
+  const newText = children.split('//')
+  return (
+    <p {...props}>
+      {newText.map((text,index)=>{
+        return (
+          <span key={text}>
+            {text}
+            {newText.length-1 != index && <br/>}
+          </span>
+        )
+      })}
+    </p>
+  )
+}

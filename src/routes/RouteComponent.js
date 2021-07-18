@@ -52,8 +52,8 @@ export default function RouteComponent({ component: Component,privateRoute, ...r
     const HAS_COMPANY = currentUser?.permissions && Array.isArray(currentUser.permissions) && currentUser.permissions.includes('co'); //company
     const HAS_PROFESSION = currentUser?.permissions && Array.isArray(currentUser.permissions) && currentUser.permissions.includes('pr'); //professional
 
-    const PERSONAL_DATA = currentUser?.name && currentUser?.rg && currentUser?.cell;
-    const COMPANY_DATA = currentUser?.address?.cep && currentUser?.company?.cpfOrCnpj;
+    const PERSONAL_DATA = currentUser?.name && currentUser?.cpf && currentUser?.cell;
+    const COMPANY_DATA = currentUser?.address?.cep;
     const PROFESSION_DATA = currentUser?.resume;
 
     const NEED_DATA = !PERSONAL_DATA || ( HAS_COMPANY && !COMPANY_DATA) || (HAS_PROFESSION && !PROFESSION_DATA)

@@ -10,6 +10,8 @@ import { InputEnd } from '../../../../Main/MuiHelpers/Input';
 import { NumberFormatCPF } from '../../../../../lib/textMask';
 import { AscendentObject } from '../../../../../helpers/Sort';
 import { SIGN } from '../../../../../routes/routesNames';
+import { useNotification } from '../../../../../context/NotificationContext';
+import { queryClient } from '../../../../../services/queryClient';
 
 const EpiView = styled.div`
   display: flex;
@@ -26,6 +28,17 @@ const EpiView = styled.div`
   p {
     padding-right: 20px;
     width: 100%;
+  }
+
+  &.group {
+    padding-top:20px;
+    border-bottom: 1px solid ${({ theme }) => theme.palette.background.line};
+    margin-bottom:1px;
+    padding-bottom:5px;
+    p {
+      color:${({ theme }) => theme.palette.text.secondary};
+      font-size:13px;
+    }
   }
 `;
 
@@ -50,6 +63,7 @@ const ItemCurso = styled.div`
     background-image: url('${({ image }) => image}');
     background-repeat: no-repeat;
     background-size: cover;
+    border-radius:5px;
   }
 
   div.checkbox {
@@ -108,31 +122,34 @@ const SideEmailContainer = styled.div`
 export function SideEmail({ email, data, setData, setCursos, cursos }) {
   // div className='selected'
   const EPI = [
-    { name: 'Luva', id: 1 },
-    { name: 'Bota', id: 2 },
-    { name: 'Capacete', id: 3 },
-    { name: 'Cinto de segunraça', id: 4 },
-    { name: 'Luva Quimica', id: 5 },
-    { name: 'Luva aprova de fogo', id: 6 },
-    { name: 'Luva de plastico', id: 7 },
-    { name: 'Óculos protetor', id: 8 },
-    { name: 'Óculos UV', id: 9 },
-    { name: 'Capacete de chumbo', id: 0 },
-    { name: 'Luva', id: 10 },
-    { name: 'Bota', id: 20 },
-    { name: 'Capacete', id: 30 },
-    { name: 'Cinto de segunraça', id: 40 },
-    { name: 'Luva Quimica', id: 50 },
-    { name: 'Luva aprova de fogo', id: 60 },
-    { name: 'Luva de plastico', id: 70 },
-    { name: 'Óculos protetor', id: 80 },
-    { name: 'Óculos UV', id: 90 },
-    { name: 'Capacete de chumbo', id: 11 },
+    { name: 'Luva', id: 1, price:1},
+    { name: 'Bota', id: 2 , price:1},
+    { name: 'Capacete', id: 3 , price:1},
+    { name: 'Cinto de segunraça', id: 4 , price:1},
+    { name: 'Luva Quimica', id: 5 , price:1},
+    { name: 'Luva aprova de fogo', id: 6 , price:2},
+    { name: 'Luva de plastico', id: 7 , price:2},
+    { name: 'Óculos protetor', id: 8 , price:2},
+    { name: 'Óculos UV', id: 9 , price:2},
+    { name: 'Capacete de chumbo', id: 0 , price:2},
+    { name: 'Luva', id: 10 , price:2},
+    { name: 'Bota 1', id: 20 , price:2},
+    { name: 'Capacete 1', id: 30 , price:3},
+    { name: 'Cinto de segunraça 1', id: 40 , price:3},
+    { name: 'Luva Quimica 1', id: 50 , price:3},
+    { name: 'Luva aprova de fogo 1', id: 60 , price:3},
+    { name: 'Luva de plastico 1', id: 70 , price:3},
+    { name: 'Óculos protetor 1', id: 80 , price:3},
+    { name: 'Óculos UV 1', id: 90 , price:3},
+    { name: 'Capacete de chumbo 1', id: 11 , price:3},
   ];
   const EPI_ID = 'dyuwqf2';
   const { currentUser } = useAuth();
+  const notification  = useNotification();
+  const cursosAllData = queryClient.getQueryData('cursos');
+  const cursosUserData = currentUser?.cursos;
+  const isUrl = email.value && email.value.includes(SIGN);
 
-  // console.log(email,cursos)
   const handleChange = (value, name) => {
     const newData = { ...data };
     newData[`${email.index}--${name}`] = value;
@@ -140,40 +157,46 @@ export function SideEmail({ email, data, setData, setCursos, cursos }) {
     setData(newData);
   };
 
-  const handleCheck = (event, key) => {
+  const handleCheck = (event, cursoId, quantity) => {
+
+    if (quantity <= 0 && event.target.checked) return notification.warn({message:'Você não possui mais unidades deste curso',modal:true})
+
     const newData = { ...cursos };
-    if (key === EPI_ID) {
-      newData[`${email.index}--${key}`] = event.target.checked;
-      if (event.target.checked) newData[`${email.index}--${key}--epi`] = [];
-      if (!event.target.checked) delete newData[`${email.index}--${key}--epi`];
+    if (cursoId === EPI_ID) {
+      newData[`${email.index}--${cursoId}`] = event.target.checked;
+      if (event.target.checked) newData[`${email.index}--${cursoId}--epi`] = [];
+      if (!event.target.checked) delete newData[`${email.index}--${cursoId}--epi`];
     } else {
-      newData[`${email.index}--${key}`] = event.target.checked;
+      newData[`${email.index}--${cursoId}`] = event.target.checked;
     }
 
     console.log('newData', newData);
     setCursos(newData);
   };
 
-  const handleEPICheck = (event, key, epi) => {
+  const handleEPICheck = (event, cursoId, epi, itemQuantity) => {
+
+    if (itemQuantity <= 0 && event.target.checked) {
+      return notification.warn({message:'Você não possui mais unidades deste curso',modal:true})
+    }
+
     const newData = { ...cursos };
+    newData[`${email.index}--${cursoId}--epi`] = newData[`${email.index}--${cursoId}--epi`] ? newData[`${email.index}--${cursoId}--epi`] : []
     console.log('event,event', event);
 
     console.log('epi', epi);
     if (event.target.checked)
-      newData[`${email.index}--${key}--epi`] = [
-        ...newData[`${email.index}--${key}--epi`],
+      newData[`${email.index}--${cursoId}--epi`] = [
+        ...newData[`${email.index}--${cursoId}--epi`],
         epi,
       ];
     if (!event.target.checked)
-      newData[`${email.index}--${key}--epi`] = [
-        ...newData[`${email.index}--${key}--epi`].filter((i) => i.id !== epi.id),
+      newData[`${email.index}--${cursoId}--epi`] = [
+        ...newData[`${email.index}--${cursoId}--epi`].filter((i) => i.id !== epi.id),
       ];
 
     setCursos(newData);
   };
-
-  const cursosData = currentUser?.cursos;
-  const isUrl = email.value && email.value.includes(SIGN);
 
   return (
     <SideEmailContainer isUrl={isUrl}>
@@ -209,29 +232,53 @@ export function SideEmail({ email, data, setData, setCursos, cursos }) {
             }}
             inputComponent={NumberFormatCPF}
           />
-          {cursosData
-            ? Object.keys(cursosData).map((key) => {
-                const curso = cursosData[key];
-                const check = Boolean(cursos[`${email.index}--${key}`]);
+          {cursosUserData
+            ? cursosUserData.map((item) => {
+                const curso = item;
+                const cursoAll = cursosAllData[cursosAllData.findIndex(i=>i.id == item.id)]
+                const cursoImage = cursoAll?.image;
+                const hasSubCurso = cursoAll?.subs
+                const check = Boolean(cursos[`${email.index}--${item.id}`]);
+
 
                 function onQuantity() {
                   let count = 0;
-                  Object.keys(cursos).map((k) => {
-                    if (
-                      k.split('--').length === 2 &&
-                      k.includes(key) &&
-                      cursos[k]
-                    )
-                      count += 1;
-                  });
-                  return curso.quantity - count;
+                  let countQuantity = 0;
+                  if (hasSubCurso) { //se tiver sub cursos como epi
+                    Object.keys(cursos).map((k) => {
+                      console.log('k',k)
+                      if (
+                        k.split('--').length === 3 &&
+                        k.includes(item.id) &&
+                        cursos[k]
+                      )
+                        count += cursos[k].length;
+                    });
+
+                    curso?.data && curso.data.map((dt) => {
+                      console.log('dt',dt)
+                      countQuantity += dt.quantity;
+                    });
+                    console.log('countQuantity',countQuantity,count)
+                    return countQuantity - count;
+                  } else {
+                    Object.keys(cursos).map((k) => {
+                      if (
+                        k.split('--').length === 2 &&
+                        k.includes(item.id) &&
+                        cursos[k]
+                      )
+                        count += 1;
+                    });
+                    return curso.quantity - count;
+                  }
                 }
 
                 const quantity = onQuantity();
 
                 return (
                   <>
-                    <ItemCurso image={curso.image}>
+                    <ItemCurso image={cursoImage}>
                       <div className="image" alt={curso.name} />
                       <h1>{curso.name}</h1>
                       <p>
@@ -241,41 +288,85 @@ export function SideEmail({ email, data, setData, setCursos, cursos }) {
                         <Check
                           size="small"
                           checked={check}
-                          onChange={(e) => handleCheck(e, key)}
+                          onChange={(e) => handleCheck(e, item.id, quantity)}
                           color="primary"
                         />
                       </div>
                     </ItemCurso>
-                    <Collapse unmountOnExit in={check}>
-                      {EPI.sort((a, b) => AscendentObject(a, b, 'name')).map(
-                        (epi) => {
-                          const checkEPI = Boolean(
-                            cursos[`${email.index}--${key}--epi`] &&
-                              cursos[`${email.index}--${key}--epi`].findIndex(i=>i.id==epi.id) != -1,
-                          );
+
+                    {hasSubCurso &&
+                      <Collapse unmountOnExit in={check}>
+                        {[1,2,3].map(price => {
+
+                          function onItemQuantity() {
+                            let count = 0;
+                            let countQuantity = 0;
+
+                            Object.keys(cursos).map((k) => {
+                              console.log('k',k)
+                              if (
+                                k.split('--').length === 3 &&
+                                k.includes(item.id) &&
+                                cursos[k]
+                              ) {
+                                cursos[k].map(episData=>{
+                                  const epiItem = EPI[EPI.findIndex(i=>i.id == episData.id)]
+                                  if (epiItem && epiItem.price == price) count += 1;
+                                })
+                              }
+
+                            });
+
+                            curso?.data && curso.data.map((dt) => {
+                              if (dt.price == price) countQuantity += dt.quantity;
+                            });
+                            console.log('countQuantity',countQuantity,count)
+                            return countQuantity - count;
+
+                          }
+
+                          const itemQuantity = onItemQuantity();
 
                           return (
-                            <EpiView
-                              onClick={() =>
-                                handleEPICheck(
-                                  { target: { checked: !checkEPI } },
-                                  key,
-                                  epi,
-                                )
-                              }
-                            >
-                              <p>{epi.name}</p>
-                              <Check
-                                size="small"
-                                checked={checkEPI}
-                                onChange={(e) => handleEPICheck(e, key, epi)}
-                                color="primary"
-                              />
-                            </EpiView>
-                          );
-                        },
-                      )}
-                    </Collapse>
+                            <div key={String(price)}>
+                              <EpiView className={'group'}>
+                                <p>Grupo {price} (unidades: {itemQuantity})</p>
+                              </EpiView>
+                              {EPI.filter(i=>i.price == price).sort((a, b) => AscendentObject(a, b, 'name')).map((epi) => {
+                                  const checkEPI = Boolean(
+                                    cursos[`${email.index}--${item.id}--epi`] &&
+                                      cursos[`${email.index}--${item.id}--epi`].findIndex(i=>i.id==epi.id) != -1,
+                                  );
+
+                                  return (
+                                    <EpiView
+                                      key={String(epi.id)}
+                                      onClick={() =>
+                                        handleEPICheck(
+                                          { target: { checked: !checkEPI } },
+                                          item.id,
+                                          epi,
+                                          itemQuantity
+                                        )
+                                      }
+                                    >
+                                      <p>{epi.name}</p>
+                                      <Check
+                                        size="small"
+                                        checked={checkEPI}
+                                        // onChange={(e) => handleEPICheck(e, item.id, epi, itemQuantity)}
+                                        color="primary"
+                                      />
+                                    </EpiView>
+                                  );
+                                },
+                              )}
+                            </div>
+                          )
+                        })}
+                      </Collapse>
+                    }
+
                     {/* <ItemCurso>
                     <img src={curso.image} alt={curso.name} />
                     <h1>{curso.name}</h1>

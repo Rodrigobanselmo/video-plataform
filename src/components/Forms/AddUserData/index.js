@@ -19,7 +19,14 @@ import { SIGN } from '../../../routes/routesNames';
 import { useMutation } from 'react-query';
 import { db } from '../../../lib/firebase.prod';
 import { useAuth } from '../../../context/AuthContext';
+import { IconButton } from '@material-ui/core';
+import { BootstrapTooltip } from '../../Main/MuiHelpers/Tooltip';
 // import {v4} from "uuid";
+
+
+const IconDelete = styled(DeleteOutlineIcon)`
+  color: ${({theme})=>theme.palette.text.secondary};
+`;
 
 const LinkButton = styled.button`
   border: 1px solid ${({ theme }) => theme.palette.background.line};
@@ -167,7 +174,7 @@ function appendData(formData,cursos,data,user) {
         if (cursoIndex == key && !isEPI)  { //se nao tem epi
           const dataCursos = DATA['cursos'] ? DATA['cursos'] : []
           if (dataCursos.findIndex(i=>i.id == cursoId) === -1) {
-            DATA['cursos'] = [...dataCursos,{id:cursoId,name:user.cursos[cursoId].name}]
+            DATA['cursos'] = [...dataCursos,{id:cursoId,name:user.cursos[user.cursos.findIndex(i=>i.id==cursoId)].name,quantity:1}]
           }
         }
 
@@ -175,10 +182,10 @@ function appendData(formData,cursos,data,user) {
           let dataCursos = DATA['cursos'] ? DATA['cursos'] : []
           const index = dataCursos.findIndex(i=>i.id == cursoId)
           if (index === -1) {
-            dataCursos.push({id:cursoId,epi:[...cursos[keyCurso]]})
+            dataCursos.push({id:cursoId,quantity:1,epi:[...cursos[keyCurso]]})
           } else {
             let epi = dataCursos[index]?.epi ? dataCursos[index].epi : []
-            dataCursos[index] = {...dataCursos[index], epi: [...epi,...cursos[keyCurso]]}
+            dataCursos[index] = {...dataCursos[index],quantity:1 , epi: [...epi,...cursos[keyCurso]]}
           }
           DATA['cursos'] = [...dataCursos]
         }
@@ -375,7 +382,7 @@ export const AddUserData = React.memo(({ cursos, setCursos, setEmail, data, setD
     setEmail((email) => ({ ...email, value: e.target.value }));
   }
 
-  function handleURL(index) {
+  function handleDeleteURL(index) {
     const newEmails = [...emails];
 
     if (emails[index].includes(URL)) {
@@ -398,6 +405,11 @@ export const AddUserData = React.memo(({ cursos, setCursos, setEmail, data, setD
       setCursos(newCursos);
     }
 
+  }
+
+  function handleURL(index) {
+    const newEmails = [...emails];
+
     if (!emails[index].includes(URL)) {
       const code = `${Math.random().toString(36).slice(2, 10)}${Math.random().toString(36).slice(2, 10)}`;
       const link = `${URL}-${code}`;
@@ -405,6 +417,8 @@ export const AddUserData = React.memo(({ cursos, setCursos, setEmail, data, setD
 
       setEmail({ value:`${location}${code}`, index:index.toString() });
       setEmails(newEmails);
+    } else {
+      onFocus(`${index}`)
     }
   }
 
@@ -423,6 +437,15 @@ export const AddUserData = React.memo(({ cursos, setCursos, setEmail, data, setD
               <InputUnform
                 width="100%"
                 name={`${index}`}
+                start
+                statusStart={isURL?'personalized':false}
+                startComponent={()=>
+                  <BootstrapTooltip title={`Deletar link conpartilhavel.`} styletooltip={{transform: 'translateY(5px)'}}>
+                    <IconButton style={{margin:-5,marginRight:-10,width:20,height:20}} onClick={() => handleDeleteURL(index)}  aria-label={'delete'}>
+                      <IconDelete style={{fontSize:17}} type={'Trash'} />
+                    </IconButton>
+                  </BootstrapTooltip>
+                }
                 endComponent={()=>
                   <LinkButton
                     activeURL={isURL}

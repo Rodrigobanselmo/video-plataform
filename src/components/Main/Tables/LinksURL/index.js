@@ -14,6 +14,19 @@ import Lottie from 'react-lottie';
 import copyJson from '../../../../assets/animations/copy.json';
 import { useNotification } from '../../../../context/NotificationContext';
 
+const ContainerTable = styled.div`
+  padding-right:54px;
+
+  @media screen and (max-width: 1100px) {
+    padding-right:40px;
+  }
+
+  @media screen and (max-width: 700px) {
+    padding-right:20px;
+  }
+`;
+
+
 const IconCopy = styled(LinkIcon)`
   color: ${({theme})=>theme.palette.text.secondary};
 `;
@@ -69,10 +82,11 @@ const Container = styled.div`
         overflow: hidden;
         text-overflow: ellipsis;
       }
+
       &:first-child {
         border-bottom-left-radius:0.25rem;
         border-top-left-radius:0.25rem;
-        width:30%;
+        width:40%;
         span {
           opacity:1;
         }
@@ -80,6 +94,7 @@ const Container = styled.div`
       &:last-child {
         border-bottom-right-radius:0.25rem;
         border-top-right-radius:0.25rem;
+        width:40%;
       }
 
       &.clean {
@@ -95,6 +110,15 @@ const Container = styled.div`
       align-self: center;
       color: ${({theme})=>theme.palette.text.primary};
 
+      svg {
+        color: ${({theme})=>theme.palette.primary.main};
+        font-size:24px;
+      }
+
+      span.subText {
+        font-size:12px;
+        color: ${({theme})=>theme.palette.text.secondary};
+      }
 
       > div {
         display:flex;
@@ -116,68 +140,38 @@ const Container = styled.div`
     }
 
     td.curso {
+      width:40%;
+
       span {
-        display:inline-block;
-        max-width:280px;
+        max-width:330px;
         overflow: hidden;
+        display:inline-block;
         white-space: nowrap;
         text-overflow: ellipsis;
+        /* display:-webkit-box; */
+        /* -webkit-line-clamp:2; */
+        /* -webkit-box-orient: vertical; */
+        /* height:fit-content; */
       }
 
     }
 
-    td.status {
-      padding: 0rem 2rem;
+    td.clear {
+      background-color: transparent;
+      -webkit-box-shadow: none;
+      box-shadow:  none;
+      padding:0;
+      width:fit-content;
+      min-width:fit-content;
     }
+
   }
 `;
-
-const StatusView = styled.div`
-  display:flex;
-  flex:1;
-  flex-direction:row;
-  justify-content: flex-start;
-  align-items: center;
-
-  > div {
-    display:flex;
-    flex:1;
-    flex-direction:row;
-    justify-content: flex-start;
-    align-items: center;
-  }
-
-  div.circle {
-    margin-right:5px;
-    border-radius:15px;
-    height: 15px;
-    width: 15px;
-    border: 3px solid ${({theme})=> theme.palette.status.successD};
-    /* background-color:${({theme})=> theme.palette.status.successD}; */
-
-    ${props => props.status == 'Ativo' && css`
-      border: 3px solid ${({theme})=> theme.palette.status.successD};
-    `}
-
-    ${props => props.status == 'Pendente' && css`
-      border: 3px solid ${({theme})=> theme.palette.status.orange};
-    `}
-  }
-`;
-
-const defaultOptions = {
-  loop: true,
-  autoplay: true,
-  animationData: copyJson,
-  rendererSettings: {
-    preserveAspectRatio: 'xMidYMid slice',
-  },
-};
 
 export function LinksURLTable({isLoading,data,filter=true}) {
 
   const notification = useNotification();
-  const DATA = data.filter(i=>i?.link);
+  const DATA = data.filter(i=>(i?.link && !i?.email));
 
   function handleCopy(link) {
     navigator.clipboard.writeText(link)
@@ -186,7 +180,7 @@ export function LinksURLTable({isLoading,data,filter=true}) {
 
 
   return (
-    <>
+    <ContainerTable >
       <Title noFilter={!filter}>Links Compartilhaveis</Title>
       {filter &&
         <FilterComponent
@@ -208,7 +202,7 @@ export function LinksURLTable({isLoading,data,filter=true}) {
                     <th>Emissão</th>
                     <th>Cursos</th>
                     {/* <th>Tipo</th> */}
-                    <th>Revogar link</th>
+                    {/* <th>Revogar link</th> */}
                   </tr>
                 </thead>
                   <tbody>
@@ -220,6 +214,7 @@ export function LinksURLTable({isLoading,data,filter=true}) {
                           }).join(', ')
                           return `${item.name} (${epis})`
                         }
+                        return `${item.name}`
                       }).join(', ')
 
                       return (
@@ -228,34 +223,27 @@ export function LinksURLTable({isLoading,data,filter=true}) {
                             <Tooltip title={'copiar link'} TransitionComponent={Fade} placement="bottom-start" TransitionProps={{ timeout: {enter:500, exit: 50} }} >
                               <div onClick={()=>handleCopy(user.link)}>
                                 <IconCopy/>
-                                <span>{user?.link ?? '----------------------'}</span>
+                                <div style={{display:'flex',flexDirection:'column'}}>
+                                  <span>{user?.link ?? '----------------------'}</span>
+                                  {user?.name && <span className='subText'>para: <strong>{user?.name}</strong></span>}
+                                </div>
                               </div>
                             </Tooltip>
                           </td>
                           <td><span>{user?.creation ?? '----------------------'}</span></td>
                           <td className='curso' >
-                            <BootstrapTooltip title={'EPI (bota, luva, capacete,bota, luva, capacete), NR 7 (Teleatendimento)'} styletooltip={{transform: 'translateY(-5px)'}}>
+                            <BootstrapTooltip title={curso} styletooltip={{transform: 'translateY(-5px)'}}>
                               <span className='oneLine'>
                                 {curso}
                               </span>
                             </BootstrapTooltip>
                           </td>
-                          <td className='status'>
-                            <StatusView status={user?.status}>
-                              <BootstrapTooltip title={'tooltip'} styletooltip={{transform: 'translateY(-5px)'}}>
-                                <div>
-                                  <div className='circle'/>
-                                  <span>{user?.status ?? '----------------------'}</span>
-                                </div>
-                              </BootstrapTooltip>
-                              {user?.status ==='Pendente' &&
-                                <BootstrapTooltip title={`Revogar acesso a este usuário, o qual você receberá de volta os cursos que foram disponibilizados a ele.`} styletooltip={{transform: 'translateY(10px)'}}>
-                                  <IconButton aria-label={'delete'}>
-                                    <IconDelete type={'Trash'} />
-                                  </IconButton>
-                                </BootstrapTooltip>
-                              }
-                            </StatusView>
+                          <td className='clear' style={{position:'absolute',right:30,top:'calc(50% - 25px)'}}>
+                            <BootstrapTooltip title={`Revogar acesso a este usuário, o qual você receberá de volta os cursos que foram disponibilizados a ele.`} styletooltip={{transform: 'translateY(10px)'}}>
+                              <IconButton aria-label={'delete'}>
+                                <IconDelete type={'Trash'} />
+                              </IconButton>
+                            </BootstrapTooltip>
                           </td>
                         </tr>
                       );
@@ -271,6 +259,6 @@ export function LinksURLTable({isLoading,data,filter=true}) {
       ) : (
         <LoadTable rows={5} columns={5}/>
       )}
-    </>
+    </ContainerTable>
   )
 }

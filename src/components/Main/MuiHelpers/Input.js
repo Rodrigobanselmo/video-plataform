@@ -225,7 +225,7 @@ export function SelectedEnd({selected,setData,sliceItems=false,label,data=[],mar
     );
 }
 
-export function InputUnform({formstyle,endComponent:EndComponent,onChange,iconStart,statusStart,variant,positionIcon='end',name,validation=false,option=false,titleStart='',marginTop=0,marginBottom=0,labelWidth,label,status,icon,width='100%',title='',...props}) {
+export function InputUnform({formstyle,endComponent:EndComponent,startComponent:StartComponent,onChange,iconStart,statusStart,variant,positionIcon='end',name,validation=false,option=false,titleStart='',marginTop=0,marginBottom=0,labelWidth,label,status,icon,width='100%',title='',...props}) {
 
   const fieldRef = useRef()
   const inputRef = useRef()
@@ -278,12 +278,14 @@ export function InputUnform({formstyle,endComponent:EndComponent,onChange,iconSt
       <InputAdornment >
         {statusStart=='money'?
           'R$'
+        : statusStart =='personalized' ?
+          <StartComponent/>
         :
-        <BootstrapTooltip placement="bottom" TransitionProps={{ timeout: {enter:500, exit: 50} }} title={titleStart} styletooltip={{transform: 'translateY(0px)'}}>
-            <div>
-                <IconStart style={{fontSize:22,transform:'translateY(2px)'}} status={statusStart} type={iconStart}/>
-            </div>
-        </BootstrapTooltip>
+          <BootstrapTooltip placement="bottom" TransitionProps={{ timeout: {enter:500, exit: 50} }} title={titleStart} styletooltip={{transform: 'translateY(0px)'}}>
+              <div>
+                  <IconStart style={{fontSize:22,transform:'translateY(2px)'}} status={statusStart} type={iconStart}/>
+              </div>
+          </BootstrapTooltip>
         }
       </InputAdornment>
     )

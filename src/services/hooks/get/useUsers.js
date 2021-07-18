@@ -1,5 +1,6 @@
 import { useQuery } from "react-query";
 import { useAuth } from "../../../context/AuthContext";
+import { useLoaderDashboard } from "../../../context/LoadDashContext";
 import { db } from "../../../lib/firebase.prod";
 
 function getCreation(docData) {
@@ -48,11 +49,15 @@ export async function getUsers(companyId) {
   return [...array]
 }
 
-export function useUsers() {
+export function useUsers({notDisableLoad}) {
   const {currentUser} = useAuth();
+  const { setLoaderDash } = useLoaderDashboard();
 
   return useQuery('users', ()=>getUsers(currentUser.companyId), {
-    staleTime: 1000 * 60 * 60 * 1
+    staleTime: 1000 * 60 * 60 * 1,
+    onSuccess: () => {
+      if (!notDisableLoad) setLoaderDash(false)
+    }
   })
 }
 

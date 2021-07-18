@@ -7,6 +7,8 @@ import { useLoaderDashboard } from './LoadDashContext';
 import {useLoaderScreen} from './LoaderContext'
 import {GetUserData} from '../services/firestoreUser'
 import {LogOut} from '../services/firebaseAuth'
+import { useMutation } from "react-query";
+import { useCreateUser } from "../services/hooks/set/useCreateUser"
 
 const AuthContext = React.createContext()
 
@@ -16,56 +18,17 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState("")
+  const mutation = useCreateUser(setCurrentUser)
 
-  const location = useLocation();
-  const history = useHistory()
   const { setLoaderDash } = useLoaderDashboard();
-  const { setLoad } = useLoaderScreen();
-  const notification = useNotification();
-
-  function checkSuccess(doc,user,newUser) {
-    const importantData = {
-      displayName:user?.displayName,
-      emailVerified:user?.emailVerified,
-      email:user?.email,
-      uid:user?.uid,
-    }
-    setCurrentUser({photoURL:user?.photoURL,...doc,...importantData})
-    setLoaderDash(false)
-    console.log('user',{...doc})
-    // if (location.pathname.includes(SIGN)) history.replace(DASHBOARD)
-    if (newUser) {
-      setTimeout(() => {
-        notification.simple({message:'Seja bem-vindo!'})
-      }, 1000);
-    }
-    if (newUser !== true && newUser) {
-      setTimeout(() => {
-        notification.simple({message:`Parabens, agora você é membro da empresa ${newUser}`})
-      }, 1400);
-    }
-  }
-
-  function checkError(error) {
-    setTimeout(() => {
-      notification.error({message:error,modal:true})
-    }, 600);
-    LogOut(()=>{},()=>{})
-    setLoaderDash(false)
-    setCurrentUser(null)
-  }
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
-      // console.log('user',user)
       if (!user) {
         setCurrentUser(user)
         setLoaderDash(false)
       }
-      // setLoaderDash(false)
-      // setCurrentUser(user)
-      console.log('user1',user)
-      if (user) GetUserData(user,checkSuccess,checkError)
+      if (user) mutation.mutate(user)
     })
 
     return unsubscribe

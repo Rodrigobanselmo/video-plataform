@@ -32,7 +32,7 @@ const ProfileName = styled.p`
     letter-spacing: 0px;
     padding-top: 0px;
     padding-left: 0px;
-    font-size: 20px;
+    font-size:18px;
   `}
 
   ${props => props.borderApplied && css`
@@ -75,8 +75,8 @@ const ProfileContainer = styled.div`
   ${props => props.navbar && css`
     margin:0;
     margin-left:15px;
-    height:60px;
-    width: 60px;
+    height:53px;
+    width: 53px;
     padding:2px;
     border: 2px solid ${({theme})=> theme.palette.text.primaryNav };
   `}
@@ -113,14 +113,14 @@ function stringToColor(string) {
 export function AvatarView({user, navbar, borderApplied, forwardRef, ...props}) {
 
   const isPhoto = user?.photoURL;
-  const isPending = user?.status && user.status === 'Pendente';
+  const isPending = user?.status && (user.status === 'Pendente' || user.status === 'Autenticando');
 
   return (
     <ProfileContainer ref={forwardRef} borderApplied={borderApplied && !(!isPhoto && isPending)} navbar={navbar} {...props}>
     {!isPhoto && !isPending ? (
       <Profile style={navbar?{}:{backgroundColor:darken(stringToColor(user?.name??'Rp'),0.06)}}>
         <ProfileName borderApplied={borderApplied} navbar={navbar}>
-          {user?.name ? InitialsName(user.name,22) : 'P'}
+          {user?.name ? InitialsName(user.name,22) : 'PE'}
         </ProfileName>
       </Profile>
     ) : ( !isPhoto && isPending

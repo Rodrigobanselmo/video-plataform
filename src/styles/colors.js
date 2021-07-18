@@ -61,6 +61,7 @@ export default {
       failD: '#880000',
       warnD: '#b59c0e',
       infoD: '#4e91d4',
+      yellow: '#cfd220',
       orange: '#F37735',
     },
     notification: {

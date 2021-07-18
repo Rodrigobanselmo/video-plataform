@@ -10,7 +10,7 @@ import {FilterComponent,LoadingContent,AddUserButton} from '../../../../componen
 import {Link} from "react-router-dom";
 import {keepOnlyNumbers} from '../../../../helpers/StringHandle';
 import {useHistory} from "react-router-dom";
-import { ProfessionForm, UserForm,AddressForm, BankForm, PermissionForm } from '../Team/Modal//form'
+// import { ProfessionForm, UserForm,AddressForm, BankForm, PermissionForm } from '../Team/Modal//form'
 import { useSelector,useDispatch } from 'react-redux'
 import Input, {InputEnd,InputUnform,SelectedEnd} from '../../../../components/Main/MuiHelpers/Input'
 import Checkbox from '@material-ui/core/Checkbox';
@@ -64,14 +64,14 @@ export function Form({setCurrentUser,notification,setLoad,currentUser,userId}) {
         {/* <HeaderPage style={{margin:'10px 0px'}}>
           <Title style={{fontSize:18}}>Dados de Endereço</Title>
         </HeaderPage> */}
-        <UserForm notification={notification} unform={currentUser} onForm={onSaveUser} dispatch={dispatch} save={save}/>
+        {/* <UserForm notification={notification} unform={currentUser} onForm={onSaveUser} dispatch={dispatch} save={save}/> */}
       </TabPanel>
       <TabPanel key={1} value={tabValue} index={1} >
         {/* <AddModal.Header
           text='Dados de Endereço'
           subText='Informe seu endereço para prosseguir'
         /> */}
-        <AddressForm notification={notification} unform={currentUser?.address?currentUser.address:{}} onForm={onSaveUser} dispatch={dispatch} save={save}/>
+        {/* <AddressForm notification={notification} unform={currentUser?.address?currentUser.address:{}} onForm={onSaveUser} dispatch={dispatch} save={save}/> */}
       </TabPanel>
       <TabPanel key={2} value={tabValue} index={2} >
         {/* <AddModal.Header
@@ -88,14 +88,14 @@ export function Form({setCurrentUser,notification,setLoad,currentUser,userId}) {
         <HeaderPage style={{margin:'20px 0px'}}>
           <p style={{fontSize:18}}>Selecione as profissões e as areas de atuação.</p>
         </HeaderPage>
-        <ProfessionForm notification={notification} unform={currentUser} onForm={onSaveUser} dispatch={dispatch} save={save}/>
+        {/* <ProfessionForm notification={notification} unform={currentUser} onForm={onSaveUser} dispatch={dispatch} save={save}/> */}
       </TabPanel>
       {currentUser?.permissions && Array.isArray(currentUser.permissions) && currentUser.permissions.includes('ea') &&
         <TabPanel key={4} value={tabValue} index={4} >
         <HeaderPage style={{margin:'20px 0px'}}>
           <p style={{fontSize:18}}>Selecione as permissões de usuário.</p>
         </HeaderPage>
-        <PermissionForm notification={notification} unform={currentUser} onForm={onSaveUser} dispatch={dispatch} save={save}/>
+        {/* <PermissionForm notification={notification} unform={currentUser} onForm={onSaveUser} dispatch={dispatch} save={save}/> */}
       </TabPanel>
       }
     </NewTabs>

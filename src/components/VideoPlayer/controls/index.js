@@ -286,13 +286,13 @@ const Controls = forwardRef(
                 })}
               </SoundView>
               {/* <AccessTimeSharpIcon onClick={()=>{}} style={{fontSize:19,margin:'0 10px 0 5px'}}/> */}
-              <IconCog onClick={()=>{}} style={{fontSize:20}} rotateCog={true} />
+              <IconCog onClick={()=>{}} style={{fontSize:20}} rotatecog='true' />
               <ButtonPlayRate
                 ref={anchorRef}
                 onClick={()=>setOpenRate(true)}
               >
                 <p>
-                  {playbackRate}<span>X</span>
+                  {Math.round(playbackRate * 100) / 100}<span>X</span>
                 </p>
               </ButtonPlayRate>
               <FullScreen onClick={onToggleFullScreen}/>

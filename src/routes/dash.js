@@ -1,4 +1,4 @@
-import { HomeAdmin,Home,Team,Calendar,Perfil,Profession,AllClients,CalendarConector,Download,Video,AllVideo } from '../containers';
+import { HomeAdmin,Home,Team,Calendar,Perfil,Profession,AllClients,CalendarConector,Download,Video,AllVideo,Cursos,CursoInfo } from '../containers';
 import {
   HOME_ADMIN,
   DASHBOARD,
@@ -11,13 +11,25 @@ import {
   CALENDAR_CONECTOR,
   DOWNLOAD,
   VIDEO,
-  ALL_VIDEO
+  ALL_VIDEO,
+  CURSOS,
+  CURSO_INFO
 } from './routesNames'
 
 const routes = [
   {
     path: DASHBOARD,
     component: Home,
+    exact:true,
+  },
+  {
+    path: CURSOS,
+    component: Cursos,
+    exact:true,
+  },
+  {
+    path: CURSO_INFO,
+    component: CursoInfo,
     exact:true,
   },
   {

@@ -144,7 +144,7 @@ export default function Video() {
     // UpdateStudentProgress(data,currentUser,()=>{},onError)
 
     if (('percentage' in modules && modules.percentage < userData.percentage) || !('percentage' in modules)) {
-      dispatch({ type: 'MODULE_WRITE', payload: userData })
+      // dispatch({ type: 'MODULE_WRITE', payload: userData })
       onSetRouteVideo(userData,curso)
       console.log('update modules')
     } else if (modules?.percentage && modules.percentage > userData.percentage) {

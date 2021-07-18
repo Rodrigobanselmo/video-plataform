@@ -1,14 +1,16 @@
 import React, {useState} from 'react';
-import {InputsContainer} from '../../../Dashboard/Components/Standard/PageCarousel'
-import {InputUnform} from '../../MuiHelpers/Input'
-import {FormContainer,ButtonForm} from '../../../Dashboard/Components/Form/comp'
+import {InputsContainer} from '../../Dashboard/Components/Standard/PageCarousel'
+import {InputUnform} from '../../Main/MuiHelpers/Input'
+import {FormContainer,ButtonForm} from '../../Dashboard/Components/Form/comp'
 import * as Yup from 'yup'
 import 'react-phone-number-input/style.css'
 import PhoneInput from 'react-phone-number-input'
-import {keepOnlyNumbers} from '../../../../helpers/StringHandle';
+import {keepOnlyNumbers} from '../../../helpers/StringHandle';
 import { FaUserTie } from 'react-icons/fa';
 import styled from "styled-components";
 import { FiCamera } from 'react-icons/fi';
+import { NumberFormatCPF } from '../../../lib/textMask';
+import { TestaCPF } from '../../../helpers/StringVerification';
 
 const AvatarInput = styled.div`
   position: relative;
@@ -99,9 +101,30 @@ export function PersonalData({ onUploadProfile,setUnform,unform,notification}) {
 
   const formRef = React.useRef()
 
+  function isCPFValid(message) {
+    return this.test('isCPFValid', message, function (value, schema) {
+      const { path, createError } = this;
+
+      if (!value) return true;
+      let isCpfValidOrNull = false;
+
+      console.log('value',value)
+      if (TestaCPF(keepOnlyNumbers(value)))
+        isCpfValidOrNull = true;
+
+      if (!isCpfValidOrNull) {
+        return createError({ path, message: message ?? 'CPF inválido' });
+      }
+
+      return true;
+    });
+  }
+
+  Yup.addMethod(Yup.mixed, 'cpf', isCPFValid);
+
   const validation = Yup.object({
     name: Yup.string().required('Nome não pode estar em branco.'),
-    rg: Yup.string().trim().required('RG não pode estar em branco.'),
+    cpf: Yup.string().trim().length(14,'CPF incompleto').required('CPF não pode estar em branco.').cpf(),
   })
 
   const handleSubmit = React.useCallback(async (formData) => {
@@ -168,12 +191,13 @@ export function PersonalData({ onUploadProfile,setUnform,unform,notification}) {
             />
             <InputUnform
               width={'100%'}
-              name={'rg'}
-              defaultValue={keepOnlyNumbers(unform?.rg)}
-              labelWidth={20}
-              label={'RG'}
+              name={'cpf'}
+              defaultValue={keepOnlyNumbers(unform?.cpf)}
+              labelWidth={30}
+              label={'CPF'}
               variant="outlined"
-              inputProps={{style: {color:'#000'}}}
+              inputProps={{placeholder:'000.000.000-00',style: {color:'#000'}}}
+              inputComponent={NumberFormatCPF}
             />
             <PhoneDiv >
               <PhoneInput

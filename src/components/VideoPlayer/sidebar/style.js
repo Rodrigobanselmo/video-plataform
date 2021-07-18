@@ -116,7 +116,7 @@ export const IconArrow = styled(KeyboardArrowDownIcon)`
   color: ${({theme})=>theme.palette.primary.greyDarkRealiza};
   transition: transform 0.2s ease;
 
-  ${props => props.isOpenModule && css`
+  ${props => props.isopenmodule === 'true' && css`
     transform: rotate(180deg);
   `}
 `;
@@ -140,7 +140,9 @@ export const CircleView = styled.div`
 
 export const SideContainer = styled.div`
   position:absolute;
-  min-width: 350px;
+  /* min-width: 350px; */
+  min-width: 200px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   flex: 0;

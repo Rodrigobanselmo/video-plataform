@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
-import {InputsContainer} from '../../../Dashboard/Components/Standard/PageCarousel'
-import {InputUnform} from '../../MuiHelpers/Input'
-import {FormContainer,ButtonForm} from '../../../Dashboard/Components/Form/comp'
+import {InputsContainer} from '../../Dashboard/Components/Standard/PageCarousel'
+import {InputUnform} from '../../Main/MuiHelpers/Input'
+import {FormContainer,ButtonForm} from '../../Dashboard/Components/Form/comp'
 import * as Yup from 'yup'
 import 'react-phone-number-input/style.css'
-import {keepOnlyNumbers} from '../../../../helpers/StringHandle';
+import {keepOnlyNumbers} from '../../../helpers/StringHandle';
 import styled from "styled-components";
 import { BsInfoCircle } from 'react-icons/bs';
-import { TextArea } from '../../MuiHelpers/TextArea';
-import { BootstrapTooltip } from '../../MuiHelpers/Tooltip';
+import { TextArea } from '../../Main/MuiHelpers/TextArea';
+import { BootstrapTooltip } from '../../Main/MuiHelpers/Tooltip';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 

@@ -42,7 +42,7 @@ align-items: flex-end;
 `;
 
 export const IconCog = styled(FaCog)`
-transform:rotate(${({rotateCog})=>rotateCog?30:0}deg);
+transform:rotate(${({rotatecog})=>rotatecog==='true'?30:0}deg);
 margin:0 7px 0 10px;
 `;
 

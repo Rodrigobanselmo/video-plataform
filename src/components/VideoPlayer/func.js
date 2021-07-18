@@ -1,4 +1,5 @@
 export function isLocked(modules,aula,mI,cI) {
+  if (aula==='lastModule') return 'lastModule'
   if (!aula?.lock) return 'ok'
   if (mI==0&&cI==0) return 'ok'
 

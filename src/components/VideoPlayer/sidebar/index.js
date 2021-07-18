@@ -8,18 +8,23 @@ import {isLocked} from '../func'
 // import {DASHBOARD,ADMIN_PERFIL} from '../../../routes/routesNames'
 
 import { useParams,useHistory } from 'react-router-dom';
+import { queryClient } from '../../../services/queryClient';
+import { VIDEO_ROUTE } from '../../../routes/routesNames';
 
 
-export function SideVideoBar({curso}) {
+export function SideVideoBar({curso,show,...props}) {
+
+  const { cursoId,moduleId,classId } = useParams();
+  const queryModules =  queryClient.getQueryData(['student', cursoId]);
+  const modules =  (queryModules && queryModules?.student) ? queryModules.student[0] : {};
 
   const [open, setOpen] = useState('')
-  const modules = useSelector(state => state.modules)
+  // const modules = useSelector(state => state.modules)
   const notification = useNotification();
   const dispatch = useDispatch()
-  let { moduleId,classId } = useParams();
   const history = useHistory()
-  console.log(modules)
-  const pathname = '/app/admin/video/'+curso.id
+  // console.log(modules)
+  const pathname = VIDEO_ROUTE + '/' +cursoId
 
   //dispatch({ type: 'ROUTE', payload: location })
   // history.push(pathname+'/'+curso.modules[0].id+'/'+curso.modules[0].classes[0].id)
@@ -40,7 +45,7 @@ export function SideVideoBar({curso}) {
 
 
   useEffect(() => {
-    setTimeout(() => {
+    if (!show) setTimeout(() => {
       setOpen(moduleId)
     }, 700);
   }, [moduleId,classId])
@@ -51,20 +56,21 @@ export function SideVideoBar({curso}) {
   }
 
   function handleSetClass(moduleId,classId,isLocked) {
+    if (show) return null
     if (isLocked !== 'ok') return notification.warn({message:isLocked})
     history.push(pathname+'/'+moduleId+'/'+classId)
   }
 
 
   return (
-    <SideContainer >
+    <SideContainer {...props}>
       {curso.modules.map((module,index)=>{
 
-        const watchedClasses = modules.watched[module.id] ? modules.watched[module.id].length : 0
+        const watchedClasses = (modules?.watched && modules.watched[module.id]) ? modules.watched[module.id].length : 0
         const totalClasses = module.classes.length
 
         return (
-          <div key={module.id}>
+          <div key={module.id} >
             <ModuleContainer first={index == 0} onClick={()=>HandleOpenClasses(module.id)}>
               <CircleView >
                 <NumberCircle >{index+1}</NumberCircle>
@@ -77,7 +83,7 @@ export function SideVideoBar({curso}) {
               { false ?
                 <IconLock style={{fontSize:'18px'}}/>
               :
-                <IconArrow isOpenModule={open == module.id} style={{fontSize:'22px'}}/>
+                <IconArrow isopenmodule={(open == module.id).toString()} style={{fontSize:'22px'}}/>
               }
             </ModuleContainer>
             <Collapse unmountOnExit={true} in={open == module.id}>

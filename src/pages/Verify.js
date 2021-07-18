@@ -93,54 +93,60 @@ const Verification = () => {
   const { setLoad } = useLoaderScreen();
   const { setLoaderDash } = useLoaderDashboard();
   const { currentUser, setCurrentUser } = useAuth()
-  const [int, setInt] = useState(null)
-  const [clear, setClear] = useState(null)
-  // const interval = () => {
-
-  // }
+  // const [int, setInt] = useState(null)
+  // const [clear, setClear] = useState(null)
 
   const onFocus = () => {
     console.log('focus')
+    // clearInterval(int)
+
+    // const interval = setInterval(() => {
+    //   console.log('reload')
+    //   handleConfirm({isReload:true})
+    // }, 5000);
+
     handleConfirm({isReload:true})
-    const interval = setInterval(() => {
-      console.log('reload')
-      handleConfirm({isReload:true})
-    }, 5000);
-
-    setInt(interval)
+    // setInt(interval)
   }
 
-  const onBlur = () => {
-    console.log('blur')
-    setClear(Math.random)
-  }
+  // const onBlur = () => {
+  //   console.log('blur')
+  //   setClear(Math.random)
+  // }
 
   useEffect(() => {
     if (document.hasFocus()) onFocus()
 
     setLoaderDash(false)
-    window.addEventListener("focus", ()=>onFocus())
-    window.addEventListener("blur", ()=>onBlur())
+    window.addEventListener("focus", onFocus)
+    // window.addEventListener("blur", onBlur)
 
     return () => {
-      window.removeEventListener("focus", ()=>onFocus())
-      window.removeEventListener("blur", ()=>onBlur())
+      console.log('remove listenier')
+      window.removeEventListener("focus", onFocus)
+      // window.removeEventListener("blur", onBlur)
     }
 
   }, [])
 
-  useEffect(() => {
-    clearInterval(int)
-    return () => {
-      clearInterval(int)
-      setLoaderDash(true)
-    }
-  }, [clear])
+  // useEffect(() => {
+  //   return () => {
+  //     clearInterval(int)
+  //   }
+  // }, [])
+
+  // useEffect(() => {
+  //   clearInterval(int)
+  //   return () => {
+  //     clearInterval(int)
+  //   }
+  // }, [clear])
 
   const onError = (error) => notification.error({message:error})
 
   function handleLogout() {
     const onLogout = () => setTimeout(() => setLoad(false), 1000);
+    // clearInterval(int)
 
     setLoad(true)
     LogOut(onLogout,onError)
@@ -150,7 +156,7 @@ const Verification = () => {
     const onReloadSuccess = (user) => {
       console.log(user)
       console.log(currentUser)
-      if (user.emailVerified) {
+      if (user?.emailVerified) {
         console.log('true',user.emailVerified)
         setCurrentUser({...currentUser,emailVerified:user.emailVerified})
       }

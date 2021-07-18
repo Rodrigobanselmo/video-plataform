@@ -10,6 +10,18 @@ import { LoadTable } from '../elements/LoadTable';
 import { MissingData } from '../elements/MissingData';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 
+const ContainerTable = styled.div`
+  padding-right:54px;
+
+  @media screen and (max-width: 1100px) {
+    padding-right:40px;
+  }
+
+  @media screen and (max-width: 700px) {
+    padding-right:20px;
+  }
+`;
+
 const IconDelete = styled(DeleteOutlineIcon)`
   color: ${({theme})=>theme.palette.text.secondary};
 `;
@@ -142,6 +154,10 @@ const StatusView = styled.div`
       border: 3px solid ${({theme})=> theme.palette.status.successD};
     `}
 
+    ${props => props.status == 'Autenticando' && css`
+      border: 3px solid ${({theme})=> theme.palette.status.yellow};
+    `}
+
     ${props => props.status == 'Pendente' && css`
       border: 3px solid ${({theme})=> theme.palette.status.orange};
     `}
@@ -151,11 +167,12 @@ const StatusView = styled.div`
 export function MembersTable({isLoading,data,filter=true}) {
 
   const pending = 'Esperando usuário realizar cadastro na plataforma'
+  const authenticating = 'Usuário já criou sua conta na plataforma, mas não finalizado o cadastro.'
   const active = 'Usuário está ativo e em dia com suas atividades'
-  const DATA = data.filter(i=>!i?.link);
+  const DATA = data.filter(i=>!i?.link||(i?.link && i?.email));
 
   return (
-    <>
+    <ContainerTable>
       <Title noFilter={!filter}>Membros</Title>
       {filter &&
         <FilterComponent
@@ -194,6 +211,10 @@ export function MembersTable({isLoading,data,filter=true}) {
                           tooltip = active
                         break;
 
+                        case 'Autenticando':
+                          tooltip = authenticating
+                        break;
+
                         default:
                           tooltip = 'Situação não identificada'
                         break;
@@ -219,7 +240,7 @@ export function MembersTable({isLoading,data,filter=true}) {
                                   <span>{user?.status ? user.status : '----------------------'}</span>
                                 </div>
                               </BootstrapTooltip>
-                              {user?.status ==='Pendente' &&
+                              {(user?.status ==='Pendente') &&
                                 <BootstrapTooltip title={`Revogar acesso a este usuário, o qual você receberá de volta os cursos que foram disponibilizados a ele.`} styletooltip={{transform: 'translateY(10px)'}}>
                                   <IconButton aria-label={'delete'}>
                                     <IconDelete type={'Trash'} />
@@ -242,6 +263,6 @@ export function MembersTable({isLoading,data,filter=true}) {
       ) : (
         <LoadTable rows={5} columns={5}/>
       )}
-    </>
+    </ContainerTable>
   )
 }

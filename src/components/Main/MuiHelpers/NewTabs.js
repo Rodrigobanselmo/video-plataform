@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'transparent',
     padding:'0px 0px',
     boxShadow: 'none',
-    borderBottom:`1px ${theme.palette.background.line} solid`,
+    // borderBottom:`1px ${theme.palette.background.line} solid`,
   },
 }));
 

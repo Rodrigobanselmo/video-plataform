@@ -1,6 +1,6 @@
-import { AddCalendarDate,GetCalendarDate } from '../../../../services/firestoreCalendar'
-import { GetData } from '../../../../services/firestoreData'
-import {GetAllDataTwoFilters} from '../../../../services/firestoreUser'
+import { AddCalendarDate,GetCalendarDate } from '../../../services/firestoreCalendar'
+import { GetData } from '../../../services/firestoreData'
+import {GetAllDataTwoFilters} from '../../../services/firestoreUser'
 
 export function onGetHomeData({setClients,notification,setLoaderDash}) {
     function checkSuccess(response) {

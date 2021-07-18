@@ -10,9 +10,9 @@ import Page, {FirstForm,SecondForm,ThirdForm,BanksForm} from './comp'
 import {onAddUserData,onUpdateProfile} from './func'
 import { onLogout } from '../../components/Dashboard/NavSystem/func';
 import styled from "styled-components";
-import { PersonalData } from '../../components/Main/Forms/PersonalData';
-import { CompanyData } from '../../components/Main/Forms/CompanyData';
-import { ProfessionalData } from '../../components/Main/Forms/ProfessionalData';
+import { PersonalData } from '../../components/Forms/PersonalData';
+import { CompanyData } from '../../components/Forms/CompanyData';
+import { ProfessionalData } from '../../components/Forms/ProfessionalData';
 
 
 export default function InputUserData() {
@@ -29,10 +29,6 @@ export default function InputUserData() {
 
   const HAS_COMPANY = currentUser?.permissions && Array.isArray(currentUser.permissions) && currentUser.permissions.includes('co'); //company
   const HAS_PROFESSION = currentUser?.permissions && Array.isArray(currentUser.permissions) && currentUser.permissions.includes('pr'); //professional
-
-  const PERSONAL_DATA = currentUser?.name && currentUser?.rg && currentUser?.cell;
-  const COMPANY_DATA = currentUser?.address?.cep && currentUser?.company?.cpfOrCnpj;
-  const PROFESSION_DATA = currentUser?.resume;
 
   useEffect(() => {
     setTimeout(() => {

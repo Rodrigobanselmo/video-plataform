@@ -28,9 +28,16 @@
       "@typescript-eslint",
       "prettier"
   ],
+  //@typescript-eslint/explicit-function-return-type
+  //@typescript-eslint/explicit-module-boundary-types
   "rules": {
+
+    // "import/no-extraneous-dependencies": ["error", {"devDependencies": true}], //add to suppres miraje devDependencies warn
+
     "no-use-before-define": "off",
     "@typescript-eslint/no-use-before-define": ["error"],
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    // "@typescript-eslint/explicit-function-return-type": "off",
     "prettier/prettier": "error",
     "react/jsx-one-expression-per-line": "off",
     "react-hooks/rules-of-hooks": "error",

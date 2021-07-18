@@ -6,7 +6,10 @@ export default (state = initialState, action) => {
 
     switch(action.type) {
         case 'MODULE_WRITE':
-        return action.payload;
+          var newState = {...state}
+          newState[action.payload.id] = action.payload
+          console.log('newStatenewState',newState,action.payload.id)
+        return {...newState};
 
         case 'MODULE_UPDATE':
         return {...state,...action.payload};

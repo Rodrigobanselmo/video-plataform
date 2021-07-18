@@ -43,14 +43,14 @@ export async function CheckEmailExists(
   checkError,
 ) {
 
-  const usersRef = db.collection('users');
+  const invitesRef = db.collection('invites');
 
   try {
     const responseEmail = await auth.fetchSignInMethodsForEmail(email) //.then((response) => {
     if (responseEmail.length != 0 ) return checkSuccess(responseEmail);
 
     let EMAIL_EXIST = false
-    const response = await usersRef.where('email', '==', email).get()
+    const response = await invitesRef.where('email', '==', email).get()
     response.forEach(function () {
       EMAIL_EXIST = true
     })
@@ -64,22 +64,27 @@ export async function CheckEmailExists(
   }
 }
 
-export function CreateEmail(
+export async function CreateEmail(
   email = '',
   password = '',
+  linkData,
   checkSuccess,
   checkError
 ) {
-  auth
-    .createUserWithEmailAndPassword(email, password)
-    .then((loggedUser) => {
-      setTimeout(() => {
-        checkSuccess(loggedUser);
-      }, 500);
-    })
-    .catch((error) => {
-      checkError(errorCatch(error));
-    });
+
+  try {
+    console.log('linkData',linkData)
+    if (linkData !== false) {
+      const linkRef = db.collection('links').doc(linkData.docId);
+      await linkRef.update({email})
+    }
+
+    await  auth.createUserWithEmailAndPassword(email, password)
+    setTimeout(() => checkSuccess(), 500);
+  } catch (error) {
+    checkError(errorCatch(error));
+  }
+
 }
 
 export function SignInEmail(
@@ -126,6 +131,7 @@ export function SendEmailVerification(checkSuccess,checkError) {
 
 export function ReloadUser(checkSuccess,checkError) {
   var user = auth.currentUser;
+  if (!user) return
   user.reload()
   .then(function () {
     checkSuccess(auth.currentUser);

@@ -27,13 +27,14 @@ export async function setUsers(data) { //data = array of users {}
       cursos:user?.cursos ? user.cursos : false,
       name:user?.name ? user.name : false,
       link:user?.link ? user.link : false,
-      email:user?.email ? user.email : false,
+      email:user?.email ? user.email.toLowerCase() : false,
       cpf:user?.cpf ? user.cpf : false,
       type:user?.type ? user.type : false,
       status:user?.status ? user.status : false,
       creation:user?.creation ? user.creation : false,
       createdAt:user?.createdAt ? user.createdAt : false,
       uid:user?.uid ? user.uid : false,
+      initialized: false,
     })
   })
 
@@ -73,11 +74,7 @@ export function useCreateUsers() {
     onSuccess: (data) => {
       notification.success({message:'Usuários criados com sucesso!'}) //Email enviado com sucesso, verifique em sua caixa de entrada e/ou span?
 
-      const users = [];
-      const links = []
       const haveURL = data.map(item => {
-        if (item?.link) links.push(item)
-        else users.push(item)
         return item?.link
       }).filter(i=>i).length > 0
 
@@ -89,10 +86,7 @@ export function useCreateUsers() {
         open:true,
       })
 
-      console.log('onSuccess users',users)
-      console.log('onSuccess links',links)
-      queryClient.setQueryData('users', (oldData)=>[...users,...oldData])
-      queryClient.setQueryData('links', (oldData)=>[...links,...oldData])
+      queryClient.setQueryData('users', (oldData)=>[...data,...oldData])
     },
     onError: (error) => {
       notification.error({message:errorCatchFirestore(error)})

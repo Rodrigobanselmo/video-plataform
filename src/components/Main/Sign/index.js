@@ -106,7 +106,7 @@ export default function SignIn({emailQuery,codeQuery}) {
         onLoginUser({data,setLoad,setLoaderDash,setError,onErrorNotification})
       } else if (login === 'register') {
         if (!checked) return setError('Preencha todos os campos acima!')
-        onCreateAccount({data,setLoad,setLoaderDash,setError,onErrorNotification})
+        onCreateAccount({data,setLoad,setLoaderDash,setError,onErrorNotification,validCode,linkData:linkData[0]})
       }
     }
   };

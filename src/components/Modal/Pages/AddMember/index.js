@@ -70,8 +70,6 @@ export function AddMemberModal({open,setOpen,setUsersRows}) {
 
 
 
-  const [numInput, setNumInput] = useState(3) //numeros de inputs
-  const [eieo, setEmails] = useState([{email:'',status:'',message:'',type:''}]) //dados dos email inseridos nos inputs
   const [email, setEmail] = useState({value:null,index:null}) //dados dos email inseridos nos inputs
   const [unform, setUnform] = useState({}) //dados dos email inseridos nos inputs
   const [infoModal, setInfoModal] = useState({title:'',text:''}) //para mandar pro modalFullScreen e dizer se ao fechar da um alerta

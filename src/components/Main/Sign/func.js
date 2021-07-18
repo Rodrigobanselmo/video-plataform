@@ -51,7 +51,7 @@ export function onLoginUser({data,setLoad,setLoaderDash,setError,onErrorNotifica
 
 }
 
-export function onCreateAccount({data,setLoad,setLoaderDash,setError,onErrorNotification}) {
+export function onCreateAccount({data,setLoad,setLoaderDash,setError,onErrorNotification,validCode,linkData}) {
 
     function checkSuccess() {
       // history.replace(VERIFY_EMAIL)
@@ -67,7 +67,7 @@ export function onCreateAccount({data,setLoad,setLoaderDash,setError,onErrorNoti
 
     if (checkConfirmPass(data,setError)) {
       setLoad(true)
-        CreateEmail(data.emailAddress,data.password,checkSuccess,checkError)
+      CreateEmail(data.emailAddress,data.password,validCode?linkData:false,checkSuccess,checkError)
     }
 }
 

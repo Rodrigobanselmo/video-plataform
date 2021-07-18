@@ -28,6 +28,10 @@ import { useSelector,useDispatch } from 'react-redux'
 
 import FullScreen from "@material-ui/icons/Fullscreen";
 import { useParams,useHistory } from 'react-router-dom';
+import { useNotification } from "../../context/NotificationContext";
+import { useUpdateCurso } from "../../services/hooks/set/useUpdateCurso";
+import { queryClient } from "../../services/queryClient";
+import { VIDEO_ROUTE } from "../../routes/routesNames";
 
 const ReactPlayerStyles = styled(ReactPlayer)`
   position: absolute;
@@ -80,25 +84,31 @@ const initialState = {
 }
 //setState({...initialState});
 
-export function VideoPlayer({curso,notification}) {
+export function VideoPlayer({curso}) {
   // const [showControls, setShowControls] = useState(false);
   // const [anchorEl, setAnchorEl] = React.useState(null);
   // const [timeDisplayFormat, setTimeDisplayFormat] = React.useState("normal");
+  const { cursoId,moduleId,classId } = useParams();
+
   const [autoplay, setAutoplay] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [state, setState] = useState({...initialState});
   const [playbackRate, setPlaybackRate] = useState(1);
 
-  const modules = useSelector(state => state.modules)
+  const queryModules =  queryClient.getQueryData(['student', cursoId]);
+  const modules =  (queryModules && queryModules?.student) ? queryModules.student[0] : {};
+  // const modules = useSelector(state => state.modules)
+  // console.log('queryClient',queryModules)
   const progress = useSelector(state => state.progress)
+  const notification = useNotification();
   const history = useHistory()
   const dispatch = useDispatch()
-  let { cursoId,moduleId,classId } = useParams();
-  const pathname = '/app/admin/video/'+cursoId
+  const mutation = useUpdateCurso(cursoId)
+  const pathname = VIDEO_ROUTE + '/' +cursoId
 
-  const moduleIndex = curso.modules.findIndex(i=>i.id==moduleId);
-  const classIndex = curso.modules[moduleIndex].classes.findIndex(i=>i.id==classId);
-  const actualClass = curso.modules[moduleIndex].classes[classIndex];
+  const moduleIndex = moduleId ? curso.modules.findIndex(i=>i.id==moduleId) : 0;
+  const classIndex = classId ? curso.modules[moduleIndex!==-1?moduleIndex:0].classes.findIndex(i=>i.id==classId) : 0;
+  const actualClass = curso.modules[moduleIndex!==-1?moduleIndex:0].classes[classIndex!==-1?classIndex:0];
 
   const playerRef = useRef(null);
   const playerContainerRef = useRef(null);
@@ -137,9 +147,10 @@ export function VideoPlayer({curso,notification}) {
   const totalDuration = format(duration);
 
   useEffect(() => {
+
     setState({...state,ready:false,playing:false});
     console.log('rate1')
-    setPlaybackRate(1.05)
+    setPlaybackRate(1.005)
     const time = setTimeout(() => {
       setPlaybackRate(playbackRate)
       console.log('rate')
@@ -213,7 +224,7 @@ export function VideoPlayer({curso,notification}) {
         }
       }
 
-      dispatch({ type: 'PROGRESS_UPDATE', payload: data })
+      dispatch({ type: 'PROGRESS_UPDATE', payload: data }) //PROGRESS_DISPATCH
     } else {
       save = 0;
     }
@@ -316,9 +327,10 @@ export function VideoPlayer({curso,notification}) {
       : classIndex+1;
 
     const nextModule = curso.modules[nextModuleIndex]
-    const nextClass = curso.modules[nextModuleIndex].classes[nextClassIndex]
+    const nextClass = nextModule ? nextModule.classes[nextClassIndex] : 'lastModule' // se for ultimo modilo
 
     const lock = isLocked(modules,nextClass,nextModuleIndex,nextClassIndex)
+    if (lock === 'lastModule') return notification.success({message:'Você não possui mais aulas'})
     if (lock !== 'ok' && next != 'endNext') return notification.warn({message:lock})
 
     handleMouseMove()
@@ -326,7 +338,7 @@ export function VideoPlayer({curso,notification}) {
     history.push(pathname+'/'+nextModule.id+'/'+nextClass.id)
   };
 
-  const onEndVideo = () => {
+  const onEndVideo = async () => {
     if (autoplay) {
       handleNextVideo('endNext')
       setLoading(true)
@@ -335,15 +347,15 @@ export function VideoPlayer({curso,notification}) {
       handlePlayPause()
     }
     if ((
-        module[`${cursoId}//${moduleId}//${classId}`]
+        modules[`${cursoId}//${moduleId}//${classId}`]
       &&
-        module[`${cursoId}//${moduleId}//${classId}`]?.percentage == 100
+        modules[`${cursoId}//${moduleId}//${classId}`]?.percentage == 100
       )
       ||
       (
-        module[moduleId]
+        modules[moduleId]
       &&
-        module[moduleId].includes(moduleId)
+        modules[moduleId].includes(moduleId)
       )
     ) return null
 
@@ -358,18 +370,21 @@ export function VideoPlayer({curso,notification}) {
       : classIndex+1;
 
     const nextModule = curso.modules[nextModuleIndex]
-    const nextClass = curso.modules[nextModuleIndex].classes[nextClassIndex]
+    const nextClass = nextModule ? nextModule.classes[nextClassIndex] : 'lastModule'
 
-    dispatch({ type: 'MODULE_DONE', payload: {cursoId,moduleId,classId,nextModule,nextClass,classIndex:nextClassIndex,moduleIndex:nextModuleIndex} })
-    dispatch({ type: 'PROGRESS_DONE', payload: `${cursoId}//${moduleId}//${classId}` })
+    await mutation.mutateAsync({cursoId,moduleId,classId,nextModule,nextClass,classIndex:nextClassIndex,moduleIndex:nextModuleIndex})
+
+    // dispatch({ type: 'MODULE_DONE', payload: {cursoId,moduleId,classId,nextModule,nextClass,classIndex:nextClassIndex,moduleIndex:nextModuleIndex} }) //PROGRESS_DISPATCH
+    // dispatch({ type: 'PROGRESS_DONE', payload: `${cursoId}//${moduleId}//${classId}` }) //PROGRESS_DISPATCH
   };
 
-  useKeypress([' ','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'], (e) => {
+  useKeypress([' ','r','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'], (e) => {
     console.log('e.key',e.key)
     if (e.key === ' ') {
       handlePlayPause();
     } else if  (e.key === 'ArrowLeft') {
       // handleRewind()
+      onEndVideo() // !remover
     } else if  (e.key === 'ArrowRight') {
       // handleFastForward()
     } else if  (e.key === 'ArrowUp') {
@@ -377,6 +392,25 @@ export function VideoPlayer({curso,notification}) {
       console.log(volume)
     } else if  (e.key === 'ArrowDown') {
       if (volume>0) handleVolumeChange(volume-0.2)
+    } else if  (e.key === 'r') { // !remover
+      const resetData = {
+        uid: modules.uid,
+        id: modules.id,
+        status: 'started',
+        percentage: 0,
+        startDate: modules.startDate,
+        expireDate: modules.expireDate,
+        finishedDate: false,
+        cursoId: modules.cursoId,
+        modules: 'all',
+        watched: {},
+        classes:  modules.classes,
+        position: '0/0',
+        totalWatched: 0,
+        numOfClasses: modules.numOfClasses,
+      }
+      mutation.mutateAsync(resetData,modules)
+      console.log('r')
     }
     // Do something when the user has pressed the Escape key
   });

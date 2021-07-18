@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
-import {InputsContainer} from '../../../Dashboard/Components/Standard/PageCarousel'
-import {InputUnform,SelectedEnd} from '../../MuiHelpers/Input'
-import {FormContainer,ButtonForm} from '../../../Dashboard/Components/Form/comp'
+import {InputsContainer} from '../../Dashboard/Components/Standard/PageCarousel'
+import {InputUnform,SelectedEnd} from '../../Main/MuiHelpers/Input'
+import {FormContainer,ButtonForm} from '../../Dashboard/Components/Form/comp'
 import * as Yup from 'yup'
 import 'react-phone-number-input/style.css'
-import {keepOnlyNumbers, formatCPFeCNPJeCEPeCNAE} from '../../../../helpers/StringHandle';
-import useTimeOut from '../../../../hooks/useTimeOut';
-import {NumberFormatOnly,NumberFormatCEP,NumberFormatCNPJ,NumberFormatCPF} from '../../../../lib/textMask'
-import {estados} from '../../../../constants/geral'
+import {keepOnlyNumbers, formatCPFeCNPJeCEPeCNAE} from '../../../helpers/StringHandle';
+import useTimeOut from '../../../hooks/useTimeOut';
+import {NumberFormatOnly,NumberFormatCEP,NumberFormatCNPJ,NumberFormatCPF} from '../../../lib/textMask'
+import {estados} from '../../../constants/geral'
 import axios from "axios";
 import styled, {css} from "styled-components";
 
@@ -55,12 +55,16 @@ export function CompanyData({ notification,setUnform,unform,onSecondForm}) {
     if (data.status == 'Check') setKey(Math.random())
   }, [unform])
 
-  const yupCompany = unform.company.juridica ? {razao: Yup.string().required('Nome não pode estar em branco.')} : {}
+  const yupCompany = unform.company.juridica
+    ? {
+        razao: Yup.string().required('Nome não pode estar em branco.'),
+        cpfOrCnpj: Yup.string().required('Nome não pode estar em branco.')
+      }
+    : {}
 
   const validation = Yup.object({
     company: Yup.object({
       ...yupCompany,
-      cpfOrCnpj: Yup.string().required('Nome não pode estar em branco.'),
     }),
     address: Yup.object({
       cep: Yup.string().required('Nome não pode estar em branco.'),
@@ -179,7 +183,7 @@ export function CompanyData({ notification,setUnform,unform,onSecondForm}) {
             Pessoa física
           </ButtonType>
         </div>
-        <InputUnform
+        {unform.company.juridica && <InputUnform
           // width={unform.company.juridica?'100%':'100%'}
           formstyle={{display:'flex',flex:'1 1 200px'}}
           name={'company.cpfOrCnpj'}
@@ -192,7 +196,7 @@ export function CompanyData({ notification,setUnform,unform,onSecondForm}) {
           variant="outlined"
           inputProps={{style: {textTransform: 'capitalize',color:'#000'}}}
           inputComponent={unform.company.juridica?NumberFormatCNPJ:NumberFormatCPF}
-        />
+        />}
         {unform.company.juridica && <InputUnform
           // width={'100%'}
           formstyle={{display:'flex',flex:'3 1 400px'}}

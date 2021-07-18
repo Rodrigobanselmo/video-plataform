@@ -12,14 +12,14 @@ export async function getLink(code) {
   console.log('refreshLink')
 
   response.forEach(function (doc) {
-    arrayData.push({...doc.data()});
+    arrayData.push({...doc.data(),docId:doc.id});
   });
 
   return arrayData
 }
 
 export function useLink(code) {
-  return useQuery(['links', code], ()=>getLink(code), {
+  return useQuery(['link', code], ()=>getLink(code), {
     staleTime: 1000 * 60 * 60 * 1
   })
 }

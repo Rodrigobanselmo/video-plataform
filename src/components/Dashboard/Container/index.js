@@ -6,6 +6,25 @@ import NavSystem from '../NavSystem'
 // import {LoaderDashboard} from '../../../components/Main/Loader/index'
 import {useAuth} from '../../../context/AuthContext'
 import useTimeOut from '../../../hooks/useTimeOut'
+import styled from "styled-components";
+
+const Content = styled.main`
+    position:relative;
+    flex-grow: 1;
+    height:auto;
+    overflow-y: scroll;
+    background-color:${({ theme }) => theme.palette.background.default};
+    height:100vh;
+    padding:50px 0px 50px 54px;
+
+    @media screen and (max-width: 1100px) {
+    padding:26px 0px 26px 40px;
+  }
+
+  @media screen and (max-width: 700px) {
+    padding:30px 0px 30px 20px;
+  }
+`;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,16 +43,16 @@ const useStyles = makeStyles((theme) => ({
     }),
   },
   content: {
-    position:'relative',
-    flexGrow: 1,
-    padding: theme.spacing(6,7),
-    height:'auto',
-    overflowY: 'scroll',
-    backgroundColor:theme.palette.background.default,
-    height:'100vh',
-    transition: theme.transitions.create('background-color', {
-      duration: 660,
-    }),
+    // position:'relative',
+    // flexGrow: 1,
+    // padding: theme.spacing(6,7),
+    // height:'auto',
+    // overflowY: 'scroll',
+    // backgroundColor:theme.palette.background.default,
+    // height:'100vh',
+    // transition: theme.transitions.create('background-color', {
+    //   duration: 660,
+    // }),
   },
 }));
 
@@ -63,10 +82,10 @@ export default function MiniDrawer({children}) {
             {/* <Sidebar open={open} setOpen={setOpen} lock={lock} onTimeOut={onTimeOut} onClearTimeOut={onClearTimeOut} setLock={setLock}/> */}
           </>
         : null }
-        <main id = "someRandomID" className={classes.content}>
+        <Content id = "someRandomID" className={classes.content}>
             <div className={classes.toolbar} />
               {children}
-        </main>
+        </Content>
     </div>
     // </LoaderDashboard>
   );

@@ -93,7 +93,7 @@ const NaveLink = styled(Link)`
 
 `;
 
-export default function NavBar({open,setOpen}) {
+const NavBar = ({open,setOpen}) => {
 
   const [openProfile, setOpenProfile] = React.useState(false);
   const [darkMode, setDarkMode] = React.useState(true);
@@ -151,18 +151,29 @@ export default function NavBar({open,setOpen}) {
 
           <div style={{display:'flex',flex:1,marginLeft:60,justifyContent:'flex-start',flexDirection:'row'}}>
           {menuList.map((item, index) => {
-            const isActive = pathname==item.route
 
-            return (
-              <>
-                { (item.visible === 'all' || (currentUser?.access && item.visible.includes(currentUser.access))) &&
-                  <NaveLink key={item.text} active={isActive.toString()} to={item.route}>
-                    <p>{item.text}</p>
-                    {isActive && <BottomBar />}
-                  </NaveLink>
-                }
-              </>
-            )
+            function pathActive() {
+              if (item?.contain) {
+                const array = item.contain.map((route) => {
+                  return pathname.includes(route)
+                })
+                if (array.findIndex(i=>i === false) !== -1) return false
+                return true
+              }
+              return pathname==item.route
+            }
+            const isActive = pathActive()
+
+            if ((item.visible === 'all' || (currentUser?.access && item.visible.includes(currentUser.access)))) {
+              return (
+                <NaveLink onClick={()=>{pathname!==item.route && setLoaderDash(true)}} key={item.id} active={isActive.toString()} to={item.route}>
+                  <p>{item.text}</p>
+                  {isActive && <BottomBar />}
+                </NaveLink>
+              )
+            }
+
+            return null
           })}
           </div>
 
@@ -170,7 +181,7 @@ export default function NavBar({open,setOpen}) {
           {/* <div className={classes.grow} /> */}
           <div className={classes.sectionDesktop}>
             {navList.map((item, index) => (
-              <div key={String(index)}>
+              <div key={item.text}>
               { item.visible === 'all' || (currentUser?.access && item.visible.includes(currentUser.access)) ?
                 <ReactLink onClick={item?.onClick ?()=>notification.modal({title: 'Notifição',type:'inform',icon:'success',text:'Notifição padrão do sistema',open:true,onClick:()=>console.log('notification confirm')}):()=>notification.success({message:'Em construção'})} to={item.to} style={{margin:'0px 5px'}}>
                   <BootstrapTooltip placement="bottom" TransitionProps={{ timeout: {enter:500, exit: 50} }} title={item.text} styletooltip={{transform: 'translateY(10px)'}}>
@@ -210,7 +221,9 @@ export default function NavBar({open,setOpen}) {
         </div>
       </AppBar>
   );
-}
+};
+
+export default NavBar;
 
 // <div ref={anchorRef} onClick={()=>setOpenProfile(true)} className={classes.profileContainer}>
 //   {!currentUser?.photoURL ?
@@ -223,8 +236,8 @@ export default function NavBar({open,setOpen}) {
 //         {/* <Icons className={classes.profileCircleName} type={'Person'}/> */}
 //     </div>
 //   :
-    // <div className={classes.profileImg}>
-    //   <img style={{height:52,width:52,borderRadius:50}} src={currentUser.photoURL} alt={'perfil_photo'} />
-    // </div>
-  // }
+// <div className={classes.profileImg}>
+//   <img style={{height:52,width:52,borderRadius:50}} src={currentUser.photoURL} alt={'perfil_photo'} />
+// </div>
+// }
 // </div>

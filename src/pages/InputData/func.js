@@ -4,7 +4,7 @@ import {wordUpper,keepOnlyNumbers,formatCPFeCNPJeCEPeCNAE} from '../../helpers/S
 
 export function onAddUserData({data,createCompany,currentUser,setCurrentUser,setLoad,notification}) {
 
-    let formattedData = {...data}
+    let formattedData = {...data,status:'Ativo'}
     formattedData.name = wordUpper((formattedData.name.trim()).split(" "))
 
     console.log('final',formattedData)
