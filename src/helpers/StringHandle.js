@@ -141,9 +141,23 @@ export function BreakLineText({children, ...props}) {
   return (
     <p {...props}>
       {newText.map((text,index)=>{
+        const newTextSplit = text.split(' ')
         return (
           <span key={text}>
-            {text}
+            {newTextSplit.map((subText,index)=>{
+              if (subText.slice(0,2) == '--') return (
+                <span style={{textDecoration:'underline'}} key={index.toString()}>{subText.split('--')[1] == '_' ? ' ' : subText.split('--')[1]}</span>
+              )
+              if (subText.slice(0,2) == '**') return (
+                <strong key={index.toString()}>{subText.split('--')[1]}</strong>
+                )
+              if (subText.slice(0,2) == '--**' || subText.slice(0,2) == '**--') return (
+                <strong style={{textDecoration:'underline'}} key={index.toString()}>{subText.split('--')[1] == '_' ? ' ' : subText.split('--')[1]}</strong>
+              )
+              return (
+                <span key={index.toString()}> {subText} </span>
+              )
+            })}
             {newText.length-1 != index && <br/>}
           </span>
         )

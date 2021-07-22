@@ -5,7 +5,7 @@ import {useLoaderDashboard} from '../../../context/LoadDashContext'
 import {NormalizeData} from '../../../helpers/DataHandler';
 import {onGetHomeData} from './func'
 import styled, {css} from "styled-components";
-import { Collapse } from '@material-ui/core';
+import Collapse from '@material-ui/core/Collapse';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 import { VideoPlayer } from '../../../components/VideoPlayer';

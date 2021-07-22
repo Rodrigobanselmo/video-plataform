@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector,useDispatch } from 'react-redux'
-import { Collapse } from '@material-ui/core';
+import Collapse from '@material-ui/core/Collapse';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {useNotification} from '../../../context/NotificationContext'
 import {TextSlider,SliderInside,SliderButton,NextIcon,FullIcon,PreviousIcon,BoxIcon,BottomBar} from './style'

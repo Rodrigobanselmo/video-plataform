@@ -50,7 +50,7 @@ const Container = styled.div`
 
 `;
 
-export function MissingData({text,bigger,dashedBorder}) {
+export function MissingData({text='',bigger,dashedBorder}) {
   return (
     <Container bigger={bigger} dashedBorder={dashedBorder}>
       <img src='/images/open-box.png'/>

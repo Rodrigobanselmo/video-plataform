@@ -4,7 +4,7 @@ import React from 'react';
 // import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import Checkbox from '@material-ui/core/Checkbox';
-import { Collapse } from '@material-ui/core';
+import Collapse from '@material-ui/core/Collapse';
 import { useAuth } from '../../../../../context/AuthContext';
 import { InputEnd } from '../../../../Main/MuiHelpers/Input';
 import { NumberFormatCPF } from '../../../../../lib/textMask';
@@ -12,6 +12,22 @@ import { AscendentObject } from '../../../../../helpers/Sort';
 import { SIGN } from '../../../../../routes/routesNames';
 import { useNotification } from '../../../../../context/NotificationContext';
 import { queryClient } from '../../../../../services/queryClient';
+import { BootstrapTooltip } from '../../../../Main/MuiHelpers/Tooltip';
+import { PERMISSIONS } from '../../../../../constants/geral';
+import { UserInfoInputs } from './UserInfo';
+import { PermissionSelect } from './Permission';
+import { CursosSideBar } from './Cursos';
+import { CursosSideBarAdmin } from './CursosAdmin';
+
+const TitleSection = styled.h3`
+  color:${({ theme }) => theme.palette.text.primary};
+  font-size:${({ isAddClient }) => isAddClient? 22:16}px;
+  margin:${({ isAddClient }) => isAddClient? '0 0 0 0':'20px 0 0px 0'};
+
+
+
+`;
+
 
 const EpiView = styled.div`
   display: flex;
@@ -39,6 +55,10 @@ const EpiView = styled.div`
       color:${({ theme }) => theme.palette.text.secondary};
       font-size:13px;
     }
+  }
+
+  &.last {
+    border-bottom: 1px solid ${({ theme }) => theme.palette.background.line};
   }
 `;
 
@@ -91,7 +111,10 @@ const SideEmailContainer = styled.div`
   overflow-y: auto;
   max-height: 85vh;
   border-radius: 20px;
-
+  width:100%;
+  @media screen and (max-width: 800px) {
+    grid-area:side;
+  }
   div.selected {
     display: flex;
     flex-direction: column;
@@ -119,269 +142,53 @@ const SideEmailContainer = styled.div`
   }
 `;
 
-export function SideEmail({ email, data, setData, setCursos, cursos }) {
-  // div className='selected'
-  const EPI = [
-    { name: 'Luva', id: 1, price:1},
-    { name: 'Bota', id: 2 , price:1},
-    { name: 'Capacete', id: 3 , price:1},
-    { name: 'Cinto de segunraça', id: 4 , price:1},
-    { name: 'Luva Quimica', id: 5 , price:1},
-    { name: 'Luva aprova de fogo', id: 6 , price:2},
-    { name: 'Luva de plastico', id: 7 , price:2},
-    { name: 'Óculos protetor', id: 8 , price:2},
-    { name: 'Óculos UV', id: 9 , price:2},
-    { name: 'Capacete de chumbo', id: 0 , price:2},
-    { name: 'Luva', id: 10 , price:2},
-    { name: 'Bota 1', id: 20 , price:2},
-    { name: 'Capacete 1', id: 30 , price:3},
-    { name: 'Cinto de segunraça 1', id: 40 , price:3},
-    { name: 'Luva Quimica 1', id: 50 , price:3},
-    { name: 'Luva aprova de fogo 1', id: 60 , price:3},
-    { name: 'Luva de plastico 1', id: 70 , price:3},
-    { name: 'Óculos protetor 1', id: 80 , price:3},
-    { name: 'Óculos UV 1', id: 90 , price:3},
-    { name: 'Capacete de chumbo 1', id: 11 , price:3},
-  ];
-  const EPI_ID = 'dyuwqf2';
+export function SideEmail({ email, data, setData, setCursos, cursos, setPermissions, permissions, isAddClient }) {
+
   const { currentUser } = useAuth();
-  const notification  = useNotification();
-  const cursosAllData = queryClient.getQueryData('cursos');
-  const cursosUserData = currentUser?.cursos;
+
+  const isAdmin = currentUser?.access === 'admin'
   const isUrl = email.value && email.value.includes(SIGN);
 
-  const handleChange = (value, name) => {
-    const newData = { ...data };
-    newData[`${email.index}--${name}`] = value;
-
-    setData(newData);
-  };
-
-  const handleCheck = (event, cursoId, quantity) => {
-
-    if (quantity <= 0 && event.target.checked) return notification.warn({message:'Você não possui mais unidades deste curso',modal:true})
-
-    const newData = { ...cursos };
-    if (cursoId === EPI_ID) {
-      newData[`${email.index}--${cursoId}`] = event.target.checked;
-      if (event.target.checked) newData[`${email.index}--${cursoId}--epi`] = [];
-      if (!event.target.checked) delete newData[`${email.index}--${cursoId}--epi`];
-    } else {
-      newData[`${email.index}--${cursoId}`] = event.target.checked;
-    }
-
-    console.log('newData', newData);
-    setCursos(newData);
-  };
-
-  const handleEPICheck = (event, cursoId, epi, itemQuantity) => {
-
-    if (itemQuantity <= 0 && event.target.checked) {
-      return notification.warn({message:'Você não possui mais unidades deste curso',modal:true})
-    }
-
-    const newData = { ...cursos };
-    newData[`${email.index}--${cursoId}--epi`] = newData[`${email.index}--${cursoId}--epi`] ? newData[`${email.index}--${cursoId}--epi`] : []
-    console.log('event,event', event);
-
-    console.log('epi', epi);
-    if (event.target.checked)
-      newData[`${email.index}--${cursoId}--epi`] = [
-        ...newData[`${email.index}--${cursoId}--epi`],
-        epi,
-      ];
-    if (!event.target.checked)
-      newData[`${email.index}--${cursoId}--epi`] = [
-        ...newData[`${email.index}--${cursoId}--epi`].filter((i) => i.id !== epi.id),
-      ];
-
-    setCursos(newData);
-  };
 
   return (
     <SideEmailContainer isUrl={isUrl}>
       {email?.value ? (
         <div className="selected">
-          <h2>{isUrl ? 'Link compartilhavel' : 'e-mail'}</h2>
-          {!isUrl && <p className="oneLine">{email.value}</p>}
-          <InputEnd
-            option
-            width="100%"
-            onChange={({ target }) => handleChange(target.value, 'name')}
-            inputProps={{ style: { textTransform: 'capitalize' } }}
-            value={data[`${email.index}--name`] ?? ''}
-            size="small"
-            labelWidth={120}
-            label="Nome do aluno"
-            validation
-            title="Você pode preencher este dado no lugar do aluno ou deixar para que ele preencha quando for se cadastrar"
-            variant="outlined"
-          />
-          <InputEnd
-            option
-            value={data[`${email.index}--cpf`] ?? ''}
-            onChange={({ target }) => handleChange(target.value, 'cpf')}
-            labelWidth={30}
-            label="CPF"
-            variant="outlined"
-            validation
-            title="Você pode preencher este dado no lugar do aluno ou deixar para que ele preencha quando for se cadastrar"
-            inputProps={{
-              placeholder: '000.000.000-00',
-              style: { textTransform: 'capitalize', color: '#000' },
-            }}
-            inputComponent={NumberFormatCPF}
-          />
-          {cursosUserData
-            ? cursosUserData.map((item) => {
-                const curso = item;
-                const cursoAll = cursosAllData[cursosAllData.findIndex(i=>i.id == item.id)]
-                const cursoImage = cursoAll?.image;
-                const hasSubCurso = cursoAll?.subs
-                const check = Boolean(cursos[`${email.index}--${item.id}`]);
-
-
-                function onQuantity() {
-                  let count = 0;
-                  let countQuantity = 0;
-                  if (hasSubCurso) { //se tiver sub cursos como epi
-                    Object.keys(cursos).map((k) => {
-                      console.log('k',k)
-                      if (
-                        k.split('--').length === 3 &&
-                        k.includes(item.id) &&
-                        cursos[k]
-                      )
-                        count += cursos[k].length;
-                    });
-
-                    curso?.data && curso.data.map((dt) => {
-                      console.log('dt',dt)
-                      countQuantity += dt.quantity;
-                    });
-                    console.log('countQuantity',countQuantity,count)
-                    return countQuantity - count;
-                  } else {
-                    Object.keys(cursos).map((k) => {
-                      if (
-                        k.split('--').length === 2 &&
-                        k.includes(item.id) &&
-                        cursos[k]
-                      )
-                        count += 1;
-                    });
-                    return curso.quantity - count;
-                  }
-                }
-
-                const quantity = onQuantity();
-
-                return (
-                  <>
-                    <ItemCurso image={cursoImage}>
-                      <div className="image" alt={curso.name} />
-                      <h1>{curso.name}</h1>
-                      <p>
-                        {quantity} <span>un. restantes</span>
-                      </p>
-                      <div className="checkbox">
-                        <Check
-                          size="small"
-                          checked={check}
-                          onChange={(e) => handleCheck(e, item.id, quantity)}
-                          color="primary"
-                        />
-                      </div>
-                    </ItemCurso>
-
-                    {hasSubCurso &&
-                      <Collapse unmountOnExit in={check}>
-                        {[1,2,3].map(price => {
-
-                          function onItemQuantity() {
-                            let count = 0;
-                            let countQuantity = 0;
-
-                            Object.keys(cursos).map((k) => {
-                              console.log('k',k)
-                              if (
-                                k.split('--').length === 3 &&
-                                k.includes(item.id) &&
-                                cursos[k]
-                              ) {
-                                cursos[k].map(episData=>{
-                                  const epiItem = EPI[EPI.findIndex(i=>i.id == episData.id)]
-                                  if (epiItem && epiItem.price == price) count += 1;
-                                })
-                              }
-
-                            });
-
-                            curso?.data && curso.data.map((dt) => {
-                              if (dt.price == price) countQuantity += dt.quantity;
-                            });
-                            console.log('countQuantity',countQuantity,count)
-                            return countQuantity - count;
-
-                          }
-
-                          const itemQuantity = onItemQuantity();
-
-                          return (
-                            <div key={String(price)}>
-                              <EpiView className={'group'}>
-                                <p>Grupo {price} (unidades: {itemQuantity})</p>
-                              </EpiView>
-                              {EPI.filter(i=>i.price == price).sort((a, b) => AscendentObject(a, b, 'name')).map((epi) => {
-                                  const checkEPI = Boolean(
-                                    cursos[`${email.index}--${item.id}--epi`] &&
-                                      cursos[`${email.index}--${item.id}--epi`].findIndex(i=>i.id==epi.id) != -1,
-                                  );
-
-                                  return (
-                                    <EpiView
-                                      key={String(epi.id)}
-                                      onClick={() =>
-                                        handleEPICheck(
-                                          { target: { checked: !checkEPI } },
-                                          item.id,
-                                          epi,
-                                          itemQuantity
-                                        )
-                                      }
-                                    >
-                                      <p>{epi.name}</p>
-                                      <Check
-                                        size="small"
-                                        checked={checkEPI}
-                                        // onChange={(e) => handleEPICheck(e, item.id, epi, itemQuantity)}
-                                        color="primary"
-                                      />
-                                    </EpiView>
-                                  );
-                                },
-                              )}
-                            </div>
-                          )
-                        })}
-                      </Collapse>
-                    }
-
-                    {/* <ItemCurso>
-                    <img src={curso.image} alt={curso.name} />
-                    <h1>{curso.name}</h1>
-                    <p>{curso.quantity} <span>un.</span></p>
-                    <Checkbox
-                      style={{gridColumn:'3 / 4',gridRow: '1 / 3',height:35,width:35,alignSelf:'center'}}
-                      size='small'
-                      cursos={false}
-                      color="primary"
-                    />
-                  </ItemCurso> */}
-                  </>
-                );
-              })
-            : null}
+        <UserInfoInputs
+          isUrl={isUrl}
+          email={email}
+          data={data}
+          setData={setData}
+        />
+        {!isAddClient && <PermissionSelect
+          email={email}
+          setPermissions={setPermissions}
+          permissions={permissions}
+          isAdmin={isAdmin}
+          isAddClient={isAddClient}
+        />}
+          {isAdmin && (
+            <TitleSection isAddClient={isAddClient}>Cursos</TitleSection>
+          )}
+          {isAddClient && isAdmin ? (
+            <CursosSideBarAdmin
+              email={email}
+              isAdmin={isAdmin}
+              setCursos={setCursos}
+              cursos={cursos}
+              setPermissions={setPermissions}
+              permissions={permissions}
+            />
+          ) : (
+            <CursosSideBar
+              email={email}
+              isAdmin={isAdmin}
+              setCursos={setCursos}
+              cursos={cursos}
+              setPermissions={setPermissions}
+              permissions={permissions}
+            />
+          )}
         </div>
       ) : (
         <p className="none">

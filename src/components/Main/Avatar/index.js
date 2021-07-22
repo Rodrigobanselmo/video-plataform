@@ -2,7 +2,7 @@ import * as React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import styled, {css} from "styled-components";
 import { InitialsName } from '../../../helpers/StringHandle';
-import { darken } from '@material-ui/core';
+import { darken } from "@material-ui/core/styles";
 
 const ProfileImage = styled.div`
   height: 56px;

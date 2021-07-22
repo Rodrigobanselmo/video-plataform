@@ -1,5 +1,5 @@
 import React, {useState,useRef,useEffect} from 'react';
-import { Collapse } from '@material-ui/core';
+import Collapse from '@material-ui/core/Collapse';
 import Sign, {PolicyTerms,ContinueButton} from './comp'
 import { Base, Title,Form} from './styles';
 import {handleEmailChange,handlePasswordChange,confirmHandlePasswordChange} from './valid'

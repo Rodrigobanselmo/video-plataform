@@ -25,6 +25,10 @@ const InputsEmail = styled.div`
   background-color: ${({theme})=>theme.palette.background.paper};
   overflow-y:auto;
   max-height:85vh;
+  width:100%;
+  @media screen and (max-width: 800px) {
+    grid-area:email;
+  }
 `;
 
 
@@ -37,11 +41,15 @@ export const Container = styled.div`
     align-items:center;
     padding:50px 10vw 20px 10vw;
     min-height: 100vh;
+    @media screen and (max-width: 800px) {
+      padding:50px 0vw 20px 4vw;
+    }
 `;
 
 export const GridContainer = styled.div`
   display: grid;
   grid-template-columns: 2.5fr 1.5fr;
+  /* grid-template-rows: 1fr; */
   gap: 50px;
   width:100%;
   max-width: 1200px;
@@ -51,19 +59,17 @@ export const GridContainer = styled.div`
   flex-direction:column;
   max-height:85vh;
 
-
-  @media screen and (min-width: 500px) {
-    min-width: 300px
-  }
-  @media screen and (min-width: 800px) {
-    min-width: 400px
-  }
-  @media screen and (min-width: 1000px) {
-    min-width: 800px
+  @media screen and (max-width: 800px) {
+    gap: 20px;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+                    "email"
+                    "side";
   }
 `;
 
-export function AddMemberModal({open,setOpen,setUsersRows}) {
+export function AddMemberModal({open,setOpen,isAddClient}) {
 
   const {currentUser} = useAuth();
   const mutation = useCreateUsers()
@@ -83,6 +89,7 @@ export function AddMemberModal({open,setOpen,setUsersRows}) {
 
   const [dataUser, setDataUser] = useState({}) //dados dos email inseridos nos inputs
   const [cursosSelected, setCursosSelected] = useState({});
+  const [permissions, setPermissions] = useState({});
 
   function onClose() {
       if (mutation.isLoading) return
@@ -112,17 +119,23 @@ export function AddMemberModal({open,setOpen,setUsersRows}) {
             <InputsEmail>
               <HeaderModal
                 center
-                text='Adicionar Novos Alunos a Plataforma'
+                text={!isAddClient
+                  ? 'Adicionar Novos Alunos a Plataforma'
+                  : 'Adicionar Novos Clientes a Plataforma'
+                }
                 subText='Você poderá disponibilizar cursos e convidar novos alunos a plataforma.'
                 />
               <AddUserData
                 cursos={cursosSelected}
+                permissions={permissions}
+                setPermissions={setPermissions}
                 setCursos={setCursosSelected}
                 setEmail={setEmail}
                 setData={setDataUser}
                 data={dataUser}
                 mutation={mutation}
                 onClose={onClose}
+                isAddClient={isAddClient}
               />
             </InputsEmail>
 
@@ -131,7 +144,10 @@ export function AddMemberModal({open,setOpen,setUsersRows}) {
               data={dataUser}
               setCursos={setCursosSelected}
               cursos={cursosSelected}
+              setPermissions={setPermissions}
+              permissions={permissions}
               email={email}
+              isAddClient={isAddClient}
             />
 
           </GridContainer>

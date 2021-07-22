@@ -6,6 +6,8 @@ export function onAddUserData({data,createCompany,currentUser,setCurrentUser,set
 
     let formattedData = {...data,status:'Ativo'}
     formattedData.name = wordUpper((formattedData.name.trim()).split(" "))
+    formattedData.razao = formattedData?.company?.razao
+    formattedData.cpfOrCnpj = formattedData?.company?.cpfOrCnpj
 
     console.log('final',formattedData)
     setLoad(true)

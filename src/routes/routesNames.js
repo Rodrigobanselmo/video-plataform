@@ -5,15 +5,15 @@ export const VERIFY_EMAIL = '/verificar-email';
 
 export const ADMIN = `${DASHBOARD}/admin`;
 export const HOME_ADMIN = `${ADMIN}/home`;
-export const TEAM = `${ADMIN}/equipe`;
+export const CLIENT_ADMIN = `${ADMIN}/client`;
 
 export const CURSOS = `${DASHBOARD}/cursos`;
 export const CURSO_INFO = `${DASHBOARD}/cursos/:cursoId`;
 export const VIDEO_ROUTE = `${DASHBOARD}/video`;
 export const VIDEO = `${VIDEO_ROUTE}/:cursoId/:moduleId?/:classId?`;
-export const TEAM_CLIENT = `${DASHBOARD}/equipe`;
+export const TEAM = `${DASHBOARD}/equipe`;
 
-
+export const TEAM_ADMIN = `${ADMIN}/equipe`;
 export const ALL_VIDEO = `${ADMIN}/video`;
 export const DOWNLOAD = `${ADMIN}/download`;
 export const CALENDAR_ADMIN = `${ADMIN}/calendar`;

@@ -2,12 +2,24 @@ import React from 'react'
 import styled,{css} from "styled-components";
 import Skeleton from '@material-ui/lab/Skeleton';
 
+const TotalText = styled.span`
+    opacity:0.7;
+`;
+
+
+const Container = styled.div`
+  padding-top: 10px;
+  display: flex;
+  flex-direction:row;
+  justify-content:flex-end;
+`;
+
+
 const VisualizeMore = styled.p`
   text-align: right;
-  padding-top: 10px;
   display:block;
   width: fit-content;
-  margin-left: auto;
+  margin-left: 20px;
   cursor:pointer;
 
   &:hover {
@@ -18,14 +30,11 @@ const VisualizeMore = styled.p`
   }
 `;
 
-export function LoadMoreTableCells() {
+export function LoadMoreTableCells({shown,total,handleMore}) {
   const [load, setLoad] = React.useState(false)
 
-  function handleMore() {
-    setLoad(true)
-    setTimeout(() => {
-      setLoad(false)
-    }, 1000);
+  function handleMoreCells() {
+    handleMore(setLoad)
   }
 
   return (
@@ -33,7 +42,10 @@ export function LoadMoreTableCells() {
       {load?
         <LoadSkeleton/>
       :
-        <VisualizeMore onClick={handleMore}>Visualizar mais</VisualizeMore>
+        <Container>
+          {shown&&total&&<TotalText>Total: {shown}/{total}</TotalText>}
+          {handleMore && <VisualizeMore onClick={handleMoreCells}>Visualizar mais</VisualizeMore>}
+        </Container>
       }
     </>
   )

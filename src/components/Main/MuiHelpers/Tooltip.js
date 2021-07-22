@@ -1,4 +1,4 @@
-import {Tooltip} from '@material-ui/core';
+import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles } from '@material-ui/core/styles';
 import Fade from '@material-ui/core/Fade';
 

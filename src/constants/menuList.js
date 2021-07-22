@@ -1,4 +1,4 @@
-import {TEAM,HOME_ADMIN, VERIFY_EMAIL, CURSOS, TEAM_CLIENT} from '../routes/routesNames'
+import {TEAM,HOME_ADMIN, VERIFY_EMAIL, CLIENT_ADMIN, CURSOS} from '../routes/routesNames'
 
 export const menuList = [
 
@@ -23,20 +23,20 @@ export const menuList = [
   },
   {
     text: "Equipe",
-    visible:'admin',
+    visible:'all',
     route:TEAM,
     id:Math.random(),
   },
-  {
-    text: "Equipe",
-    visible:'client',
-    route:TEAM_CLIENT,
-    id:Math.random(),
-  },
+  // {
+  //   text: "Equipe",
+  //   visible:'client',
+  //   route:TEAM_CLIENT,
+  //   id:Math.random(),
+  // },
   {
     text: "Clientes",
     visible:'admin',
-    route: VERIFY_EMAIL,
+    route: CLIENT_ADMIN,
     id:Math.random(),
   },
   {

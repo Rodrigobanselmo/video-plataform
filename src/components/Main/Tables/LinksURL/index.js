@@ -1,5 +1,7 @@
-import { Fade, IconButton, Tooltip } from '@material-ui/core';
 import React from 'react'
+import Fade from '@material-ui/core/Fade';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
 import styled,{css} from "styled-components";
 import { Icons } from '../../../Icons/iconsDashboard';
 import { AvatarView } from '../../Avatar';
@@ -13,6 +15,8 @@ import LinkIcon from '@material-ui/icons/Link';
 import Lottie from 'react-lottie';
 import copyJson from '../../../../assets/animations/copy.json';
 import { useNotification } from '../../../../context/NotificationContext';
+import { useDeleteUsers } from '../../../../services/hooks/del/useDeleteUsers';
+import { IconLoadButton } from '../elements/IconLoadButton';
 
 const ContainerTable = styled.div`
   padding-right:54px;
@@ -171,12 +175,24 @@ const Container = styled.div`
 export function LinksURLTable({isLoading,data,filter=true}) {
 
   const notification = useNotification();
+  // const mutation = useDeleteUsers()
   const DATA = data.filter(i=>(i?.link && !i?.email));
 
   function handleCopy(link) {
     navigator.clipboard.writeText(link)
     notification.success({message:'Link copiado com sucesso',modal:true})
   }
+
+  function handleMore(setLoad) {
+    setLoad(true)
+    setTimeout(() => {
+      setLoad(false)
+    }, 1000);
+  }
+
+  // function handleDelete(user) {
+  //   mutation.mutateAsync(user)
+  // }
 
 
   return (
@@ -207,15 +223,24 @@ export function LinksURLTable({isLoading,data,filter=true}) {
                 </thead>
                   <tbody>
                     {DATA.map((user) => {
-                      const curso = user.cursos.map(item=>{
-                        if (item?.epi) {
-                          const epis = item.epi.map(epi=>{
-                            return epi.name
-                          }).join(', ')
-                          return `${item.name} (${epis})`
-                        }
-                        return `${item.name}`
-                      }).join(', ')
+
+                      const cursosText = () => {
+                        if (!user?.availableCursos) return user.cursos.map(item=>{
+                          if (item?.epi) {
+                            const epis = item.epi.map(epi=>{
+                              return epi.name
+                            }).join(', ')
+                            return `${item.name} (${epis})`
+                          }
+                          return `${item.name}`
+                        }).join(', ')
+
+                        return user.availableCursos.map(item=>{
+                          return `${item.name} (${item.quantity})`
+                        }).join(', ')
+                      }
+
+                      const curso = cursosText()
 
                       return (
                         <tr key={user.uid}>
@@ -240,9 +265,9 @@ export function LinksURLTable({isLoading,data,filter=true}) {
                           </td>
                           <td className='clear' style={{position:'absolute',right:30,top:'calc(50% - 25px)'}}>
                             <BootstrapTooltip title={`Revogar acesso a este usuário, o qual você receberá de volta os cursos que foram disponibilizados a ele.`} styletooltip={{transform: 'translateY(10px)'}}>
-                              <IconButton aria-label={'delete'}>
+                              <IconLoadButton useMutation={useDeleteUsers} user={user} aria-label={'delete'}>
                                 <IconDelete type={'Trash'} />
-                              </IconButton>
+                              </IconLoadButton>
                             </BootstrapTooltip>
                           </td>
                         </tr>
@@ -251,10 +276,10 @@ export function LinksURLTable({isLoading,data,filter=true}) {
                   </tbody>
               </table>
             </Container>
-            <LoadMoreTableCells/>
+            <LoadMoreTableCells handleMore={handleMore} shown={DATA.length} total={DATA.length}/>
           </>
         ) : (
-          <MissingData text={<p>Nenhum link disponivel  <br/>até o momento</p>}/>
+          <MissingData text={'Nenhum link disponivel  // até o momento'}/>
         )
       ) : (
         <LoadTable rows={5} columns={5}/>

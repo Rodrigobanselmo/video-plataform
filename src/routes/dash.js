@@ -1,19 +1,37 @@
-import { HomeAdmin,Home,Team,Calendar,Perfil,Profession,AllClients,CalendarConector,Download,Video,AllVideo,Cursos,CursoInfo } from '../containers';
+import {
+  HomeAdmin,
+  Home,
+  Team,
+  Client,
+  Video,
+  AllVideo,
+  Cursos,
+  CursoInfo,
+  Perfil,
+
+  Download,
+  Calendar,
+  AllClients,
+  CalendarConector,
+  Profession,
+} from '../containers';
 import {
   HOME_ADMIN,
   DASHBOARD,
   TEAM,
+  CLIENTS,
+  VIDEO,
+  ALL_VIDEO,
+  CURSOS,
+  CURSO_INFO,
+  CLIENT_ADMIN,
+
   CALENDAR_ADMIN,
   ADMIN_PERFIL,
   ADMIN_PROFESSION,
   ADMIN_PERFIL_EDIT,
-  CLIENTS,
   CALENDAR_CONECTOR,
   DOWNLOAD,
-  VIDEO,
-  ALL_VIDEO,
-  CURSOS,
-  CURSO_INFO
 } from './routesNames'
 
 const routes = [
@@ -47,6 +65,19 @@ const routes = [
     component: HomeAdmin,
     admin:true,
   },
+  {
+    path: CLIENT_ADMIN,
+    component: Client,
+    admin:true,
+  },
+
+
+
+
+
+
+
+
   {
     path: ADMIN_PERFIL,
     component: Perfil,

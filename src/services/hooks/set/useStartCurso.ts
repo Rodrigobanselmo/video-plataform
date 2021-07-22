@@ -78,9 +78,11 @@ export async function setStudent(data: any, currentUser: any) {
     return { cursoId: curso.id, newCursos };
   }
 
+  // pega o curso disponibilizado ou started
   if (userSnap.data()?.cursos) {
-    const cursos = userSnap.data()?.cursos; // pega o cursp
-    const index = cursos.findIndex((i: any) => i.id === data.id); // TODO: && !i?.data || pois nao pode ter o array data, tem que ter u modal para definir epis  ----> acha index no array de cursos
+    const cursos = userSnap.data()?.cursos;
+
+    const index = cursos.findIndex((i: any) => i.id === data.id);
     if (index >= 0) {
       // se index existir
       if (cursos[index]?.status === 'started') {
@@ -96,6 +98,23 @@ export async function setStudent(data: any, currentUser: any) {
       return { error: 'Você não possui este curso.' };
     }
   }
+
+  // pega o curso comprado // TODO preciso averiguar como vou fazer para adicionar cursos com availableCursos sem epi definido
+  // if (userSnap.data()?.availableCursos) {
+  //   const cursos = userSnap.data()?.availableCursos;
+
+  //   const index = cursos.findIndex((i: any) => i.id === data.id);
+  //   if (index >= 0) {
+  //     // se index existir
+  //     if (cursos[index]?.quantity) {
+  //       // se possui quantidade maior que 0 de cursos
+  //       const response = await onAddCurso({ cursos, index }); // se o curso existe e possui quantidade maior que 0 ele vai criar students e remover uma unidade de curso
+  //       return response;
+  //     }
+  //     return { error: 'Você não possui este curso.' };
+  //   }
+  // }
+
   return { error: 'Você não possui este curso.' };
 }
 

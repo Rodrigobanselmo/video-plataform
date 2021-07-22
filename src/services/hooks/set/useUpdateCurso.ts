@@ -64,12 +64,7 @@ function onNewStudentDone(data: any, stateStudent: any) {
     newState.position = `${moduleIndex}/${classIndex}`;
   }
 
-  // newState.nextModule = nextModule?.id ?? 'lastModule';
-  // newState.nextClass = nextClass?.id ?? 'lastModule';
-
-  // newState.position = `${nextModule?.id ? moduleIndex : 0}/${
-  // nextClass?.id ? classIndex : 0
-  // }`;
+  // edit user percentage
 
   return { ...newState };
 }
@@ -83,14 +78,26 @@ function later(delay: number) {
 export async function setUpdateCurso(
   data: any,
   stateStudent: any,
+  currentUser: any,
   dispatch: any,
 ) {
   const newStudent =
     'classIndex' in data ? onNewStudentDone(data, stateStudent) : data; // se nao tem classndex, data quer dizer que é o valor de module (dado persiste de students)
   const studentsRef = db.collection('students');
+  const userRef = db.collection('users').doc(currentUser.uid);
   dispatch({ type: 'MODULE_WRITE', payload: newStudent }); // salva no module dispacth para caso caiu internet ele posso recuperar
 
   await studentsRef.doc(newStudent.id).set(newStudent);
+  await userRef.update({
+    // para editar porcetagem do curso e enviar para back
+    cursos: [
+      ...currentUser.cursos.map((curso: any) =>
+        curso.id === newStudent.cursoId && curso.status === 'started'
+          ? { ...curso, percentage: newStudent.percentage }
+          : curso,
+      ),
+    ],
+  });
   console.log('newStudent', newStudent);
   console.log('userMutation', data);
   return { newStudent, data };
@@ -98,10 +105,12 @@ export async function setUpdateCurso(
 
 export function useUpdateCurso(cursoId: string) {
   const dispatch = useDispatch();
+  const { currentUser } = useAuth();
   const student = queryClient.getQueryData<any>(['student', cursoId]);
 
   return useMutation(
-    async (data) => setUpdateCurso(data, student.student[0], dispatch),
+    async (data) =>
+      setUpdateCurso(data, student.student[0], currentUser, dispatch),
     {
       onSuccess: (data: any) => {
         console.log('onSuccess', data);

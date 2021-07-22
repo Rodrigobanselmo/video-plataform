@@ -19,8 +19,10 @@ import { SIGN } from '../../../routes/routesNames';
 import { useMutation } from 'react-query';
 import { db } from '../../../lib/firebase.prod';
 import { useAuth } from '../../../context/AuthContext';
-import { IconButton } from '@material-ui/core';
+import IconButton from '@material-ui/core/IconButton';
 import { BootstrapTooltip } from '../../Main/MuiHelpers/Tooltip';
+import { queryClient } from '../../../services/queryClient';
+import { v4 } from 'uuid';
 // import {v4} from "uuid";
 
 
@@ -140,28 +142,44 @@ function getType(docData) {
   return 'Padrão'
 }
 
-function appendData(formData,cursos,data,user) {
+
+
+  function appendData(formData,cursos,permissions,data,user,isAddClient) {
   const array = []
   const companyId = user.companyId
 
   Object.keys(formData).map((key) => { //.sort((a, b) => a - b)
 
     var DATA = {
-      companyId,
+      companyId:isAddClient?v4():companyId,
       status: 'Pendente',
-      access: 'admin',
+      access: isAddClient?'client':user.access,
       uid:`${Math.random().toString(36).slice(2, 10)}${Math.random().toString(36).slice(2, 10)}${Math.random().toString(36).slice(2, 10)}`
     }
 
     DATA.createdAt = new Date().getTime();
     DATA.permission = [];
+    DATA.createdByAdmin = !!isAddClient;
+    if (!user.access === 'admin' || !isAddClient) DATA.createdAtClient = new Date().getTime();
 
     if (formData[key].includes(SIGN)) {
       DATA.link = formData[key]
       DATA.code = formData[key].split('?code=')[1]
     } else DATA.email = formData[key].toLowerCase().trim()
 
-    Object.keys(cursos).map((keyCurso)=>{ //adicinar cursos
+    Object.keys(permissions).map((keyPermission)=>{ //adicinar permissions
+      if (permissions[keyPermission]) {
+        const keySplit = keyPermission.split('--')
+        const cursoIndex = keySplit[0]
+        const permission = keySplit[1]
+
+        if (cursoIndex == key && cursoIndex !== 'quantity' )  {
+          DATA.permission.push(permission)
+        }
+      }
+    })
+
+    if (!isAddClient) Object.keys(cursos).map((keyCurso)=>{ //adicinar cursos
 
       if (cursos[keyCurso]) { // se curso estiver selecionado
 
@@ -170,6 +188,7 @@ function appendData(formData,cursos,data,user) {
         const cursoIndex = keySplit[0]
         const cursoId = keySplit[1]
         const isEPI = Boolean(keySplit[2])
+
 
         if (cursoIndex == key && !isEPI)  { //se nao tem epi
           const dataCursos = DATA['cursos'] ? DATA['cursos'] : []
@@ -194,6 +213,52 @@ function appendData(formData,cursos,data,user) {
 
     })
 
+    if (isAddClient) Object.keys(cursos).map((keyCurso)=>{ //adicinar cursos // cursos é o state que tem ['email.index--{}--epi']
+      DATA.createdAtAdmin = new Date().getTime();
+      if (cursos[keyCurso]) { // se curso estiver selecionado
+
+        const keySplit = keyCurso.split('--')
+        const cursosAllData = queryClient.getQueryData('cursos');
+
+        const cursoIndex = keySplit[0]
+        const cursoId = keySplit[1]
+
+        if (cursoIndex == key)  {
+          const availableCursos = DATA['availableCursos'] ? DATA['availableCursos'] : []
+          const CURSO = cursosAllData[cursosAllData.findIndex(i=>i.id==cursoId)]
+          if (availableCursos.findIndex(i=>i.id == cursoId) === -1) {
+            DATA['availableCursos'] = [...availableCursos,{id:cursoId,name:CURSO.name,quantity:cursos[keyCurso]}]
+          }
+
+          if (CURSO?.subCursos) {
+            let count = 0;
+            const CursoAvailableIndex = DATA['availableCursos'].findIndex(i=>i.id == cursoId); // `email.index--key`
+            const CursoAvailableData = []; // `email.index--key`
+            Object.keys(permissions).map((keyPermission) => { //`quantity--${email.index}--${curso.id}--${price}`
+              const keyIsSameIndex = keyPermission.split('--')[1] == key;
+              const keyPrice = keyPermission.split('--')[3];
+              const keyCursoIdData = keyPermission.split('--')[2];
+              if (
+                keyPermission.split('--').length == 4 &&
+                keyIsSameIndex &&
+                keyCursoIdData == cursoId &&
+                permissions[keyPermission] &&
+                permissions[keyPermission] != 0
+              ) {
+                CursoAvailableData.push({price:keyPrice,quantity:permissions[keyPermission]})
+                count = Number(count) + Number(permissions[keyPermission])
+              }
+            })
+          DATA['availableCursos'][CursoAvailableIndex].data = [...CursoAvailableData]
+          DATA['availableCursos'][CursoAvailableIndex].quantity = count
+
+          }
+        }
+
+      }
+
+    })
+
     if (data[`${key}--cpf`]) DATA['cpf'] = formatCPFeCNPJeCEPeCNAE(data[`${key}--cpf`])
     if (data[`${key}--name`]) DATA['name'] = wordUpper((data[`${key}--name`].trim()).split(" "))
 
@@ -201,13 +266,15 @@ function appendData(formData,cursos,data,user) {
     DATA['creation'] = getCreation(DATA)
 
     if (DATA?.cursos) array.push(DATA)
+    if (DATA?.availableCursos) array.push(DATA)
+    console.log('DATA',DATA)
 
   });
   return array
 
 }
 
-export const AddUserData = React.memo(({ cursos, setCursos, setEmail, data, setData, mutation, onClose }) => {
+export const AddUserData = React.memo(({ isAddClient, cursos, setCursos, setEmail, data, setData, mutation, onClose,setPermissions,permissions }) => {
   const URL = 'link-url';
   const {currentUser} = useAuth();
   const [emails, setEmails] = useState(['', '']);
@@ -238,6 +305,20 @@ export const AddUserData = React.memo(({ cursos, setCursos, setEmail, data, setD
         )
           isEPIMissing = true;
       });
+
+      if (isAddClient) { //se for pagina de addicionar clientes
+        Object.keys(permissions).map((key) => { //`quantity--${email.index}--${curso.id}--${price}`
+          const keyIsSameIndex = key.split('--')[1] == path; // `email.index--key`
+          console.log('permissions[key]',permissions)
+          if (
+            key.split('--').length == 4 &&
+            keyIsSameIndex &&
+            permissions[key] &&
+            permissions[key] != 0
+          )
+            isEPIMissing = false;
+        })
+      }
 
       if (isEPIMissing) {
         return createError({
@@ -305,9 +386,15 @@ export const AddUserData = React.memo(({ cursos, setCursos, setEmail, data, setD
         await Promise.all(Object.keys(formData).map(async (key) => { //.sort((a, b) => a - b)
           if (formData[key] && !formData[key].includes(SIGN)) {
             const usersRef = db.collection('users');
-            const response = await usersRef.where('email', '==', formData[key]).get()
+            const invitesRef = db.collection('invites');
+            const responseUsers = await usersRef.where('email', '==', formData[key]).get()
+            const responseInvites = await invitesRef.where('email', '==', formData[key]).get()
 
-            response.forEach(function (doc) {
+            responseUsers.forEach(function (doc) {
+              EMAIL_KEY.push(key)
+            })
+
+            responseInvites.forEach(function (doc) {
               EMAIL_KEY.push(key)
             })
 
@@ -318,10 +405,10 @@ export const AddUserData = React.memo(({ cursos, setCursos, setEmail, data, setD
           throw EMAIL_KEY
         }
 
-        const DATA = appendData(formData,cursos,data,currentUser)
+        const DATA = appendData(formData,cursos,permissions,data,currentUser,isAddClient)
 
-
-        await mutation.mutateAsync(DATA)
+        const newQuantity = permissions
+        await mutation.mutateAsync({DATA,newQuantity})
         onClose()
 
         // console.log('Data',DATA)
@@ -345,7 +432,7 @@ export const AddUserData = React.memo(({ cursos, setCursos, setEmail, data, setD
         }
       }
     },
-    [cursos, data, emails],
+    [cursos, data, emails,permissions],
   );
 
   function handleAddEmail() {
@@ -376,8 +463,13 @@ export const AddUserData = React.memo(({ cursos, setCursos, setEmail, data, setD
       Object.keys(data).map((key) => {
         if (key.split('--')[0] === index.toString()) delete newData[key];
       });
+      const newPermissions = { ...permissions };
+      Object.keys(permissions).map((key) => {
+        if (key.split('--')[0] === index.toString()) delete newPermissions[key];
+      });
       setData(newData);
       setCursos(newCursos);
+      setPermissions(newPermissions);
     }
     setEmail((email) => ({ ...email, value: e.target.value }));
   }
@@ -399,6 +491,12 @@ export const AddUserData = React.memo(({ cursos, setCursos, setEmail, data, setD
         if (key.split('--')[0] === index.toString()) delete newData[key];
       });
 
+      const newPermissions = { ...permissions };
+      Object.keys(permissions).map((key) => {
+        if (key.split('--')[0] === index.toString()) delete newPermissions[key];
+      });
+
+      setPermissions(newPermissions);
       setEmail({ value:'', index:null });
       setEmails(newEmails);
       setData(newData);
