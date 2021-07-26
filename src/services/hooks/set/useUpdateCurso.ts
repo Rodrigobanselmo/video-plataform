@@ -1,3 +1,4 @@
+/* eslint-disable no-lonely-if */
 /* eslint-disable no-throw-literal */
 /* eslint-disable array-callback-return */
 /* eslint-disable import/no-cycle */
@@ -25,43 +26,65 @@ function onNewStudentDone(data: any, stateStudent: any) {
     nextClass,
     classIndex,
     moduleIndex,
+    testData,
   } = data;
   const newState = { ...stateStudent };
 
-  // adicionar percentage
-  if (newState[`${cursoId}//${moduleId}//${classId}`])
-    newState[`${cursoId}//${moduleId}//${classId}`] = {
-      ...newState[`${cursoId}//${moduleId}//${classId}`],
-      percentage: 100,
-    };
-  else newState[`${cursoId}//${moduleId}//${classId}`] = { percentage: 100 };
+  const isTest = !!testData;
 
-  // adicionar module percentage
-  if (newState.watched && newState.watched[moduleId])
-    newState.watched[moduleId] = [
-      ...newState.watched[moduleId].filter((i: any) => i !== classId),
-      classId,
-    ];
-  else newState.watched[moduleId] = [classId];
+  if (!isTest) {
+    // adicionar percentage
+    if (newState[`${cursoId}//${moduleId}//${classId}`])
+      newState[`${cursoId}//${moduleId}//${classId}`] = {
+        ...newState[`${cursoId}//${moduleId}//${classId}`],
+        percentage: 100,
+      };
+    else newState[`${cursoId}//${moduleId}//${classId}`] = { percentage: 100 };
 
-  let total = 0;
-  Object.values(newState.watched).map((i: any) => {
-    i.map((t: any) => {
-      total += 1;
+    // adicionar module percentage
+    if (newState.watched && newState.watched[moduleId])
+      newState.watched[moduleId] = [
+        ...newState.watched[moduleId].filter((i: any) => i !== classId),
+        classId,
+      ];
+    else newState.watched[moduleId] = [classId];
+
+    let total = 0;
+    Object.values(newState.watched).map((i: any) => {
+      i.map((t: any) => {
+        total += 1;
+      });
     });
-  });
-  newState.totalWatched = total;
-  newState.percentage = total / newState.numOfClasses;
+    newState.totalWatched = total;
+    newState.percentage = total / newState.numOfClasses;
+  } else {
+    // adicionar percentage
+
+    if (newState[`${cursoId}//${moduleId}//${classId}`]) {
+      const newTest = { ...newState[`${cursoId}//${moduleId}//${classId}`] };
+      newTest.data = [...newTest.data, ...testData.data];
+      newTest.percentage =
+        newTest.percentage === 100 ? 100 : testData.percentage;
+
+      newState[`${cursoId}//${moduleId}//${classId}`] = {
+        ...newTest,
+      };
+    } else {
+      newState[`${cursoId}//${moduleId}//${classId}`] = testData;
+    }
+  }
 
   // adicionar module last position //
-  newState.lastModule = moduleId;
-  newState.lastClass = classId;
+  if (!isTest || (isTest && testData.percentage === 100)) {
+    newState.lastModule = moduleId;
+    newState.lastClass = classId;
 
-  if (nextClass?.id && nextModule?.id) {
-    // se for ultima aula aqui é falso
-    newState.nextModule = nextModule.id;
-    newState.nextClass = nextClass.id;
-    newState.position = `${moduleIndex}/${classIndex}`;
+    if (nextClass?.id && nextModule?.id) {
+      // se for ultima aula aqui é falso
+      newState.nextModule = nextModule.id;
+      newState.nextClass = nextClass.id;
+      newState.position = `${moduleIndex}/${classIndex}`;
+    }
   }
 
   // edit user percentage

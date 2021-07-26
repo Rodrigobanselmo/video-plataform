@@ -44,6 +44,14 @@ align-items: flex-end;
 export const IconCog = styled(FaCog)`
 transform:rotate(${({rotatecog})=>rotatecog==='true'?30:0}deg);
 margin:0 7px 0 10px;
+flex-shrink:0;
+
+  @media screen and (max-width:700px) {
+    font-size: 10px;
+    padding:2px;
+    margin:0 3px 0 6px;
+  }
+
 `;
 
 export const PlayView = styled.div`

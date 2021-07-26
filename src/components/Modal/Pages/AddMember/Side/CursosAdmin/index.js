@@ -103,7 +103,7 @@ export function CursosSideBarAdmin({ email, isAdmin, setCursos, cursos, setPermi
           const quantity = 'Infinito';
 
           return (
-            <>
+            <div key={curso.id}>
               <ItemCurso image={cursoImage}>
                 <div className="image" alt={curso.name} />
                 <h1>{curso.name}</h1>
@@ -146,8 +146,7 @@ export function CursosSideBarAdmin({ email, isAdmin, setCursos, cursos, setPermi
                 permissions={permissions}
                 onQuantity={onQuantity}
               />
-
-            </>
+            </div>
           );
         })
       : null}

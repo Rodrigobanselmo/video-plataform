@@ -32,7 +32,7 @@ export default function CursoInfo() {
   useEffect(() => {
       if (!isLoading) setLoaderDash(false)
       if (!isLoading && data.length == 0) return history.push(CURSOS)
-}, [isLoading])
+  }, [isLoading])
 
   async function handleChangeRoute() {
     setLoaderDash(true)

@@ -253,9 +253,11 @@ export function MembersTable({isLoading,data,filter=true,isClient}) {
                           </BootstrapTooltip>
                           {(user?.status ==='Pendente') ? (
                             <BootstrapTooltip title={`Revogar acesso a este usuário, o qual você receberá de volta os cursos que foram disponibilizados a ele.`} styletooltip={{transform: 'translateY(10px)'}}>
-                              <IconLoadButton useMutation={useDeleteUsers} user={user} aria-label={'delete'}>
-                                <IconDelete />
-                              </IconLoadButton>
+                              <section>
+                                <IconLoadButton useMutation={useDeleteUsers} user={user} aria-label={'delete'}>
+                                  <IconDelete />
+                                </IconLoadButton>
+                              </section>
                             </BootstrapTooltip>
                             ) : (
                               <IconButton onClick={()=>handleOpenUser(user.uid)} aria-label={'IconArrowDown'}>

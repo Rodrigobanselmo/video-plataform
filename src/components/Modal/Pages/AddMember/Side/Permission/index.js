@@ -69,7 +69,7 @@ export function PermissionSelect({ email, setPermissions, permissions, isAdmin }
       {isAdmin && PERMISSIONS.map((permission,index) => {
         const checkPer = Boolean(permissions[`${email.index}--${permission.per}`]);
         return (
-          <BootstrapTooltip title={permission.message}>
+          <BootstrapTooltip key={permission.id} title={permission.message}>
             <EpiView
               className={index===PERMISSIONS.length-1?'last':''}
               las={permission.id}

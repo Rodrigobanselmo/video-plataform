@@ -24,7 +24,7 @@ import Fade from '@material-ui/core/Fade';
 import styled, {css} from "styled-components";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {isLocked} from './func'
-import { useSelector,useDispatch } from 'react-redux'
+import { useSelector,useDispatch, useStore } from 'react-redux'
 
 import FullScreen from "@material-ui/icons/Fullscreen";
 import { useParams,useHistory } from 'react-router-dom';
@@ -32,6 +32,7 @@ import { useNotification } from "../../context/NotificationContext";
 import { useUpdateCurso } from "../../services/hooks/set/useUpdateCurso";
 import { queryClient } from "../../services/queryClient";
 import { VIDEO_ROUTE } from "../../routes/routesNames";
+import { TestView } from "./testView";
 
 const ReactPlayerStyles = styled(ReactPlayer)`
   position: absolute;
@@ -94,12 +95,15 @@ export function VideoPlayer({curso}) {
   const [loading, setLoading] = React.useState(false);
   const [state, setState] = useState({...initialState});
   const [playbackRate, setPlaybackRate] = useState(1);
-
   const queryModules =  queryClient.getQueryData(['student', cursoId]);
-  const modules =  (queryModules && queryModules?.student) ? queryModules.student[0] : {};
-  // const modules = useSelector(state => state.modules)
-  // console.log('queryClient',queryModules)
-  const progress = useSelector(state => state.progress)
+  const modules =  (queryModules && queryModules?.student) ? queryModules.student[0] : {}; //student
+
+  // const progress = useSelector(state => state.progress)
+  const store = useStore()
+  const progress = store.getState().progress
+
+  const refProgress = useRef(null);
+
   const notification = useNotification();
   const history = useHistory()
   const dispatch = useDispatch()
@@ -146,6 +150,20 @@ export function VideoPlayer({curso}) {
 
   const totalDuration = format(duration);
 
+
+  const isLastClass = classIndex == curso.modules[moduleIndex].classes.length - 1
+
+  const nextModuleIndex = isLastClass
+    ? moduleIndex+1
+    : moduleIndex;
+
+  const nextClassIndex = isLastClass
+    ? 0
+    : classIndex+1;
+
+  const nextModule = curso.modules[nextModuleIndex]
+  const nextClass = nextModule ? nextModule.classes[nextClassIndex] : 'lastModule'
+
   useEffect(() => {
 
     setState({...state,ready:false,playing:false});
@@ -155,7 +173,7 @@ export function VideoPlayer({curso}) {
       setPlaybackRate(playbackRate)
       console.log('rate')
     }, 1000);
-
+    refProgress.current = progress
     return ()=>clearTimeout(time)
   }, [moduleId,classId])
 
@@ -210,7 +228,7 @@ export function VideoPlayer({curso}) {
 
 
 
-    const pgr = progress[`${cursoId}//${moduleId}//${classId}`] ? progress[`${cursoId}//${moduleId}//${classId}`].seconds : 0
+    const pgr = refProgress.current[`${cursoId}//${moduleId}//${classId}`] ? refProgress.current[`${cursoId}//${moduleId}//${classId}`].seconds : 0
 
     if (Math.floor(changeState.playedSeconds) % 10 == 0 && save == 0 && Math.floor(changeState.playedSeconds) > pgr && percentage<100) {
 
@@ -223,7 +241,7 @@ export function VideoPlayer({curso}) {
           percentage:changeState.played,
         }
       }
-
+      refProgress.current = {...refProgress.current,...data}
       dispatch({ type: 'PROGRESS_UPDATE', payload: data }) //PROGRESS_DISPATCH
     } else {
       save = 0;
@@ -275,8 +293,8 @@ export function VideoPlayer({curso}) {
   };
 
   const handleMouseMove = () => {
-    controlsRef.current.style.opacity = "1";
-    controlsRef.current.style.cursor = 'default';
+    if (controlsRef.current) controlsRef.current.style.opacity = "1";
+    if (controlsRef.current) controlsRef.current.style.cursor = 'default';
     count = 0;
   };
 
@@ -316,19 +334,6 @@ export function VideoPlayer({curso}) {
 
   const handleNextVideo = (next) => {
 
-    const isLastClass = classIndex == curso.modules[moduleIndex].classes.length - 1
-
-    const nextModuleIndex = isLastClass
-      ? moduleIndex+1
-      : moduleIndex;
-
-    const nextClassIndex = isLastClass
-      ? 0
-      : classIndex+1;
-
-    const nextModule = curso.modules[nextModuleIndex]
-    const nextClass = nextModule ? nextModule.classes[nextClassIndex] : 'lastModule' // se for ultimo modilo
-
     const lock = isLocked(modules,nextClass,nextModuleIndex,nextClassIndex)
     if (lock === 'lastModule') return notification.success({message:'Você não possui mais aulas'})
     if (lock !== 'ok' && next != 'endNext') return notification.warn({message:lock})
@@ -359,23 +364,10 @@ export function VideoPlayer({curso}) {
       )
     ) return null
 
-    const isLastClass = classIndex == curso.modules[moduleIndex].classes.length - 1
-
-    const nextModuleIndex = isLastClass
-      ? moduleIndex+1
-      : moduleIndex;
-
-    const nextClassIndex = isLastClass
-      ? 0
-      : classIndex+1;
-
-    const nextModule = curso.modules[nextModuleIndex]
-    const nextClass = nextModule ? nextModule.classes[nextClassIndex] : 'lastModule'
-
     await mutation.mutateAsync({cursoId,moduleId,classId,nextModule,nextClass,classIndex:nextClassIndex,moduleIndex:nextModuleIndex})
+    dispatch({ type: 'PROGRESS_DONE', payload: `${cursoId}//${moduleId}//${classId}` }) //PROGRESS_DISPATCH
 
     // dispatch({ type: 'MODULE_DONE', payload: {cursoId,moduleId,classId,nextModule,nextClass,classIndex:nextClassIndex,moduleIndex:nextModuleIndex} }) //PROGRESS_DISPATCH
-    // dispatch({ type: 'PROGRESS_DONE', payload: `${cursoId}//${moduleId}//${classId}` }) //PROGRESS_DISPATCH
   };
 
   useKeypress([' ','r','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'], (e) => {
@@ -417,75 +409,98 @@ export function VideoPlayer({curso}) {
 
   return (
         <div style={{width:'100%'}}>
-          <PlayerWrapper
-            onMouseMove={handleMouseMove}
-            onMouseLeave={hanldeMouseLeave}
-            ref={playerContainerRef}
-          >
-            <ReactPlayerStyles
-              ref={playerRef}
-              width="100%"
-              height="100%"
-              url={actualClass.video}
-              // url={'https://www.youtube.com/watch?v=jhZf_nZ6XA4&ab_channel=PrometalEPIs'}
-              // url={'https://r1---sn-bg07dn6d.c.drive.google.com/videoplayback?expire=1624723013&ei=BRbXYLKMD4S3lAPknYOYCw&ip=2804:14d:4c85:9883:4990:24b8:c43f:2c1c&cp=QVRHVkhfUlBPRFhPOkdtd2VKMXpmcTN4YUFYQzN0SGlvRzN3RjRQNUtwdldEUU5Fak05WmpjbHU&id=c54e7706caaab4d4&itag=22&source=webdrive&requiressl=yes&mh=Ax&mm=32&mn=sn-bg07dn6d&ms=su&mv=u&mvi=1&pl=48&sc=yes&ttl=transient&susc=dr&driveid=1SFAJoeJKridToyArhRRFZRgXLoWVvaWJ&app=explorer&mime=video/mp4&vprv=1&prv=1&dur=83.150&lmt=1624030804692744&mt=1624707969&sparams=expire,ei,ip,cp,id,itag,source,requiressl,ttl,susc,driveid,app,mime,vprv,prv,dur,lmt&sig=AOq0QJ8wRQIgOkuCgdPAbrSXI0E-WoJwgN_G_elXyOsWoowB9Jiy57QCIQCWc5GcuwenzzyuTUlsgxnqgKqtQuZYBG289eQF2qAgFg==&lsparams=mh,mm,mn,ms,mv,mvi,pl,sc&lsig=AG3C_xAwRgIhAJLvChJuYSP1kdBGLAX7ScrdQP5zyu4XxuK2VshtwGZrAiEA3DHMMQvK0LHDHZR-tJK8OatQGbtZofCbDhV3v877n8Q=&cpn=tfzlDZRWu1Tf0r1p&c=WEB_EMBEDDED_PLAYER&cver=1.20210623.1.0'}
-              // url={'https://www.youtube.com/watch?v=N2OG1w6bGFo&ab_channel=GoogleCloudTech'}
-              pip={pip}
-              playing={playing}
-              controls={false}
-              light={light}
-              loop={loop}
-              playbackRate={playbackRate}
-              volume={volume}
-              muted={muted}
-              onBuffer={()=>setLoading(true)}
-              onBufferEnd={()=>setLoading(false)}
-              progressInterval={250}
-              onProgress={handleProgress}
-              onReady={onReady}
-              onEnded={onEndVideo}
-              // config={{
-              //   youtube: {
-              //     playerVars: { start:100 }
-              //   },
-              // }}
-            />
-            {loading&&<CircularProgress style={{position:'absolute',top:'calc(50% - 40px)',left:'calc(50% - 30px)'}} size={60}/>}
-            <Controls
-              ref={controlsRef}
-              hideMark={percentage == 100}
-              // progress={progress[`${cursoId}//${moduleId}//${classId}`]}
-              progressRef={progressRef}
-              progressTimeRef={progressTimeRef}
-              progressLoadRef={progressLoadRef}
-              progressMark={progressMark}
-              playerRef={playerRef}
-              format={format}
-              onSeek={handleSeekChange}
-              onSeekMouseDown={handleSeekMouseDown}
-              onSeekMouseUp={handleSeekMouseUp}
-              onRewind={handleRewind}
-              onPlayPause={handlePlayPause}
-              onFastForward={handleFastForward}
-              playing={playing}
-              played={played}
-              elapsedTime={elapsedTime}
-              totalDuration={totalDuration}
-              muted={muted}
-              onVolumeChange={handleVolumeChange}
-              playbackRate={playbackRate}
-              onPlaybackRateChange={handlePlaybackRate}
-              onToggleFullScreen={toggleFullScreen}
-              volume={volume}
+          {actualClass?.type === 'test' ?
+              <>
+                <PlayerWrapper>
+                  <TestView
+                    actualClass={actualClass}
+                    student={modules}
+                    nextModule={nextModule}
+                    nextClass={nextClass}
+                    classIndex={nextClassIndex}
+                    moduleIndex={nextModuleIndex}
+                  />
+                </PlayerWrapper>
+                <BottomControls
+                  autoplay={autoplay}
+                  setAutoplay={setAutoplay}
+                  handleNextVideo={handleNextVideo}
+                  handlePreviewVideo={handlePreviewVideo}
+                />
+              </>
+          :
+            <>
+              <PlayerWrapper
+                onMouseMove={handleMouseMove}
+                onMouseLeave={hanldeMouseLeave}
+                ref={playerContainerRef}
+              >
+                <ReactPlayerStyles
+                  ref={playerRef}
+                  width="100%"
+                  height="100%"
+                  url={actualClass.video}
+                  // url={'https://www.youtube.com/watch?v=jhZf_nZ6XA4&ab_channel=PrometalEPIs'}
+                  // url={'https://r1---sn-bg07dn6d.c.drive.google.com/videoplayback?expire=1624723013&ei=BRbXYLKMD4S3lAPknYOYCw&ip=2804:14d:4c85:9883:4990:24b8:c43f:2c1c&cp=QVRHVkhfUlBPRFhPOkdtd2VKMXpmcTN4YUFYQzN0SGlvRzN3RjRQNUtwdldEUU5Fak05WmpjbHU&id=c54e7706caaab4d4&itag=22&source=webdrive&requiressl=yes&mh=Ax&mm=32&mn=sn-bg07dn6d&ms=su&mv=u&mvi=1&pl=48&sc=yes&ttl=transient&susc=dr&driveid=1SFAJoeJKridToyArhRRFZRgXLoWVvaWJ&app=explorer&mime=video/mp4&vprv=1&prv=1&dur=83.150&lmt=1624030804692744&mt=1624707969&sparams=expire,ei,ip,cp,id,itag,source,requiressl,ttl,susc,driveid,app,mime,vprv,prv,dur,lmt&sig=AOq0QJ8wRQIgOkuCgdPAbrSXI0E-WoJwgN_G_elXyOsWoowB9Jiy57QCIQCWc5GcuwenzzyuTUlsgxnqgKqtQuZYBG289eQF2qAgFg==&lsparams=mh,mm,mn,ms,mv,mvi,pl,sc&lsig=AG3C_xAwRgIhAJLvChJuYSP1kdBGLAX7ScrdQP5zyu4XxuK2VshtwGZrAiEA3DHMMQvK0LHDHZR-tJK8OatQGbtZofCbDhV3v877n8Q=&cpn=tfzlDZRWu1Tf0r1p&c=WEB_EMBEDDED_PLAYER&cver=1.20210623.1.0'}
+                  // url={'https://www.youtube.com/watch?v=N2OG1w6bGFo&ab_channel=GoogleCloudTech'}
+                  pip={pip}
+                  playing={playing}
+                  controls={false}
+                  light={light}
+                  loop={loop}
+                  playbackRate={playbackRate}
+                  volume={volume}
+                  muted={muted}
+                  onBuffer={()=>setLoading(true)}
+                  onBufferEnd={()=>setLoading(false)}
+                  progressInterval={250}
+                  onProgress={handleProgress}
+                  onReady={onReady}
+                  onEnded={onEndVideo}
+                  // config={{
+                  //   youtube: {
+                  //     playerVars: { start:100 }
+                  //   },
+                  // }}
+                />
+                {loading&&<CircularProgress style={{position:'absolute',top:'calc(50% - 40px)',left:'calc(50% - 30px)'}} size={60}/>}
+                <Controls
+                  ref={controlsRef}
+                  hideMark={percentage == 100}
+                  // progress={progress[`${cursoId}//${moduleId}//${classId}`]}
+                  progressRef={progressRef}
+                  progressTimeRef={progressTimeRef}
+                  progressLoadRef={progressLoadRef}
+                  progressMark={progressMark}
+                  playerRef={playerRef}
+                  format={format}
+                  onSeek={handleSeekChange}
+                  onSeekMouseDown={handleSeekMouseDown}
+                  onSeekMouseUp={handleSeekMouseUp}
+                  onRewind={handleRewind}
+                  onPlayPause={handlePlayPause}
+                  onFastForward={handleFastForward}
+                  playing={playing}
+                  played={played}
+                  elapsedTime={elapsedTime}
+                  totalDuration={totalDuration}
+                  muted={muted}
+                  onVolumeChange={handleVolumeChange}
+                  playbackRate={playbackRate}
+                  onPlaybackRateChange={handlePlaybackRate}
+                  onToggleFullScreen={toggleFullScreen}
+                  volume={volume}
 
-            />
-          </PlayerWrapper>
-          <BottomControls
-            autoplay={autoplay}
-            setAutoplay={setAutoplay}
-            handleNextVideo={handleNextVideo}
-            handlePreviewVideo={handlePreviewVideo}
-          />
+                />
+              </PlayerWrapper>
+              <BottomControls
+                autoplay={autoplay}
+                setAutoplay={setAutoplay}
+                handleNextVideo={handleNextVideo}
+                handlePreviewVideo={handlePreviewVideo}
+              />
+            </>
+          }
         </div>
   );
 }

@@ -67,7 +67,7 @@ export function SideVideoBar({curso,show,...props}) {
       {curso.modules.map((module,index)=>{
 
         const watchedClasses = (modules?.watched && modules.watched[module.id]) ? modules.watched[module.id].length : 0
-        const totalClasses = module.classes.length
+        const totalClasses = module.classes.filter(i=>!i?.type).length
 
         return (
           <div key={module.id} >
@@ -93,12 +93,16 @@ export function SideVideoBar({curso,show,...props}) {
                     ? modules[`${curso.id}//${module.id}//${aula.id}`]?.percentage
                     : 0
 
+                  const isLast = module.classes.length == aulaIndex + 1
+                  const isTest = aula.type === 'test'
+                  const isNextTest = !isLast && module.classes[aulaIndex+1] && module.classes[aulaIndex+1].type === 'test'
+
                   return (
                     <AulaWrapper onClick={()=>handleSetClass(module.id,aula.id,isLocked(modules,aula,index,aulaIndex))} key={aula.id}>
                       <Circle >
                         <FillCircle active={classId==aula.id || percentage === 100}/>
                         <ShadowCircle selected={classId==aula.id}/>
-                        <Line active={percentage === 100} last={module.classes.length == aulaIndex + 1}/>
+                        <Line active={percentage === 100} last={isLast || isNextTest || isTest}/>
                       </Circle>
                       <Text active={percentage === 100}>{aula.name}</Text>
                       {isLocked(modules,aula,index,aulaIndex) !== 'ok' && <IconLock style={{fontSize:'14px'}}/>}

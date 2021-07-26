@@ -52,16 +52,6 @@ export const ContinueButton = styled(Button)`
       background-image: linear-gradient(-10deg, ${({theme})=>theme.palette.primary.main}, ${({theme})=>theme.palette.primary.light});
     `};
 
-    ${props => props.disable === 'true' && css`
-      border: 1px ${({theme})=>theme.palette.background.line} solid;
-      background: ${({theme})=>theme.palette.background.inactive};
-      opacity:1;
-      color:${({theme})=>theme.palette.primary.contrastText};
-      pointer-events: none;
-      &:hover {
-        background-color: ${({theme})=>theme.palette.background.inactive};
-      }
-    `};
 
     ${props => props.size === 'medium' && css`
       padding: 8px 12px;
@@ -80,6 +70,28 @@ export const ContinueButton = styled(Button)`
         color:${({theme})=>theme.palette.text.third};
         font-weight:${({theme})=>'normal'};
       `};
+    `};
+
+
+    ${props => props.secondary && css`
+      background-color: ${({theme})=>theme.palette.primary.light};
+      &:hover {
+        background-color: ${({theme})=>theme.palette.primary.light};
+        filter: brightness(0.95);
+        transition: all 0.2s ease;
+      }
+    `};
+
+
+    ${props => props.disable === 'true' && css`
+      border: 1px ${({theme})=>theme.palette.background.line} solid;
+      background: ${({theme})=>theme.palette.background.inactive};
+      opacity:1;
+      color:${({theme})=>theme.palette.primary.contrastText};
+      pointer-events: none;
+      &:hover {
+        background-color: ${({theme})=>theme.palette.background.inactive};
+      }
     `};
 
     > .MuiTouchRipple-root span {

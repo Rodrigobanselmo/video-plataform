@@ -52,7 +52,8 @@ export function CursosSideBar({ email, isAdmin, setCursos, cursos, setPermission
   const notification  = useNotification();
 
   const cursosAllData = queryClient.getQueryData('cursos');
-  const cursosUserData = isAdmin ?cursosAllData.filter(i=>i?.modules):currentUser?.availableCursos;
+  const cursosUserData = !isAdmin ?cursosAllData.filter(i=>i?.modules):currentUser?.availableCursos; // ?Infinito
+  // const cursosUserData = isAdmin ?cursosAllData.filter(i=>i?.modules):currentUser?.availableCursos;
 
   const handleCheck = (event, cursoId, quantity, onQuantity, hasSubCurso) => {
 
@@ -88,7 +89,7 @@ export function CursosSideBar({ email, isAdmin, setCursos, cursos, setPermission
           const check = Boolean(cursos[`${email.index}--${item.id}`]);
 
           function onQuantity(cursos) {
-            if (isAdmin) return 'Infinito' //se aqui vier arrai de cursos all
+            // if (isAdmin) return 'Infinito' // ?Infinito se aqui vier arrai de cursos all
             let count = 0;
             let countQuantity = 0;
             if (hasSubCurso) { //se tiver sub cursos como epi
@@ -130,7 +131,7 @@ export function CursosSideBar({ email, isAdmin, setCursos, cursos, setPermission
           const quantity = onQuantity(cursos);
 
           return (
-            <>
+            <div key={curso.id}>
               <ItemCurso image={cursoImage}>
                 <div className="image" alt={curso.name} />
                 <h1>{curso.name}</h1>
@@ -159,7 +160,7 @@ export function CursosSideBar({ email, isAdmin, setCursos, cursos, setPermission
                 onQuantity={onQuantity}
               />
 
-            </>
+            </div>
           );
         })
       : null}

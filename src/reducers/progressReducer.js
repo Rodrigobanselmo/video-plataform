@@ -11,11 +11,22 @@ export default (state = initialState, action) => {
         case 'PROGRESS_UPDATE':
         return {...state,...action.payload};
 
+        case 'PROGRESS_UPDATE_ANSWER':
+          var data = {...state}
+
+          if (data[action.payload.key]) {
+            data[action.payload.key] = {...data[action.payload.key],...action.payload.insert}
+          } else {
+            data[action.payload.key] = action.payload.insert
+          }
+          console.log('reducer data',data)
+        return {...state};
+
         case 'PROGRESS_LOGOUT':
         return {...initialState};
 
         case 'PROGRESS_DONE':
-        let data = {...state}
+        var data = {...state}
         data[action.payload] && delete data[action.payload]
 
         return {...data};

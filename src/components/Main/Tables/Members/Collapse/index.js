@@ -65,7 +65,7 @@ export function CollapseTable({userOpen,user}) {
               <PermissionView>
                 {PERMISSIONS.map(permission=>{
                   return (
-                    <PermissionItem>
+                    <PermissionItem key={permission.id}>
                       <p>{permission.name}</p>
                       <Checkbox
                         size='small'

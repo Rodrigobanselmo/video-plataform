@@ -23,11 +23,7 @@ const TitleSection = styled.h3`
   color:${({ theme }) => theme.palette.text.primary};
   font-size:${({ isAddClient }) => isAddClient? 22:16}px;
   margin:${({ isAddClient }) => isAddClient? '0 0 0 0':'20px 0 0px 0'};
-
-
-
 `;
-
 
 const EpiView = styled.div`
   display: flex;

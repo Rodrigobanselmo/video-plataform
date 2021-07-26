@@ -61,7 +61,10 @@ const NotificationProvider = (props) => {
         component={modal?.component ? modal.component : false}
         open={modal?.open && modal.open ? modal.open : false}
         onClick={modal.onClick}
-        onClose={modal.onClose}
+        onClose={()=>{
+          modal.onClosed()
+          modal.onClose()
+        }}
         type={modal?.type ? modal.type : false}
         buttonDirection={
           modal?.buttonDirection ? modal.buttonDirection : 'normal'
@@ -93,6 +96,7 @@ export const useNotification = () => {
       return dispatch({
         type: 'ADD_MODAL',
         payload: {
+          onClosed: () => dispatchAction('modalReset', {}),
           onClose: () => dispatchAction('modalReset', {}),
           onClick: () => dispatchAction('modalReset', {}),
           type: '',

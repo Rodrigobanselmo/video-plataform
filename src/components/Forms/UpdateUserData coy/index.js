@@ -23,7 +23,6 @@ import IconButton from '@material-ui/core/IconButton';
 import { BootstrapTooltip } from '../../Main/MuiHelpers/Tooltip';
 import { queryClient } from '../../../services/queryClient';
 import { v4 } from 'uuid';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 // import {v4} from "uuid";
 
 
@@ -80,7 +79,7 @@ const InputArea = styled.div`
   width: 100%;
   display: grid;
   grid-template-columns: 1fr;
-position:relative;
+
 `;
 
 export const IconEnd = styled(BsInfoCircle)`
@@ -273,7 +272,7 @@ function appendData(formData,cursos,permissions,data,user,isAddClient) {
 
 }
 
-export const AddUserData = React.memo(({ email, isAddClient, cursos, setCursos, setEmail, data, setData, mutation, onClose,setPermissions,permissions }) => {
+export const AddUserData = React.memo(({ isAddClient, cursos, setCursos, setEmail, data, setData, mutation, onClose,setPermissions,permissions }) => {
   const URL = 'link-url';
   const {currentUser} = useAuth();
   const [emails, setEmails] = useState(['', '']);
@@ -380,7 +379,7 @@ export const AddUserData = React.memo(({ email, isAddClient, cursos, setCursos, 
 
       try {
         await validation.validate(formData, { abortEarly: false });
-        if (Object.values(formData).filter(i=>i).length === 0) return alert('Preencha os campos')
+
         const EMAIL_KEY = [];
         await Promise.all(Object.keys(formData).map(async (key) => { //.sort((a, b) => a - b)
           if (formData[key] && !formData[key].includes(SIGN)) {
@@ -538,7 +537,7 @@ export const AddUserData = React.memo(({ email, isAddClient, cursos, setCursos, 
                 statusStart={isURL?'personalized':false}
                 startComponent={()=>
                   <BootstrapTooltip title={`Deletar link conpartilhavel.`} styletooltip={{transform: 'translateY(5px)'}}>
-                    <IconButton style={{margin:-5,marginRight:-10,zIndex:20,width:20,height:20}} onClick={() => handleDeleteURL(index)}  aria-label={'delete'}>
+                    <IconButton style={{margin:-5,marginRight:-10,width:20,height:20}} onClick={() => handleDeleteURL(index)}  aria-label={'delete'}>
                       <IconDelete style={{fontSize:17}} type={'Trash'} />
                     </IconButton>
                   </BootstrapTooltip>
@@ -564,7 +563,6 @@ export const AddUserData = React.memo(({ email, isAddClient, cursos, setCursos, 
                   ? { value: `${location}${item.split('-')[2]}` }
                   : {})}
               />
-              {(email?.index&&email?.index===`${index}`) && <KeyboardArrowRightIcon style={{fontSize:30,position:'absolute',right:-25,top:6}} type={'Trash'} />}
             </InputArea>
           );
         })}

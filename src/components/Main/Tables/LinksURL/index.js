@@ -265,9 +265,11 @@ export function LinksURLTable({isLoading,data,filter=true}) {
                           </td>
                           <td className='clear' style={{position:'absolute',right:30,top:'calc(50% - 25px)'}}>
                             <BootstrapTooltip title={`Revogar acesso a este usuário, o qual você receberá de volta os cursos que foram disponibilizados a ele.`} styletooltip={{transform: 'translateY(10px)'}}>
-                              <IconLoadButton useMutation={useDeleteUsers} user={user} aria-label={'delete'}>
-                                <IconDelete type={'Trash'} />
-                              </IconLoadButton>
+                              <div>
+                                <IconLoadButton useMutation={useDeleteUsers} user={user} aria-label={'delete'}>
+                                  <IconDelete type={'Trash'} />
+                                </IconLoadButton>
+                              </div>
                             </BootstrapTooltip>
                           </td>
                         </tr>

@@ -1,4 +1,4 @@
-import { fade } from "@material-ui/core";
+import { fade } from "@material-ui/core/styles";
 import styled, {css} from "styled-components";
 import {Icons} from '../../../../components/Icons/iconsDashboard'
 
@@ -35,6 +35,7 @@ export const InputsContainer = styled.div`
     width:100%;
     max-width:1000px;
     margin-bottom:20px;
+    /* height:100%; */
 `;
 
 export const Title = styled.h1`

@@ -33,6 +33,13 @@ export const BoxIcon = styled.div`
   filter: brightness(0.95);
 }
 
+  @media screen and (max-width:700px) {
+    span {
+      display: none;
+    }
+    height: 30px;
+    width: 30px;
+  }
 `;
 
 export const FullIcon = styled(CropLandscape)`
@@ -62,6 +69,12 @@ export const SliderButton = styled.div`
     background-color: ${({theme})=>theme.palette.primary.main};
   `}
 
+  @media screen and (max-width:700px) {
+    padding:2px;
+    width:60px;
+    height:20px;
+  }
+
 `;
 
 export const SliderInside = styled.div`
@@ -77,9 +90,18 @@ export const SliderInside = styled.div`
     transform:translateX(29px);
   `}
 
+  @media screen and (max-width:700px) {
+    width:32px;
+    height:16px;
+  }
+
 `;
 
 export const TextSlider = styled.span`
   color: #eee;
   margin-left: 16px;
+  @media screen and (max-width:700px) {
+    margin-left: 10px;
+  }
+
 `;

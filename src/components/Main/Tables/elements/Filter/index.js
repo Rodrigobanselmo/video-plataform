@@ -8,7 +8,7 @@ import InputSearch from '../../../../Dashboard/Components/Standard/Search';
 import {Icons} from '../../../../Icons/iconsDashboard';
 import useTimeOut from '../../../../../hooks/useTimeOut';
 import styled from "styled-components";
-import { useDebounce } from '../../../../../hooks/useDebounce';
+import { useDebounce } from '../../../../../hooks/useDebounceJs';
 
 const FilterComponents = styled.div`
     display:flex;

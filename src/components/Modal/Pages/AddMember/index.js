@@ -15,6 +15,7 @@ import { SideEmail } from './Side';
 import { useQuery } from 'react-query';
 import { db } from '../../../../lib/firebase.prod';
 import { useCreateUsers } from '../../../../services/hooks/set/useCreateUsers';
+import { UpdateUserData } from '../../../Forms/UpdateUserData';
 
 
 const InputsEmail = styled.div`
@@ -58,6 +59,7 @@ export const GridContainer = styled.div`
   justify-self: center;
   flex-direction:column;
   max-height:85vh;
+  min-height:85vh;
 
   @media screen and (max-width: 800px) {
     gap: 20px;
@@ -69,7 +71,7 @@ export const GridContainer = styled.div`
   }
 `;
 
-export function AddMemberModal({open,setOpen,isAddClient}) {
+export function AddMemberModal({open,setOpen,isAddClient,update}) {
 
   const {currentUser} = useAuth();
   const mutation = useCreateUsers()
@@ -125,18 +127,35 @@ export function AddMemberModal({open,setOpen,isAddClient}) {
                 }
                 subText='Você poderá disponibilizar cursos e convidar novos alunos a plataforma.'
                 />
-              <AddUserData
-                cursos={cursosSelected}
-                permissions={permissions}
-                setPermissions={setPermissions}
-                setCursos={setCursosSelected}
-                setEmail={setEmail}
-                setData={setDataUser}
-                data={dataUser}
-                mutation={mutation}
-                onClose={onClose}
-                isAddClient={isAddClient}
+              { !update ? (
+                <AddUserData
+                  cursos={cursosSelected}
+                  permissions={permissions}
+                  setPermissions={setPermissions}
+                  setCursos={setCursosSelected}
+                  setEmail={setEmail}
+                  setData={setDataUser}
+                  data={dataUser}
+                  mutation={mutation}
+                  onClose={onClose}
+                  isAddClient={isAddClient}
+                  email={email}
+                />
+              ) : (
+                <UpdateUserData
+                  cursos={cursosSelected}
+                  permissions={permissions}
+                  setPermissions={setPermissions}
+                  setCursos={setCursosSelected}
+                  setEmail={setEmail}
+                  setData={setDataUser}
+                  data={dataUser}
+                  mutation={mutation}
+                  onClose={onClose}
+                  isAddClient={isAddClient}
+                  email={email}
               />
+              )}
             </InputsEmail>
 
             <SideEmail

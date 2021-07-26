@@ -101,9 +101,9 @@ const OutlinedInputEnd = withStyles((theme) => ({
     marginDense: {
         margin:0,
     },
-    // disabled: {
-    //   color: fade(theme.palette.text.primary,0.6),
-    // },
+    disabled: {
+      color: fade(theme.palette.text.primary,0.6),
+    },
 }))(({inpRef,...props}) => <OutlinedInput ref={inpRef} {...props} />);
 
 const SelectEnd = withStyles((theme) => ({

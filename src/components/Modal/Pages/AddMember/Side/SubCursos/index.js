@@ -107,7 +107,7 @@ export function SubCursosSideBar({ email, hasSubCurso, check, isAdmin, curso, se
           {[1,2,3].map(price => {
 
             function onItemQuantity(cursos) {
-              if (isAdmin) return 'Infinito'
+              // if (isAdmin) return 'Infinito' // ?infinito
 
               let count = 0;
               let countQuantity = 0;

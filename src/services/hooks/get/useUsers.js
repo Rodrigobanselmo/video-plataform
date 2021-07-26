@@ -40,6 +40,13 @@ export async function getUsers(currentUser) {
   const reduceType = 'users'
   let docId = null;
 
+  const users = await db.collection('users').orderBy('email').where("companyId", "==", currentUser.companyId).get();
+  const array2 = []
+  users.forEach(doc=>{
+    array2.push({...doc.data()})
+  })
+  console.log('usersusers',array2)
+
   const reduce = await reduceRef.where("id", "==", currentUser.companyId).where("reduceType", "==", reduceType).get();
   const array = []
 

@@ -10,7 +10,7 @@ import axios from 'axios';
 import { saveAs } from 'file-saver';
 import { VideoPlayer } from '../../../components/VideoPlayer';
 import { SideVideoBar } from '../../../components/VideoPlayer/sidebar';
-import {Title,ContainerPlayer,SideVideoBarTry,ProgressContainer,PercentageSpan,Shadow,ProgressWrapper,CircleView,ProgressBar} from './style'
+import {Title,ContainerPlayer,SideVideoBarTry,ProgressContainer, Container,PercentageSpan,Shadow,ProgressWrapper,CircleView,ProgressBar} from './style'
 import { CreateCursoData,GetCursoDataValidatePage,UpdateStudentProgress } from '../../../services/firestoreVideo'
 import {useAuth} from '../../../context/AuthContext'
 import { useHistory,useParams,useLocation } from "react-router-dom"
@@ -23,9 +23,17 @@ import { useStudent } from '../../../services/hooks/get/useStudent';
 import { queryClient } from '../../../services/queryClient';
 
 
+
+
+
 const modulesAll = {
   id:'dyuwqf2',
   professionals:[{name:"Alex Abreu",id:'123213'},{name:"Carla Muller",id:'qw7e62'}],
+  name:'EPI',
+  numOfClasses:10,
+  numOfModules:3,
+  name:'EPI',
+  name:'EPI',
   name:'EPI',
   modules:[
   {
@@ -90,7 +98,149 @@ export default function Video() {
   // const  { data:curso, isLoading:cursoIsLoading } = useCurso({cursoId})
   const  { data, isLoading } = useStudent({cursoId})
 
-  const curso = data?.curso
+  const cursoPrev = data?.curso
+  let curso = {...cursoPrev}
+
+
+  useEffect(() => {
+    if (cursoPrev) curso.modules[0].classes.push({
+      id:'091283',
+      lock:['order'],
+      name:'Teste',
+      questions: [
+        {
+          text:'Normalmente, quantos litros de sangue uma pessoa tem? Em média, quantos são retirados numa doação de sangue?',
+          id:Math.random().toString(36),
+          options:[
+            {text:'Tem entre 2 a 4 litros. São retirados 450 mililitros'},
+            {text:'Tem entre 4 a 6 litros. São retirados 450 mililitros'},
+            {text:'Tem 10 litros. São retirados 2 litros'},
+            {text:'Tem 7 litros. São retirados 1,5 litros'},
+            {text:'Tem 0,5 litros. São retirados 0,5 litros'},
+          ],
+          answer:'Tem entre 4 a 6 litros. São retirados 450 mililitros',
+          why:'A quantidade de sangue varia de pessoa para pessoa. O volume de sangue é entre 7% e 8% o peso corporal. Assim, um adulto com 50 e 80 quilos, pode ter entre 4 e 6 litros de sangue, respectivamente.',
+        },
+        {
+          text:'De quem é a famosa frase “Penso, logo existo”?',
+          id:Math.random().toString(36),
+          options:[
+            {text:'Platão'},
+            {text:'Galileu Galilei'},
+            {text:'Descartes'},
+            {text:'Sócrates'},
+            {text:'Francis'},
+          ],
+          answer:'Descartes'
+        },
+        // {
+        //   text:' De onde é a invenção do chuveiro elétrico?',
+        //   id:Math.random().toString(36),
+        //   options:[
+        //     {text:'França'},
+        //     {text:'Inglaterra'},
+        //     {text:'Brasil'},
+        //     {text:'Austrália'},
+        //     {text:'Itália'},
+        //   ],
+        //   answer:'Brasil',
+        // },
+        // {
+        //   text:'Normalmente, quantos litros de sangue uma pessoa tem? Em média, quantos são retirados numa doação de sangue?',
+        //   id:Math.random().toString(36),
+        //   options:[
+        //     {text:'Tem entre 2 a 4 litros. São retirados 450 mililitros'},
+        //     {text:'Tem entre 4 a 6 litros. São retirados 450 mililitros'},
+        //     {text:'Tem 10 litros. São retirados 2 litros'},
+        //     {text:'Tem 7 litros. São retirados 1,5 litros'},
+        //     {text:'Tem 0,5 litros. São retirados 0,5 litros'},
+        //   ],
+        //   answer:Tem entre 4 a 6 litros. São retirados 450 mililitros',
+        // },
+        // {
+        //   text:'De quem é a famosa frase “Penso, logo existo”?',
+        //   id:Math.random().toString(36),
+        //   options:[
+        //     {text:'Platão'},
+        //     {text:'Galileu Galilei'},
+        //     {text:'Descartes'},
+        //     {text:'Sócrates'},
+        //     {text:'Francis'},
+        //   ],
+        //   answer:['Descartes',2]
+        // },
+        // {
+        //   text:' De onde é a invenção do chuveiro elétrico?',
+        //   id:Math.random().toString(36),
+        //   options:[
+        //     {text:'França Bandeira insígnia da presidência, bandeira nacional, brasão, hinos e selo Bandeira insígnia da presidência, bandeira nacional, brasão, hinos e selo Bandeira insígnia da presidência, bandeira nacional, brasão, hinos e selo'},
+        //     {text:'Inglaterra'},
+        //     {text:'Brasil'},
+        //     {text:'Austrália'},
+        //     {text:'Itália'},
+        //   ],
+        //   answer:['Brasil',2]
+        // },
+        // {
+        //   text:'Normalmente, quantos litros de sangue uma pessoa tem? Em média, quantos são retirados numa doação de sangue?',
+        //   id:Math.random().toString(36),
+        //   options:[
+        //     {text:'Tem entre 2 a 4 litros. São retirados 450 mililitros'},
+        //     {text:'Tem entre 4 a 6 litros. São retirados 450 mililitros'},
+        //     {text:'Tem 10 litros. São retirados 2 litros'},
+        //     {text:'Tem 7 litros. São retirados 1,5 litros'},
+        //     {text:'Tem 0,5 litros. São retirados 0,5 litros'},
+        //   ],
+        //   answer:['Tem entre 4 a 6 litros. São retirados 450 mililitros',1]
+        // },
+        // {
+        //   text:'De quem é a famosa frase “Penso, logo existo”?',
+        //   id:Math.random().toString(36),
+        //   options:[
+        //     {text:'Platão'},
+        //     {text:'Galileu Galilei'},
+        //     {text:'Descartes'},
+        //     {text:'Sócrates'},
+        //     {text:'Francis'},
+        //   ],
+        //   answer:['Descartes',2]
+        // },
+        // {
+        //   text:' De onde é a invenção do chuveiro elétrico?',
+        //   id:Math.random().toString(36),
+        //   options:[
+        //     {text:'França'},
+        //     {text:'Inglaterra'},
+        //     {text:'Brasil'},
+        //     {text:'Austrália'},
+        //     {text:'Itália'},
+        //   ],
+        //   answer:['Brasil',2]
+        // },
+        // {
+        //   text:' De onde é a invenção do chuveiro elétrico?',
+        //   id:Math.random().toString(36),
+        //   options:[
+        //     {text:'França'},
+        //     {text:'Inglaterra'},
+        //     {text:'Brasil'},
+        //     {text:'Austrália'},
+        //     {text:'Itália'},
+        //   ],
+        //   answer:['Brasil',2]
+        // },
+      ],
+      numQuestions:2,
+      numToPass:1,
+      maxTime:30,
+      private:true,
+      type:'test'
+    })
+  }, [data])
+
+
+
+
   const student = data?.student
 
   const uploadCursoMutation = useUpdateCurso(cursoId)
@@ -140,7 +290,7 @@ export default function Video() {
 }, [isLoading])
 
   return (
-    <>
+    <Container>
       {(curso && student && student[0] && !isLoading)?
         <Shadow >
           <Title >EPI</Title>
@@ -161,6 +311,6 @@ export default function Video() {
           </ContainerPlayer>
         </Shadow>
       :null}
-    </>
+    </Container>
   );
 }

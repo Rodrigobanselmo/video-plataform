@@ -1,6 +1,16 @@
 import styled from "styled-components";
 
+export const Container = styled.div`
+  padding-right:50px;
 
+  @media screen and (max-width:1100px) {
+    padding-right:35px;
+  }
+
+  @media screen and (max-width: 700px) {
+    padding-right:15px;
+  }
+`;
 
 export const SideVideoBarTry = styled.div`
   min-width: 350px;
@@ -11,6 +21,22 @@ export const SideVideoBarTry = styled.div`
   background-color: ${({theme})=>theme.palette.background.default};
   border-radius: 5px;
   position:relative;
+
+  @media screen and (max-width:1100px) {
+    background-color: ${({theme})=>theme.palette.background.paper};
+    height:fit-content;
+    overflow-y:visible;
+    > div {
+      box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.19);
+      position:relative;
+      height:fit-content;
+    }
+  }
+
+  @media screen and (max-width:700px) {
+    min-width: 150px;
+  }
+
 `;
 
 export const PercentageSpan = styled.span`
@@ -30,6 +56,14 @@ export const Shadow = styled.div`
   width: 100%;
   background-color: ${({theme})=>theme.palette.background.paper};
   box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.19);
+
+  @media screen and (max-width:1100px) {
+    padding: 0px 0px;
+    background-color: transparent;
+    box-shadow: none;
+  }
+
+
 `;
 
 export const CircleView = styled.div`
@@ -52,6 +86,9 @@ export const ProgressWrapper = styled.div`
   height: 100%;
   border-radius: 30px;
   background-color: ${({theme})=>theme.palette.background.default};
+  @media screen and (max-width:1100px) {
+    background-color: ${({theme})=>theme.palette.background.paper};
+  }
 `;
 
 export const ProgressBar = styled.div`
@@ -66,6 +103,10 @@ export const ContainerPlayer = styled.div`
   display: flex;
   flex-direction: row;
   gap:30px;
+
+  @media screen and (max-width:1100px) {
+    flex-direction: column;
+  }
 `;
 
 
