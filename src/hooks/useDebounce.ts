@@ -3,23 +3,24 @@
 import { useRef, useEffect } from 'react';
 
 interface IDebounce {
-  onDebounce: (value: string) => void;
+  onDebounce: (value: any) => void;
   onClearDebounce: () => void;
 }
 
 export const useDebounce = (
-  fn: (value: string) => void,
+  fn: (value: any) => void,
   delay: number,
+  continueUnmounted?: boolean,
 ): IDebounce => {
   const ref = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     return () => {
-      if (ref.current) clearTimeout(ref.current);
+      if (ref.current && !continueUnmounted) clearTimeout(ref.current);
     };
   }, []);
 
-  function onDebounce(value: string): void {
+  function onDebounce(value: any): void {
     if (ref.current) clearTimeout(ref.current);
     ref.current = setTimeout(() => {
       fn(value);

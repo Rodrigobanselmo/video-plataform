@@ -29,9 +29,17 @@ export const Container = styled.div`
     padding:50px 10vw 20px 10vw;
     min-height: 100vh;
 `;
+// const FormContainer = styled(Form)`
+//   display: flex;
+//   flex-wrap: wrap;
+//   width: 100%;
+//   color: ${({theme})=> theme.palette.text.primary};
+//   gap:20px;
+// `;
 export const InputsContainer = styled.div`
     display:flex;
     flex-direction:column;
+    color: ${({theme})=> theme.palette.text.primary};
     width:100%;
     max-width:1000px;
     margin-bottom:20px;

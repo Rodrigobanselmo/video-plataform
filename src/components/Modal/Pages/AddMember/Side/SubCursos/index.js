@@ -5,6 +5,8 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Collapse from '@material-ui/core/Collapse';
 import { AscendentObject } from '../../../../../../helpers/Sort';
 import { useNotification } from '../../../../../../context/NotificationContext';
+import { EPIs } from '../../../../../../constants/geral';
+import { useSellingData } from '../../../../../../context/data/SellingContext';
 
 
 const EpiView = styled.div`
@@ -45,57 +47,31 @@ const Check = styled(Checkbox)`
   width: 35px;
 `;
 
-export function SubCursosSideBar({ email, hasSubCurso, check, isAdmin, curso, setCursos, cursos, setPermissions, permissions,onQuantity }) {
-  const EPI = [
-    { name: 'Luva', id: 1, price:1},
-    { name: 'Bota', id: 2 , price:1},
-    { name: 'Capacete', id: 3 , price:1},
-    { name: 'Cinto de segunraça', id: 4 , price:1},
-    { name: 'Luva Quimica', id: 5 , price:1},
-    { name: 'Luva aprova de fogo', id: 6 , price:2},
-    { name: 'Luva de plastico', id: 7 , price:2},
-    { name: 'Óculos protetor', id: 8 , price:2},
-    { name: 'Óculos UV', id: 9 , price:2},
-    { name: 'Capacete de chumbo', id: 0 , price:2},
-    { name: 'Luva', id: 10 , price:2},
-    { name: 'Bota 1', id: 20 , price:2},
-    { name: 'Capacete 1', id: 30 , price:3},
-    { name: 'Cinto de segunraça 1', id: 40 , price:3},
-    { name: 'Luva Quimica 1', id: 50 , price:3},
-    { name: 'Luva aprova de fogo 1', id: 60 , price:3},
-    { name: 'Luva de plastico 1', id: 70 , price:3},
-    { name: 'Óculos protetor 1', id: 80 , price:3},
-    { name: 'Óculos UV 1', id: 90 , price:3},
-    { name: 'Capacete de chumbo 1', id: 11 , price:3},
-  ];
+const SubCursosSideBarComponent = ({ hasSubCurso, check, isAdmin, curso }) => {
 
   const notification  = useNotification();
+  const { fieldEdit, cursos, setCursos, setPrices, onCalcUserPrice } = useSellingData()
 
-  const handleEPICheck = (event, cursoId, epi, itemQuantity, price, onQuantity,onItemQuantity,) => {
+  const EPI  = EPIs.sort((a, b) => AscendentObject(a, b, 'name'));
 
-    if (itemQuantity <= 0 && event.target.checked) {
-      return notification.warn({message:'Você não possui mais unidades deste curso',modal:true})
-    }
+  const handleEPICheck = (event, cursoId, epi,) => {
 
-    const newPermission = { ...permissions };
+
     const newData = { ...cursos };
-    newData[`${email.index}--${cursoId}--epi`] = newData[`${email.index}--${cursoId}--epi`] ? newData[`${email.index}--${cursoId}--epi`] : []
-    console.log('event,event', event);
+    newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`] = newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`] ? newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`] : []
 
-    console.log('epi', epi);
     if (event.target.checked)
-      newData[`${email.index}--${cursoId}--epi`] = [
-        ...newData[`${email.index}--${cursoId}--epi`],
+      newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`] = [
+        ...newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`],
         epi,
       ];
+
     if (!event.target.checked)
-      newData[`${email.index}--${cursoId}--epi`] = [
-        ...newData[`${email.index}--${cursoId}--epi`].filter((i) => i.id !== epi.id),
+      newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`] = [
+        ...newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`].filter((i) => i.id !== epi.id),
       ];
 
-    newPermission[`quantity--${cursoId}`] = onQuantity(newData);
-    newPermission[`quantity--${cursoId}--${price}`] = onItemQuantity(newData);
-    setPermissions(newPermission);
+    setPrices(onCalcUserPrice(newData));
     setCursos(newData);
   };
 
@@ -104,7 +80,7 @@ export function SubCursosSideBar({ email, hasSubCurso, check, isAdmin, curso, se
     <>
       {hasSubCurso &&
         <Collapse unmountOnExit in={check}>
-          {[1,2,3].map(price => {
+          {/* {[1,2,3].map(price => {
 
             function onItemQuantity(cursos) {
               // if (isAdmin) return 'Infinito' // ?infinito
@@ -143,11 +119,11 @@ export function SubCursosSideBar({ email, hasSubCurso, check, isAdmin, curso, se
               <div key={String(price)}>
                 <EpiView className={'group'}>
                   <p>Grupo {price} (unidades: {itemQuantity})</p>
-                </EpiView>
-                {EPIMap.map((epi) => {
+                </EpiView> */}
+                {EPI.map((epi) => {
                     const checkEPI = Boolean(
-                      cursos[`${email.index}--${curso.id}--epi`] &&
-                        cursos[`${email.index}--${curso.id}--epi`].findIndex(i=>i.id==epi.id) != -1,
+                      cursos[`${fieldEdit.index}--${curso.id}--${curso.name}--epi`] &&
+                        cursos[`${fieldEdit.index}--${curso.id}--${curso.name}--epi`].findIndex(i=>i.id==epi.id) != -1,
                     );
 
                     return (
@@ -158,10 +134,6 @@ export function SubCursosSideBar({ email, hasSubCurso, check, isAdmin, curso, se
                             { target: { checked: !checkEPI } },
                             curso.id,
                             epi,
-                            itemQuantity,
-                            price,
-                            onQuantity,
-                            onItemQuantity,
                           )
                         }
                       >
@@ -176,11 +148,13 @@ export function SubCursosSideBar({ email, hasSubCurso, check, isAdmin, curso, se
                     );
                   },
                 )}
-              </div>
+              {/* </div>
             )
-          })}
+          })} */}
         </Collapse>
       }
     </>
   );
-}
+};
+
+export const SubCursosSideBar = React.memo(SubCursosSideBarComponent)

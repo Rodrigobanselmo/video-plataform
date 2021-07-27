@@ -102,7 +102,7 @@ function Team() {
 
     return (
       <>
-        <ReactSelect/>
+        {/* <ReactSelect/>
         <InputSearch
           filter={filter}
           onSelect={handleSelect}
@@ -120,7 +120,7 @@ function Team() {
           options={data?data.filter(i=>i?.name&&i?.email):[]}
         >
 
-        </InputSearch>
+        </InputSearch> */}
         <InputNew
           name={'select'}
           label='Selecione Membros'

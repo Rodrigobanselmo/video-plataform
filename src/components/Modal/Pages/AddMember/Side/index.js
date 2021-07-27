@@ -18,81 +18,20 @@ import { UserInfoInputs } from './UserInfo';
 import { PermissionSelect } from './Permission';
 import { CursosSideBar } from './Cursos';
 import { CursosSideBarAdmin } from './CursosAdmin';
+import { fade } from '@material-ui/core/styles';
+import { useSellingData } from '../../../../../context/data/SellingContext';
 
-const TitleSection = styled.h3`
-  color:${({ theme }) => theme.palette.text.primary};
-  font-size:${({ isAddClient }) => isAddClient? 22:16}px;
-  margin:${({ isAddClient }) => isAddClient? '0 0 0 0':'20px 0 0px 0'};
-`;
-
-const EpiView = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  border-top: 1px solid ${({ theme }) => theme.palette.background.line};
-  cursor: pointer;
-
-  &:hover {
-    opacity: 0.6;
-    background-color: #55555509;
-  }
-
-  p {
-    padding-right: 20px;
-    width: 100%;
-  }
-
-  &.group {
-    padding-top:20px;
-    border-bottom: 1px solid ${({ theme }) => theme.palette.background.line};
-    margin-bottom:1px;
-    padding-bottom:5px;
-    p {
-      color:${({ theme }) => theme.palette.text.secondary};
-      font-size:13px;
-    }
-  }
-
-  &.last {
-    border-bottom: 1px solid ${({ theme }) => theme.palette.background.line};
-  }
-`;
-
-const Check = styled(Checkbox)`
-  height: 35px;
-  width: 35px;
-`;
-
-const ItemCurso = styled.div`
-  display: grid;
-  width: 100%;
-  grid-template-columns: 1fr 5fr 35px;
-  grid-template-rows: 1fr fit-content;
-  grid-gap: 0 10px;
-  margin-top: 10px;
-  padding: 7px 0;
-  border-top: 1px solid ${({ theme }) => theme.palette.background.line};
-
-  div.image {
-    grid-row: 1 / 3;
-    grid-column: 1 / 2;
-    background-image: url('${({ image }) => image}');
-    background-repeat: no-repeat;
-    background-size: cover;
-    border-radius:5px;
-  }
-
-  div.checkbox {
-    grid-column: 3 / 4;
-    grid-row: 1 / 3;
-    align-self: center;
-    height: 35px;
-    width: 35px;
-  }
-
-  h1 {
-    font-size: 1rem;
-    color: ${({ theme }) => theme.palette.text.primary};
+const PriceText = styled.strong`
+  margin:10px 0 10px 0;
+  padding:5px 10px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  width: fit-content;
+  /* background-color: ${({ theme }) => fade(theme.palette.primary.greyRealiza,1)}; */
+  background-color: #000000aa;
+  color: ${({ theme }) => theme.palette.primary.contrastText};
+  span {
+    margin-left:10px;
   }
 `;
 
@@ -138,53 +77,63 @@ const SideEmailContainer = styled.div`
   }
 `;
 
-export function SideEmail({ email, data, setData, setCursos, cursos, setPermissions, permissions, isAddClient }) {
+export function SideEmail({ isAddClient }) {
 
   const { currentUser } = useAuth();
 
+  const { fieldEdit, dataUser, setDataUser, prices } = useSellingData()
   const isAdmin = currentUser?.access === 'admin'
-  const isUrl = email.value && email.value.includes(SIGN);
+  const isUrl = fieldEdit.value && fieldEdit.value.includes(SIGN);
 
+
+  const fieldIndex = fieldEdit?.index
+  const price = prices[fieldIndex]
 
   return (
     <SideEmailContainer isUrl={isUrl}>
-      {email?.value ? (
+      {fieldEdit?.value ? (
         <div className="selected">
         <UserInfoInputs
           isUrl={isUrl}
-          email={email}
-          data={data}
-          setData={setData}
+          fieldEdit={fieldEdit}
+          dataUser={dataUser}
+          setDataUser={setDataUser}
         />
-        {!isAddClient && <PermissionSelect
+        {/* {!isAddClient && <PermissionSelect
           email={email}
           setPermissions={setPermissions}
           permissions={permissions}
           isAdmin={isAdmin}
           isAddClient={isAddClient}
-        />}
-          {isAdmin && (
+        />} */}
+          {/* {isAdmin && (
             <TitleSection isAddClient={isAddClient}>Cursos</TitleSection>
-          )}
-          {isAddClient && isAdmin ? (
+          )} */}
+
+            <PriceText>
+              Preço:
+              <span>
+              {new Intl.NumberFormat("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                }).format(price?price:0)}
+              </span>
+            </PriceText>
+
+          {/* {isAddClient && isAdmin ? (
             <CursosSideBarAdmin
-              email={email}
+              email={fieldEdit}
               isAdmin={isAdmin}
               setCursos={setCursos}
               cursos={cursos}
               setPermissions={setPermissions}
               permissions={permissions}
             />
-          ) : (
+          ) : ( */}
             <CursosSideBar
-              email={email}
               isAdmin={isAdmin}
-              setCursos={setCursos}
-              cursos={cursos}
-              setPermissions={setPermissions}
-              permissions={permissions}
             />
-          )}
+          {/* )} */}
         </div>
       ) : (
         <p className="none">
