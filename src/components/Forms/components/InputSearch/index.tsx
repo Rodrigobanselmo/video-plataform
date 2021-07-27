@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
@@ -51,7 +53,6 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, IInputProps> = (
     label,
     error = null,
     pr = 0,
-    children,
     ...rest
   },
   ref,

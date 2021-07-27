@@ -1,3 +1,6 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-lonely-if */
 /* eslint-disable no-throw-literal */
 /* eslint-disable array-callback-return */
@@ -5,17 +8,10 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { useMutation } from 'react-query';
-import { v4 } from 'uuid';
-import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useAuth } from '../../../context/AuthContext.js';
-import { useLoaderDashboard } from '../../../context/LoadDashContext.js';
-import { useNotification } from '../../../context/NotificationContext.js';
-import { db, fb } from '../../../lib/firebase.prod.js';
-import { errorCatchFirestore } from '../../error.js';
-import { LogOut } from '../../firebaseAuth.js';
+import { db } from '../../../lib/firebase.prod.js';
 import { queryClient } from '../../queryClient.js';
-import { VIDEO_ROUTE } from '../../../routes/routesNames.js';
 
 function onNewStudentDone(data: any, stateStudent: any) {
   const {

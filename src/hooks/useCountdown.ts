@@ -1,11 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { useRef, useEffect } from 'react';
 
 interface ICountdownHook {
-  onComplete?: () => void;
+  ref: any;
+  action: {
+    setTimer: (time: number) => void;
+    clearTimer: () => void;
+    msToTime: (time: number) => void;
+  };
 }
 
-export const useCountdown = (onComplete: () => void) => {
+export const useCountdown = (onComplete: () => void): ICountdownHook => {
   const refDate = useRef<HTMLParagraphElement>(null);
   const refTimeout = useRef<NodeJS.Timeout | null>(null);
 

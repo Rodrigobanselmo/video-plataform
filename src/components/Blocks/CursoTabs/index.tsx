@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable import/extensions */
@@ -87,7 +88,7 @@ interface Props extends React.ComponentPropsWithoutRef<typeof Container> {
   data: any;
 }
 
-export const CursoTabs = ({ data, ...rest }: Props) => {
+export const CursoTabs = ({ data, ...rest }: Props): JSX.Element => {
   const [tabValue, setTabValue] = React.useState(0);
   const tabsLabel = ['Sobre o curso', 'Público Alvo', 'Professores'];
 

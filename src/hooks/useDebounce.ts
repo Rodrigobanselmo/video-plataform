@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { useRef, useEffect } from 'react';
@@ -18,7 +19,7 @@ export const useDebounce = (
     return () => {
       if (ref.current && !continueUnmounted) clearTimeout(ref.current);
     };
-  }, []);
+  });
 
   function onDebounce(value: any): void {
     if (ref.current) clearTimeout(ref.current);

@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-cycle */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
@@ -7,9 +9,8 @@ import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext.js';
 import { useLoaderDashboard } from '../../../context/LoadDashContext.js';
 import { useNotification } from '../../../context/NotificationContext.js';
-import { db, fb } from '../../../lib/firebase.prod.js';
+import { db } from '../../../lib/firebase.prod.js';
 import { errorCatchFirestore } from '../../error.js';
-import { LogOut } from '../../firebaseAuth.js';
 import { queryClient } from '../../queryClient.js';
 import { VIDEO_ROUTE } from '../../../routes/routesNames.js';
 

@@ -10,7 +10,12 @@ interface Props {
   onClick: () => void;
 }
 
-export const CardCurso = ({ onClick, image, title, text }: Props) => {
+export const CardCurso = ({
+  onClick,
+  image,
+  title,
+  text,
+}: Props): JSX.Element => {
   return (
     <div style={{ width: 250 }}>
       <CursoCard imageURL={image} onClick={onClick}>

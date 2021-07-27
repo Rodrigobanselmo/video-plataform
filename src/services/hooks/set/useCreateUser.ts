@@ -1,13 +1,14 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable import/no-cycle */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { useMutation } from 'react-query';
 import { useLoaderDashboard } from '../../../context/LoadDashContext.js';
 import { useNotification } from '../../../context/NotificationContext.js';
-import { db, fb } from '../../../lib/firebase.prod.js';
+import { db } from '../../../lib/firebase.prod.js';
 import { errorCatchFirestore } from '../../error.js';
 import { LogOut } from '../../firebaseAuth.js';
-import { queryClient } from '../../queryClient.js';
 
 // interface UserData {
 //   cursos: any;
@@ -27,7 +28,6 @@ export async function setUser(user: any) {
   const usersRef = db.collection('users').doc(user.uid);
   const invitesRef = db.collection('invites');
   const linksRef = db.collection('links');
-  const reduceRef = db.collection('reduce');
   const batch = db.batch();
 
   const importantData = {
