@@ -13,6 +13,7 @@ import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import isEqual from "react-fast-compare";
 import { BootstrapTooltip } from '../../Main/MuiHelpers/Tooltip';
 import { useSellingData } from '../../../context/data/SellingContext';
+import { useNotification } from '../../../context/NotificationContext';
 
 const ShowCursosView = styled.div`
   display:flex;
@@ -147,6 +148,7 @@ const AddUserDataComp = ({ formRef, emails, setEmails,  }) => { //fieldEdit, set
 
   const URL = 'link-url';
   const location = `${window.location.origin}${SIGN}?code=`;
+  const notification = useNotification()
   const { fieldEdit, setFieldEdit, setCursos, setPermissions, setDataUser, cursos } = useSellingData()
 
   function handleAddEmail() {
@@ -250,6 +252,11 @@ const AddUserDataComp = ({ formRef, emails, setEmails,  }) => { //fieldEdit, set
     }
   }
 
+  function handleCopy(link) {
+    // navigator.clipboard.writeText(link)
+    // notification.success({message:'Link copiado com sucesso',modal:true})
+  }
+
   return (
     <InputsContainer style={{gap:20}}>
         {emails.map((item, index) => {
@@ -267,7 +274,8 @@ const AddUserDataComp = ({ formRef, emails, setEmails,  }) => { //fieldEdit, set
                   onChange={(e) => handleChange(e, index)}
                   variant="outlined"
                   inputProps={{
-                    style: { color: isURL ? '#00000075' : '#000' },
+                    onClick: isURL?()=>handleCopy(`${location}${item.split('-')[2]}`):()=>{},
+                    style: { color: isURL ? '#00000075' : '#000',cursor: 'pointer' },
                   }}
                   onFocus={() => onFocus(`${index}`)}
                   startComponent={()=>

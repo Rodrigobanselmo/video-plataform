@@ -62,6 +62,15 @@ const Icon = styled(Icons)`
     /* color:${({theme})=>theme.palette.text.third}; */
   color: ${props=>props.transparent?'#eff':props.theme.palette.text.third};
   }
+
+  @media screen and (max-width: 700px) {
+    top: 10px;
+    left: 10px;
+  }
+  @media screen and (max-width: 1000px) {
+    top: 20px;
+    left: 20px;
+  }
 `;
 
 const IconGoBackFull = styled(IconCloseButton)`
@@ -70,6 +79,15 @@ const IconGoBackFull = styled(IconCloseButton)`
   font-size: 30px;
   max-width:100px;
   z-index:111441110;
+
+  @media screen and (max-width: 700px) {
+    top: 10px;
+    left: 10px;
+  }
+  @media screen and (max-width: 1000px) {
+    top: 20px;
+    left: 20px;
+  }
 `;
 
 export function ModalFullScreen({children,open,transparent,onClose,infoModal=false,onGoBack=false,arrow=false}) {

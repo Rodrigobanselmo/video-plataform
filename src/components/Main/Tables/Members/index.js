@@ -168,6 +168,7 @@ export function MembersTable({isLoading,data,filter=true,isClient}) {
   const [loading,setLoading] = useState(false)
   const [search,setSearch] = useState('')
   const [userOpen,setUserOpen] = useState({})
+  console.log('reloaded userTable')
 
   const pending = 'Esperando usuário realizar cadastro na plataforma'
   const authenticating = 'Usuário já criou sua conta na plataforma, mas não finalizado o cadastro.'
@@ -211,7 +212,6 @@ export function MembersTable({isLoading,data,filter=true,isClient}) {
               </TableHeader>
               <TableBody>
                 {DATA.map((user) => {
-                  console.log('user',user)
                   let tooltip = ''
 
                   switch (user?.status) {

@@ -17,6 +17,7 @@ import { PERMISSIONS } from '../../../../../constants/geral';
 import { fade } from '@material-ui/core/styles';
 // import { useSellingData } from '../../../../../context/data/SellingContext';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const CheckoutContainer = styled.div`
   display:flex;
@@ -29,16 +30,17 @@ const CheckoutContainer = styled.div`
     box-shadow: 3px 3px 11px 1px rgba(0,0,0,0.23);
   align-items:center;
   justify-content: space-between;
-  border-radius:15px;
+  border-radius:18px;
   background-color: ${({theme})=>theme.palette.primary.main};
   background-image: linear-gradient(-10deg,${({ theme }) => theme.palette.primary.main},${({ theme }) => theme.palette.primary.light});
+  overflow:hidden;
   /* background-color: ${({theme})=>theme.palette.background.paper}; */
 
 
   > div {
     background-color: ${({theme})=>theme.palette.background.paper};
     padding:0 20px;
-    border-radius:15px;
+    border-radius:20px;
     height:100%;
     display:flex;
     justify-content: space-between;
@@ -46,8 +48,18 @@ const CheckoutContainer = styled.div`
     align-items:center;
   }
 
+  &:hover  {
+      & div.total {
+        margin-right:30px;
+      }
+    }
+
+
   > div.total {
     width:100%;
+    transition: all 0.3s linear;
+    margin-right:0px;
+    min-width:fit-content;
     border-top-right-radius:50px;
     border-bottom-right-radius:50px;
     p {
@@ -64,10 +76,15 @@ const CheckoutContainer = styled.div`
     }
   }
 
-  > div.checkout {
+  > button {
+
+    border:none;
     width:fit-content;
     font-size: 20px;
+    width: 75%;
+    padding-right:0.5rem;
     display:flex;
+    align-items:center;
     background-color: transparent;
     /* background-color: ${({theme})=>theme.palette.primary.main}; */
     font-weight: bold;
@@ -75,13 +92,20 @@ const CheckoutContainer = styled.div`
     justify-content:flex-end;
     cursor: pointer;
 
+    p {
+      padding-right:10px;
+    }
+
     svg {
       font-size: 30px;
     }
 
     &:hover {
-      filter: brightness(0.90)
+      filter: brightness(0.80)
     }
+
+
+
 
   }
 
@@ -92,10 +116,11 @@ const CheckoutContainer = styled.div`
 `;
 
 
-const CheckoutComponent = ({ prices = [] }) => {
+const CheckoutComponent = ({ prices = [], load }) => {
 
   // const { currentUser } = useAuth();
   // const isAdmin = currentUser?.access === 'admin'
+  console.log('load',load)
   const totalPrice = prices.reduce((acc,price)=>Number(acc)+Number(price),[0])
 
   return (
@@ -111,10 +136,17 @@ const CheckoutComponent = ({ prices = [] }) => {
         </p>
       </div>
 
-      <div className='checkout'>
-        <p>CHECKOUT</p>
-        <KeyboardArrowRightIcon/>
-      </div>
+      <button disabled={load} type='submit'>
+        <p>CONTINUAR</p>
+        {load ?
+          <CircularProgress
+            size={24}
+            style={{color: '#fff'}}
+          />
+        :
+          <KeyboardArrowRightIcon/>
+        }
+      </button>
     </CheckoutContainer>
   );
 };

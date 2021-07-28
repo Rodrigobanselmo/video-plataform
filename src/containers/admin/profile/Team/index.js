@@ -154,7 +154,7 @@ function Team() {
         <LinksURLTable data={data?data:[]} filter={false} isLoading={isLoading}/>
         <MembersTable data={data?data:[]} isLoading={isLoading}/>
 
-        <AddMemberModal setUsersRows={setUsersRows} open={!!open} setOpen={setOpen} update={open==='update'}/>
+        <AddMemberModal open={!!open} setOpen={setOpen} update={open==='update'}/>
       </>
     )
 }
