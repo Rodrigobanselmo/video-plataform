@@ -116,12 +116,10 @@ const CheckoutContainer = styled.div`
 `;
 
 
-const CheckoutComponent = ({ prices = [], load }) => {
+const CheckoutComponent = ({load, totalPrice }) => {
 
   // const { currentUser } = useAuth();
   // const isAdmin = currentUser?.access === 'admin'
-  console.log('load',load)
-  const totalPrice = prices.reduce((acc,price)=>Number(acc)+Number(price),[0])
 
   return (
     <CheckoutContainer>

@@ -27,8 +27,8 @@ export default function InputUserData() {
   const INFO_MODAL = {title:'Você tem certeza?',text:'Ao sair você irá pausar sua inscrição e poderá perder as informaçoes inseridas até o momento.'} // para mandar pro modalFullScreen e dizer se ao fechar da um alerta
 
 
-  const HAS_COMPANY = currentUser?.permissions && Array.isArray(currentUser.permissions) && currentUser.permissions.includes('co'); //company
-  const HAS_PROFESSION = currentUser?.permissions && Array.isArray(currentUser.permissions) && currentUser.permissions.includes('pr'); //professional
+  const HAS_COMPANY = currentUser?.permission && Array.isArray(currentUser.permission) && currentUser.permission.includes('co'); //company
+  const HAS_PROFESSION = currentUser?.permission && Array.isArray(currentUser.permission) && currentUser.permission.includes('pr'); //professional
 
   useEffect(() => {
     setTimeout(() => {

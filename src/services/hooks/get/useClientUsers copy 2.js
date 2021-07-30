@@ -41,16 +41,13 @@ export async function getUsers(currentUser, limit) {
   const linksRef = db.collection('links');
 
   // const users = queryClient.getQueryData('users');
-  const LIMIT = limit ? limit: 5
+  const LIMIT = limit ? limit: 1
   const inviteResponse = await invitesRef.orderBy('createdAt', 'desc').where("access", "==", 'client').where("isPrimaryAccount", "==", true).limit(LIMIT).get()
   const linksResponse = await linksRef.where("access", "==", 'client').where("isPrimaryAccount", "==", true).get()
   const linksData = [];
   const inviteData = [];
   const arrayData = [];
 
-  var lastVisible = inviteResponse.docs[inviteResponse.docs.length-1];
-
-  console.log('lastVisible',lastVisible)
   inviteResponse.forEach(function (doc) {
     inviteData.push({...doc.data()});
   });
@@ -65,7 +62,7 @@ export async function getUsers(currentUser, limit) {
 
   if (loadMore > 0) {
     const response = await usersRef.orderBy('createdAt', 'desc').where("access", "==", 'client').limit(loadMore).get()
-    lastVisible = response.docs[response.docs.length-1];
+
     response.forEach(function (doc) {
       arrayData.push({...doc.data()});
     });
@@ -74,7 +71,7 @@ export async function getUsers(currentUser, limit) {
   const sortLinks = linksData.sort((a, b) => b.createdAt - a.createdAt)
 
 
-  return [...sortLinks, ...inviteData,...arrayData, lastVisible]
+  return [...sortLinks, ...inviteData,...arrayData]
 }
 
 export function useClientUsers(limit) {

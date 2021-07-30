@@ -79,7 +79,7 @@ function Client() {
         <LinksURLTable data={data?data:[]} filter={false} isLoading={isLoading}/>
         <MembersTable isClient={true} data={data?data:[]} isLoading={isLoading}/>
 
-        <AddMemberModal isAddClient open={open} setOpen={setOpen}/>
+        <AddMemberModal isNewClient open={open} setOpen={setOpen}/>
       </>
     )
 }

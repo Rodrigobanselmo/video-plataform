@@ -60,6 +60,7 @@ export async function setUser(user: any) {
         ...doc.data(),
         ...importantData,
         status: 'Autenticando',
+        billId: doc.data()?.uid,
       };
     });
     if (docId) batch.delete(invitesRef.doc(docId));
@@ -73,6 +74,7 @@ export async function setUser(user: any) {
         ...doc.data(),
         ...importantData,
         status: 'Autenticando',
+        billId: doc.data()?.uid,
       };
     });
     console.log('docId', docId);

@@ -49,17 +49,18 @@ export default function RouteComponent({ component: Component,privateRoute, ...r
 
   function isToInputData() {
 
-    const HAS_COMPANY = currentUser?.permissions && Array.isArray(currentUser.permissions) && currentUser.permissions.includes('co'); //company
-    const HAS_PROFESSION = currentUser?.permissions && Array.isArray(currentUser.permissions) && currentUser.permissions.includes('pr'); //professional
+    const HAS_COMPANY = currentUser?.permission && Array.isArray(currentUser.permission) && currentUser.permission.includes('co'); //company
+    const HAS_PROFESSION = currentUser?.permission && Array.isArray(currentUser.permission) && currentUser.permission.includes('pr'); //professional
 
     const PERSONAL_DATA = currentUser?.name && currentUser?.cpf && currentUser?.cell;
-    const COMPANY_DATA = currentUser?.address?.cep;
+    const COMPANY_DATA = !currentUser?.company?.juridica || (currentUser?.company?.juridica && currentUser?.company?.cpfOrCnpj);
     const PROFESSION_DATA = currentUser?.resume;
 
-    const NEED_DATA = !PERSONAL_DATA || ( HAS_COMPANY && !COMPANY_DATA) || (HAS_PROFESSION && !PROFESSION_DATA)
+    const NEED_DATA = !PERSONAL_DATA || ( HAS_COMPANY && !COMPANY_DATA) || (HAS_PROFESSION && !PROFESSION_DATA) || !currentUser.initialized
     const ROUTE_IS_REQUEST_DATA = rest.location.pathname == REQUEST_DATA
 
-    console.log(currentUser)
+    console.log('route',currentUser)
+    console.log('route data', currentUser.permission,PERSONAL_DATA,HAS_COMPANY,COMPANY_DATA,!!NEED_DATA)
     if ( NEED_DATA && ROUTE_IS_REQUEST_DATA ) {
       return true
     } else if ( NEED_DATA && !ROUTE_IS_REQUEST_DATA ) {
@@ -84,11 +85,11 @@ export default function RouteComponent({ component: Component,privateRoute, ...r
     } else if (currentUser.emailVerified && ROUTE_IS_VERIFY_EMAIL) { // in verification screen and verify is true go to dashboard
       locationRedirect = DASHBOARD
       return false;
-    } else if (!currentUser.emailVerified && ROUTE_IS_VERIFY_EMAIL) {
+    } else if (!currentUser.emailVerified && ROUTE_IS_VERIFY_EMAIL) { // preciso verficar email e estou na rota certa
       return true
     }
 
-    return 'next'
+    return 'next' //quer dizer que vou verificar outras rotas, caso contrario estou na rota de verficaçao e preciso verificar emial
   }
 
   function onValidate() {

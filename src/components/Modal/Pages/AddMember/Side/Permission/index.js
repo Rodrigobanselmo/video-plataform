@@ -41,6 +41,7 @@ const EpiView = styled.div`
   }
 
   &.last {
+    margin-bottom:13px;
     border-bottom: 1px solid ${({ theme }) => theme.palette.background.line};
   }
 `;
@@ -51,27 +52,35 @@ const Check = styled(Checkbox)`
 `;
 
 
-export function PermissionSelect({ email, setPermissions, permissions, isAdmin }) {
+export function PermissionSelect({ fieldEdit, setPermissions, permissions, isNewClient }) {
+
+  const permissionsArray = !isNewClient
+  ? PERMISSIONS.filter(i=>!(i.per.includes('co') || i.per.includes('fm')))
+  : PERMISSIONS.filter(i=>(i.per.includes('co') || i.per.includes('fm')))
 
   const handlePermissions = (event, permission) => {
     const newData = { ...permissions };
-    newData[`${email.index}--${permission.per}`] = event.target.checked;
+    newData[`${fieldEdit.index}--${permission.per}`] = event.target.checked;
 
     setPermissions(newData);
 
   };
 
+  const isCompany =  permissions[(`${fieldEdit.index}--co`)]
+
   return (
     <>
-      {isAdmin && (
-        <TitleSection style={{marginBottom:12,marginTop:10}}>Permissões</TitleSection>
-      )}
-      {isAdmin && PERMISSIONS.map((permission,index) => {
-        const checkPer = Boolean(permissions[`${email.index}--${permission.per}`]);
+      <TitleSection style={{marginBottom:12,marginTop:10}}>
+        Permissões
+      </TitleSection>
+      {permissionsArray.map((permission,index) => {
+        const checkPer = Boolean(permissions[`${fieldEdit.index}--${permission.per}`]);
+        if (!isCompany && permission.per == 'fm') return null
+        const isLast = (index===permissionsArray.length-1) || (!isCompany && `${fieldEdit.index+1}--fm` in permissions && index===permissionsArray.length-2)
         return (
           <BootstrapTooltip key={permission.id} title={permission.message}>
             <EpiView
-              className={index===PERMISSIONS.length-1?'last':''}
+              className={isLast ?'last':''}
               las={permission.id}
               onClick={() =>
                 handlePermissions(
@@ -90,6 +99,29 @@ export function PermissionSelect({ email, setPermissions, permissions, isAdmin }
           </BootstrapTooltip>
         )
       })}
+      {/* {isFM && (
+        <>
+          <TitleSection style={{marginBottom:12,marginTop:10}}>
+            Faturamento Mensal
+          </TitleSection>
+          <EpiView
+            className={'last'}
+            onClick={() =>
+              handlePermissions(
+                { target: { checked: !checkFM } },
+                permissionFM
+              )
+            }
+          >
+            <p>{permissionFM.name}</p>
+            <Check
+              size="small"
+              checked={checkFM}
+              color="primary"
+            />
+          </EpiView>
+        </>
+      )} */}
     </>
   );
 }

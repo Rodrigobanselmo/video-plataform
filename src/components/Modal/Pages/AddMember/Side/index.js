@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-curly-newline */
-import React from 'react';
+import React, {useMemo} from 'react';
 // import AddModal, {Type,Form} from './comp'
 // import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
@@ -20,6 +20,7 @@ import { CursosSideBar } from './Cursos';
 import { CursosSideBarAdmin } from './CursosAdmin';
 import { fade } from '@material-ui/core/styles';
 import { useSellingData } from '../../../../../context/data/SellingContext';
+import { CompanyInfoInputs } from './CompanyInfo';
 
 const PriceText = styled.strong`
   margin:10px 0 10px 0;
@@ -77,35 +78,45 @@ const SideEmailContainer = styled.div`
   }
 `;
 
-export function SideEmail({ isAddClient }) {
+export function SideEmail({ isNewClient }) {
 
   const { currentUser } = useAuth();
 
-  const { fieldEdit, dataUser, setDataUser, prices } = useSellingData()
+  const { fieldEdit, dataUser, setDataUser, prices, setPermissions, permissions, isBilling } = useSellingData()
+  const fieldIndex = fieldEdit?.index
+
   const isAdmin = currentUser?.access === 'admin'
   const isUrl = fieldEdit.value && fieldEdit.value.includes(SIGN);
+  const isCNPJ =  permissions[(`${fieldIndex}--co`)]
 
-
-  const fieldIndex = fieldEdit?.index
   const price = prices[fieldIndex]
+  // const price = isBilling ? prices[fieldIndex] : 0
 
   return (
     <SideEmailContainer isUrl={isUrl}>
       {fieldEdit?.value ? (
         <div className="selected">
-        <UserInfoInputs
-          isUrl={isUrl}
+        {!isCNPJ ? (
+          <UserInfoInputs
+            isUrl={isUrl}
+            fieldEdit={fieldEdit}
+            dataUser={dataUser}
+            setDataUser={setDataUser}
+          />
+        ) : (
+          <CompanyInfoInputs
+            isUrl={isUrl}
+            fieldEdit={fieldEdit}
+            dataUser={dataUser}
+            setDataUser={setDataUser}
+          />
+        )}
+        {isAdmin && <PermissionSelect
           fieldEdit={fieldEdit}
-          dataUser={dataUser}
-          setDataUser={setDataUser}
-        />
-        {/* {!isAddClient && <PermissionSelect
-          email={email}
           setPermissions={setPermissions}
           permissions={permissions}
-          isAdmin={isAdmin}
-          isAddClient={isAddClient}
-        />} */}
+          isNewClient={isNewClient}
+        />}
           {/* {isAdmin && (
             <TitleSection isAddClient={isAddClient}>Cursos</TitleSection>
           )} */}

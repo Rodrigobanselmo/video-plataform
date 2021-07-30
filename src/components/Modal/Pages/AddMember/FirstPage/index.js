@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useMemo} from 'react';
 // import AddModal, {Type,Form} from './comp'
 import {useNotification} from '../../../../../context/NotificationContext'
 import {useLoaderScreen} from '../../../../../context/LoaderContext'
@@ -15,7 +15,7 @@ import { useSellingData } from '../../../../../context/data/SellingContext';
 import { queryClient } from '../../../../../services/queryClient';
 import * as Yup from 'yup';
 import { isUnique } from '../../../../../helpers/yupMethods';
-import { TestaCPF } from '../../../../../helpers/StringVerification';
+import { TestaCNPJ, TestaCPF } from '../../../../../helpers/StringVerification';
 import { Form } from "@unform/web";
 import { formatCPFeCNPJeCEPeCNAE, keepOnlyNumbers, wordUpper } from '../../../../../helpers/StringHandle';
 import { v4 } from 'uuid';
@@ -100,23 +100,28 @@ function getType(docData) {
   return 'Padrão'
 }
 
-function appendData(formData, prices, cursos, permissions, dataUser, user, isAddClient) {
+function appendData(formData, prices, cursos, permissions, dataUser, user, isNewClient, isAdmin, isBilling) {
   const array = []
   const companyId = user.companyId
 
   Object.keys(formData).map((key) => { //.sort((a, b) => a - b)
 
     var DATA = {
-      companyId:isAddClient?v4():companyId,
+      companyId:isAdmin
+        ? (isNewClient ? v4(): companyId)
+        :companyId,
       status: 'Pendente',
-      access: isAddClient?'client':user.access,
-      uid:`${Math.random().toString(36).slice(2, 10)}${Math.random().toString(36).slice(2, 10)}${Math.random().toString(36).slice(2, 10)}`
+      access: isNewClient?'client':user.access,
+      uid: v4()
     }
 
     DATA.createdAt = new Date().getTime();
     DATA.permission = [];
-    DATA.createdByAdmin = !!isAddClient;
-    if (!user.access === 'admin' || !isAddClient) DATA.createdAtClient = new Date().getTime();
+    DATA.billId = DATA.uid;
+    DATA.createdByAdmin = isAdmin;
+    DATA.isPrimaryAccount = !!(isAdmin && isNewClient);
+    DATA.cursos = []
+    DATA['statement'] = []
 
     if (formData[key] && formData[key].includes(SIGN)) {
       DATA.link = formData[key]
@@ -135,8 +140,9 @@ function appendData(formData, prices, cursos, permissions, dataUser, user, isAdd
       }
     })
 
-    //adicinar cursos qunadon for para aluno de uma empresa
-    if (!isAddClient) Object.keys(cursos).map((keyCurso)=>{
+    //adicinar cursos qunadon
+    // if (!isNewClient)
+    Object.keys(cursos).map((keyCurso)=>{
 
       if (cursos[keyCurso]) { // se curso estiver selecionado
 
@@ -146,11 +152,12 @@ function appendData(formData, prices, cursos, permissions, dataUser, user, isAdd
         const cursoId = keySplit[1]
         const isEPI = Boolean(keySplit[3])
 
+        const allCursos = queryClient.getQueryData('cursos')
 
         if (cursoIndex == key && !isEPI)  { //se nao tem epi
           const dataCursos = DATA['cursos'] ? DATA['cursos'] : []
           if (dataCursos.findIndex(i=>i.id == cursoId) === -1) {
-            DATA['cursos'] = [...dataCursos,{id:cursoId,name:user.cursos[user.cursos.findIndex(i=>i.id==cursoId)].name,quantity:1}]
+            DATA['cursos'] = [...dataCursos,{id:cursoId,name:allCursos[allCursos.findIndex(i=>i.id==cursoId)].name,quantity:1}]
           }
         }
 
@@ -170,62 +177,74 @@ function appendData(formData, prices, cursos, permissions, dataUser, user, isAdd
 
     })
 
-    //adicinar cursos quando for para empresas e eu for admin // cursos é o state que tem ['email.index--{}--epi']
-    if (isAddClient) Object.keys(cursos).map((keyCurso)=>{
-      DATA.createdAtAdmin = new Date().getTime();
-      if (cursos[keyCurso]) { // se curso estiver selecionado
+    // //adicinar cursos quando for para empresas e eu for admin // cursos é o state que tem ['email.index--{}--epi']
+    // if (isAdmin) Object.keys(cursos).map((keyCurso)=>{
+    //   DATA.createdAtAdmin = new Date().getTime();
+    //   if (cursos[keyCurso]) { // se curso estiver selecionado
 
-        const keySplit = keyCurso.split('--')
-        const cursosAllData = queryClient.getQueryData('cursos');
+    //     const keySplit = keyCurso.split('--')
+    //     const cursosAllData = queryClient.getQueryData('cursos');
 
-        const cursoIndex = keySplit[0]
-        const cursoId = keySplit[1]
+    //     const cursoIndex = keySplit[0]
+    //     const cursoId = keySplit[1]
 
-        if (cursoIndex == key)  {
-          const availableCursos = DATA['availableCursos'] ? DATA['availableCursos'] : []
-          const CURSO = cursosAllData[cursosAllData.findIndex(i=>i.id==cursoId)]
-          if (availableCursos.findIndex(i=>i.id == cursoId) === -1) {
-            DATA['availableCursos'] = [...availableCursos,{id:cursoId,name:CURSO.name,quantity:cursos[keyCurso]}]
-          }
+    //     if (cursoIndex == key)  {
+    //       const availableCursos = DATA['availableCursos'] ? DATA['availableCursos'] : []
+    //       const CURSO = cursosAllData[cursosAllData.findIndex(i=>i.id==cursoId)]
+    //       if (availableCursos.findIndex(i=>i.id == cursoId) === -1) {
+    //         DATA['availableCursos'] = [...availableCursos,{id:cursoId,name:CURSO.name,quantity:cursos[keyCurso]}]
+    //       }
 
-          if (CURSO?.subCursos) {
-            let count = 0;
-            const CursoAvailableIndex = DATA['availableCursos'].findIndex(i=>i.id == cursoId); // `email.index--key`
-            const CursoAvailableData = []; // `email.index--key`
-            Object.keys(permissions).map((keyPermission) => { //`quantity--${email.index}--${curso.id}--${price}`
-              const keyIsSameIndex = keyPermission.split('--')[1] == key;
-              const keyPrice = keyPermission.split('--')[3];
-              const keyCursoIdData = keyPermission.split('--')[2];
-              if (
-                keyPermission.split('--').length == 4 &&
-                keyIsSameIndex &&
-                keyCursoIdData == cursoId &&
-                permissions[keyPermission] &&
-                permissions[keyPermission] != 0
-              ) {
-                CursoAvailableData.push({price:keyPrice,quantity:permissions[keyPermission]})
-                count = Number(count) + Number(permissions[keyPermission])
-              }
-            })
-          DATA['availableCursos'][CursoAvailableIndex].data = [...CursoAvailableData]
-          DATA['availableCursos'][CursoAvailableIndex].quantity = count
+    //       if (CURSO?.subCursos) {
+    //         let count = 0;
+    //         const CursoAvailableIndex = DATA['availableCursos'].findIndex(i=>i.id == cursoId); // `email.index--key`
+    //         const CursoAvailableData = []; // `email.index--key`
+    //         Object.keys(permissions).map((keyPermission) => { //`quantity--${email.index}--${curso.id}--${price}`
+    //           const keyIsSameIndex = keyPermission.split('--')[1] == key;
+    //           const keyPrice = keyPermission.split('--')[3];
+    //           const keyCursoIdData = keyPermission.split('--')[2];
+    //           if (
+    //             keyPermission.split('--').length == 4 &&
+    //             keyIsSameIndex &&
+    //             keyCursoIdData == cursoId &&
+    //             permissions[keyPermission] &&
+    //             permissions[keyPermission] != 0
+    //           ) {
+    //             CursoAvailableData.push({price:keyPrice,quantity:permissions[keyPermission]})
+    //             count = Number(count) + Number(permissions[keyPermission])
+    //           }
+    //         })
+    //       DATA['availableCursos'][CursoAvailableIndex].data = [...CursoAvailableData]
+    //       DATA['availableCursos'][CursoAvailableIndex].quantity = count
 
-          }
-        }
+    //       }
+    //     }
 
-      }
+    //   }
 
-    })
+    // })
+    const isCNPJ =  permissions[(`${key}--co`)]
+    if (isCNPJ) {
+      DATA['company'] = {cpfOrCnpj:'',razao:''};
+      if (dataUser[`${key}--company`]) DATA['company'] = dataUser[`${key}--company`]
+      if (dataUser[`${key}--address`]) DATA['address'] = dataUser[`${key}--address`]
+      if (dataUser[`${key}--razao`]) DATA['company'] = {...DATA['company'], razao: dataUser[`${key}--razao`]};
+      if (dataUser[`${key}--cnpj`]) DATA['company'] ={...DATA['company'], cpfOrCnpj: dataUser[`${key}--cnpj`]};
+    } else {
+      if (dataUser[`${key}--cpf`]) DATA['cpf'] = formatCPFeCNPJeCEPeCNAE(dataUser[`${key}--cpf`])
+      if (dataUser[`${key}--name`]) DATA['name'] = wordUpper((dataUser[`${key}--name`].trim()).split(" "))
+    }
 
-    if (dataUser[`${key}--cpf`]) DATA['cpf'] = formatCPFeCNPJeCEPeCNAE(dataUser[`${key}--cpf`])
-    if (dataUser[`${key}--name`]) DATA['name'] = wordUpper((dataUser[`${key}--name`].trim()).split(" "))
-    if (prices[key]) DATA['statement'] = [prices[key]]
+
+    // const value = isBilling ? prices[key] : 0
+    if (prices[key]) DATA['statement'] = [{value:prices[key], type:'debit',created_at:(new Date()).getTime(),desc:'Compra de curso',buyerId:user.uid}]
 
     DATA['type'] = getType(DATA)
     DATA['creation'] = getCreation(DATA)
 
-    if (DATA?.cursos) array.push(DATA)
-    if (DATA?.availableCursos) array.push(DATA)
+    // if (DATA?.cursos)
+    // if (DATA?.availableCursos) array.push(DATA)
+    if (DATA?.email || DATA?.link) array.push(DATA)
     console.log('DATA',DATA)
 
   });
@@ -233,25 +252,28 @@ function appendData(formData, prices, cursos, permissions, dataUser, user, isAdd
 
 }
 
-export function FirstPageAddModal({isAddClient,setPosition}) {
+export function FirstPageAddModal({setPosition,onEnd, isNewClient:isNew}) {
 
   const {currentUser} = useAuth();
   const mutation = useCreateUsers()
 
   const formRef = React.useRef();
   const URL = 'link-url';
+  const isAdmin = currentUser.access === 'admin';
+  const isNewClient = isNew;
 
   // const {setLoad} = useLoaderScreen();
   const notification = useNotification();
 
   const [load, setLoad] = useState(false);
   const [emails, setEmails] = useState(['', '']);
-  const { setCheckoutInfo, dataUser, setDataUser, cursos, setCursos, permissions, setPermissions, prices, setPrices, fieldEdit, setFieldEdit } = useSellingData()
+  const { isBilling, totalPrice, setCheckoutInfo, dataUser, setDataUser, cursos, setCursos, permissions, setPermissions, prices, setPrices, fieldEdit, setFieldEdit } = useSellingData()
 
   function isCursoSelected(message) {
     return this.test('isCursoSelected', message, function (value, schema) {
       const { path, createError } = this;
       if (!value) return true;
+      if (isAdmin) return true;
 
       let isSelected = false;
       let isEPIMissing = false;
@@ -272,19 +294,19 @@ export function FirstPageAddModal({isAddClient,setPosition}) {
           isEPIMissing = true;
       });
 
-      if (isAddClient) { //se for pagina de addicionar clientes
-        Object.keys(permissions).map((key) => { //`quantity--${email.index}--${curso.id}--${price}`
-          const keyIsSameIndex = key.split('--')[1] == path; // `email.index--key`
-          console.log('permissions[key]',permissions)
-          if (
-            key.split('--').length == 4 &&
-            keyIsSameIndex &&
-            permissions[key] &&
-            permissions[key] != 0
-          )
-            isEPIMissing = false;
-        })
-      }
+      // if (isNewClient) { //se for pagina de addicionar clientes
+      //   Object.keys(permissions).map((key) => { //`quantity--${email.index}--${curso.id}--${price}`
+      //     const keyIsSameIndex = key.split('--')[1] == path; // `email.index--key`
+      //     console.log('permissions[key]',permissions)
+      //     if (
+      //       key.split('--').length == 4 &&
+      //       keyIsSameIndex &&
+      //       permissions[key] &&
+      //       permissions[key] != 0
+      //     )
+      //       isEPIMissing = false;
+      //   })
+      // }
 
       if (isEPIMissing) {
         return createError({
@@ -307,7 +329,9 @@ export function FirstPageAddModal({isAddClient,setPosition}) {
   function isCPFValid(message) {
     return this.test('isCPFValid', message, function (value, schema) {
       const { path, createError } = this;
+      const isCNPJ =  permissions[(`${path}--co`)]
 
+      if (isCNPJ) return true;
       if (!value) return true;
       if (!dataUser[`${path}--cpf`]) return true;
       let isCpfValidOrNull = false;
@@ -324,9 +348,32 @@ export function FirstPageAddModal({isAddClient,setPosition}) {
     });
   }
 
+  function isCNPJValid(message) {
+    return this.test('isCPFValid', message, function (value, schema) {
+      const { path, createError } = this;
+      const isCNPJ =  permissions[(`${path}--co`)]
+
+      if (!isCNPJ) return true;
+      if (!value) return true;
+      if (!dataUser[`${path}--cnpj`]) return true;
+      let isCnpjValidOrNull = false;
+
+      // console.log('dataUser[`${path}--cpf`]', dataUser[`${path}--cpf`]);
+      if (TestaCNPJ(keepOnlyNumbers(dataUser[`${path}--cnpj`])))
+        isCnpjValidOrNull = true;
+
+      if (!isCnpjValidOrNull) {
+        return createError({ path, message: message ?? 'CNPJ inválido' });
+      }
+
+      return true;
+    });
+  }
+
   Yup.addMethod(Yup.mixed, 'unique', isUnique);
   Yup.addMethod(Yup.mixed, 'curso', isCursoSelected);
   Yup.addMethod(Yup.mixed, 'cpf', isCPFValid);
+  Yup.addMethod(Yup.mixed, 'cnpj', isCNPJValid);
 
   const yupObject = {};
   emails.map((i, index) => {
@@ -335,12 +382,14 @@ export function FirstPageAddModal({isAddClient,setPosition}) {
         .email('Email com formatação inválida.').trim()
         .unique()
         .curso()
+        .cnpj()
         .cpf();
-    if (i.includes(URL)) yupObject[index] = Yup.string().curso().cpf();
+    if (i.includes(URL)) yupObject[index] = Yup.string().curso().cnpj().cpf();
   });
 
   const validation = Yup.object({ ...yupObject });
 
+  // !remove
   function later(delay) {
     return new Promise((resolve) => {
       setTimeout(resolve, delay);
@@ -355,9 +404,9 @@ export function FirstPageAddModal({isAddClient,setPosition}) {
 
       try {
         await validation.validate(formData, { abortEarly: false });
-        console.log('formData[key]',formData)
         await later(500)
-        if (Object.values(formData).filter(i=>i).length === 0) {
+        console.log('formData',formData)
+        if (Object.values(formData).filter(i=>i.trim()).length === 0) {
           console.log('setLoad to false')
           setLoad(false)
           return alert('Preencha os campos')
@@ -385,17 +434,26 @@ export function FirstPageAddModal({isAddClient,setPosition}) {
           throw EMAIL_KEY
         }
 
-        const DATA = appendData(formData, prices,cursos,permissions,dataUser,currentUser,isAddClient)
-        const totalPrice = prices.reduce((acc,price)=>Number(acc)+Number(price),[0])
+      const DATA = appendData(formData, prices,cursos,permissions,dataUser,currentUser,isNewClient,isAdmin, isBilling)
+      console.log(1234)
+        // const totalPrice = prices.reduce((acc,price)=>Number(acc)+Number(price),[0])
 
-        setPosition(2)
-        setCheckoutInfo({data:DATA,total:totalPrice})
-        console.log('Data',{data:DATA,total:totalPrice})
-        throw ''
+        if (isAdmin && !isNewClient) {
+          await mutation.mutateAsync({data:DATA,user:currentUser,noStatement:true})
+          onEnd()
+        } else {
+      console.log(12346)
+          setPosition(2)
+          setLoad(false)
+          setCheckoutInfo({data:DATA, total:totalPrice})
 
-        const newQuantity = permissions
-        await mutation.mutateAsync({DATA,newQuantity})
-        setLoad(false)
+        }
+        // console.log('Data',{data:DATA,total:totalPrice})
+        // throw ''
+
+        // const newQuantity = permissions
+        // await mutation.mutateAsync({DATA,newQuantity})
+        // setLoad(false)
         // onClose()
         // console.log('Data',DATA)
         // setDataUser({...dataUser,resume:formData.resume,emails:array})
@@ -427,7 +485,6 @@ export function FirstPageAddModal({isAddClient,setPosition}) {
     [cursos, dataUser, emails, permissions, prices],
   );
 
-
   return (
     <Container>
       <GridContainer
@@ -439,7 +496,7 @@ export function FirstPageAddModal({isAddClient,setPosition}) {
         <InputsEmail>
           <HeaderModal
             center
-            text={!isAddClient
+            text={!isAdmin
               ? 'Adicionar Novos Alunos a Plataforma'
               : 'Adicionar Novos Clientes a Plataforma'
             }
@@ -467,19 +524,19 @@ export function FirstPageAddModal({isAddClient,setPosition}) {
               data={dataUser}
               mutation={mutation}
               onClose={onClose}
-              isAddClient={isAddClient}
+              isAdmin={isAdmin}
               email={email}
           />
           )} */}
         </InputsEmail>
 
         <SideEmail
-          isAddClient={isAddClient}
+          isNewClient={isNewClient}
+          isAdmin={false}
         />
         <CheckoutButton
-          prices={prices}
+          totalPrice={totalPrice}
           load={load}
-          setLoad={setLoad}
         />
       </GridContainer>
     </Container>

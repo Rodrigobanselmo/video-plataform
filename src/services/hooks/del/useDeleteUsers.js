@@ -4,6 +4,7 @@ import { useNotification } from "../../../context/NotificationContext";
 import { db, fb } from "../../../lib/firebase.prod";
 import { errorCatchFirestore } from "../../error";
 import { queryClient } from "../../queryClient";
+import {v4} from "uuid";
 
 
 
@@ -48,31 +49,48 @@ async function onAddUser(userToDelete, user, batch) {
   if (user.access === 'admin') return user
 
   const usersRef = db.collection('users').doc(user.uid);
-  let newAvailableCursos = [...user.availableCursos]
+  const statementsRef = db.collection('statement');
+  let newUser = {...user}
 
-  userToDelete.cursos.map(cursoRemove => {
-    const cursoAddIndex = newAvailableCursos.findIndex(i=>i.id === cursoRemove.id)
-    const cursoAdd = newAvailableCursos[cursoAddIndex]
+  if (userToDelete?.statement && userToDelete.statement[0] && 'value' in userToDelete.statement[0] ) {
 
-    if (cursoRemove?.epi) {
-      const arrayPrice = cursoRemove?.epi.map(epi=>{
-        return epi?.price
-      })
-
-      const newDataEpis = newAvailableCursos[cursoAddIndex].data.map(data => { //adicionar aos tipos de epis
-        const newQuantity = data.quantity + arrayPrice.filter(i=>i == data.price).length
-        return {...data,quantity:newQuantity}
-      })
-
-      newAvailableCursos[cursoAddIndex].quantity = cursoAdd.quantity + arrayPrice.length
-      newAvailableCursos[cursoAddIndex].data = newDataEpis
-    } else {
-      newAvailableCursos[cursoAddIndex].quantity = cursoAdd.quantity + cursoRemove.quantity
+    const products = {
+        type:'newUser',
+        cursos: userToDelete.cursos,
+        value: userToDelete.statement[0].value,
+        shared: userToDelete?.email ?? userToDelete?.link
     }
-  })
+    const docId = v4()
 
-  batch.update(usersRef,{availableCursos:newAvailableCursos})
-  return {...user,availableCursos:newAvailableCursos}
+    batch.set(statementsRef.doc(docId),{
+      id: docId,
+      value:userToDelete.statement[0].value,
+      type:'credit',
+      created_at:(new Date()).getTime(),
+      desc:'Reembolso',
+      billId:user?.billId ?? '',
+      companyId:user?.companyId ?? '',
+      customer:user.name,
+      customerId:user.uid,
+      products
+    })
+
+    // if (!newUser?.statement) newUser.statement = []
+    // newUser.statement = [...newUser.statement, {
+    //   value:userToDelete.statement[0].value,
+    //   type:'credit',
+    //   desc:'Reembolso',
+    //   id: docId,
+    //   created_at:(new Date()).getTime(),
+    //   buyer:user.name
+    // }]
+
+    if (!newUser?.credit) newUser.credit = 0
+    newUser.credit = Number(newUser.credit) + Number(userToDelete.statement[0].value)
+  }
+
+  batch.update(usersRef,{statement:newUser.statement})
+  return {...newUser}
 }
 
 export async function deleteUsers(userToDelete,user) { //data = array of users {}
@@ -95,11 +113,11 @@ export function useDeleteUsers() {
   const { currentUser, setCurrentUser } = useAuth();
 
   return useMutation(async(data)=>deleteUsers(data,currentUser), { //data = array of users {}
-    onSuccess: (data) => {
+    onSuccess: (data, userToDelete) => {
       notification.success({message:'Convite revogado com sucesso!'}) //Email enviado com sucesso, verifique em sua caixa de entrada e/ou span?
       setCurrentUser(data.newUser)
-      queryClient.setQueryData('users', (oldData)=>[...oldData.filter(i=>i.uid !== data.uid)])
-      // queryClient.setQueryData('links', (oldData)=>[...oldData,...links])
+      if (userToDelete.isPrimaryAccount && userToDelete.access == 'client') queryClient.setQueryData('clients', (oldData)=>[...oldData.filter(i=>i.uid !== data.uid)])
+      else queryClient.setQueryData('users', (oldData)=>[...oldData.filter(i=>i.uid !== data.uid)])
     },
     onError: (error) => {
       notification.error({message:errorCatchFirestore(error)})

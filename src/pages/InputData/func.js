@@ -6,8 +6,11 @@ export function onAddUserData({data,createCompany,currentUser,setCurrentUser,set
 
     let formattedData = {...data,status:'Ativo'}
     formattedData.name = wordUpper((formattedData.name.trim()).split(" "))
-    formattedData.razao = formattedData?.company?.razao
-    formattedData.cpfOrCnpj = formattedData?.company?.cpfOrCnpj
+    formattedData.razao = formattedData?.company?.razao ?? ''
+    formattedData.cpfOrCnpj = formattedData?.company?.cpfOrCnpj ?? ''
+    formattedData.initialized = true
+    formattedData.newUser = false
+    formattedData.company.juridica = formattedData.cpfOrCnpj?true:false
 
     console.log('final',formattedData)
     setLoad(true)

@@ -27,7 +27,7 @@ export function FilterComponent(props) {
     props.onStop(value)
   }
 
-  const [onDebounce] = useDebounce(onTimeoutFunction,5000)
+  const [onDebounce] = useDebounce(onTimeoutFunction,500)
 
   function onInputSearch(e) {
     if (props.setLoading) props.setLoading(true)

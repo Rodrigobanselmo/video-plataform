@@ -109,6 +109,10 @@ export const PriceTag = styled.div`
     margin-bottom: 5px;
     grid-area: i;
     cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   p.price {
@@ -127,13 +131,20 @@ export const PriceTag = styled.div`
 `;
 
 export const CursosView = styled.div`
-  display:flex;
-  align-items: center;
-  gap:0.5rem;
-  flex-wrap: wrap;
   grid-area: curso;
   margin-top: 5px;
   margin-bottom: 5px;
+  flex-wrap: wrap;
+  display:flex;
+  align-items: center;
+
+  div {
+    gap:0.5rem;
+    flex-wrap: wrap;
+    display:flex;
+    margin-left:6px;
+    align-items: center;
+  }
 
   p {
     font-size:0.80rem;
@@ -237,6 +248,7 @@ export const TotalPayment = styled.p`
 
   span {
     font-weight:bold;
+    margin-left:5px;
   }
 `;
 

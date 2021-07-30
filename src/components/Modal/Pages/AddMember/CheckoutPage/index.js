@@ -21,20 +21,18 @@ import {
   ButtonFinal
 } from './styles';
 import Checkbox from '@material-ui/core/Checkbox';
+import { useCreateUsers } from '../../../../../services/hooks/set/useCreateUsers';
 
-export function CheckoutPage({checkoutInfo}) {
+export const CheckoutPageComponent = ({checkoutInfo, totalPrice, onEnd}) => {
 
   const {currentUser} = useAuth();
+  console.log(999999)
 
-  // const mutation = useCreateUsers()
+  const mutation = useCreateUsers()
   const notification = useNotification();
   const [checked, setChecked] = useState(false);
 
   const data = checkoutInfo?.data ? checkoutInfo.data : []
-  const total = new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(checkoutInfo?.total ? checkoutInfo.total : 0)
 
   function handleCopy(link,text) {
     navigator.clipboard.writeText(link)
@@ -45,9 +43,13 @@ export function CheckoutPage({checkoutInfo}) {
     setChecked(event.target.checked);
   };
 
-  const handleConfirmPurchase = () => {
+  const handleConfirmPurchase = async() => {
     if (!checked) return notification.warn({message:'Para finalizar pagamento, confirme que está ciente sobre nossos temos',modal:true})
-    // setChecked(event.target.checked);
+    console.log('checkoutInfo',checkoutInfo)
+
+    const isAdmin = currentUser.access === 'admin'
+    await mutation.mutateAsync({user:currentUser, noStatement:isAdmin,...checkoutInfo})
+    onEnd()
   };
 
   return (
@@ -68,10 +70,10 @@ export function CheckoutPage({checkoutInfo}) {
             const price = new Intl.NumberFormat("pt-BR", {
               style: "currency",
               currency: "BRL",
-            }).format(user.statement[0])
+            }).format(user?.statement && user.statement[0] && user.statement[0]?.value ? user.statement[0].value : 0 )
 
             return (
-              <PriceTag>
+              <PriceTag key={user.uid}>
                 {user?.name && <p className='name'>Nome: <span>{name}</span></p>}
                 {user?.cpf && <p className='cpf'>CPF: <span>{cpf}</span></p>}
                 <p onClick={()=>handleCopy(infoData,info)} className='info'>{info}: <span>{infoData}</span></p>
@@ -81,12 +83,12 @@ export function CheckoutPage({checkoutInfo}) {
                   {cursos.map((curso=>{
                     const hasEpi = curso?.epi ? curso.epi : []
                     return (
-                      <>
+                      <div key={curso.name}>
                         <p>{curso.name}</p>
                         {hasEpi.map(epi=>{
-                          return <p>{epi.name}</p>
+                          return <p key={epi.name}>{epi.name}</p>
                         })}
-                      </>
+                      </div>
                     )
                   }))}
                 </CursosView>
@@ -95,7 +97,12 @@ export function CheckoutPage({checkoutInfo}) {
           })}
         </PriceTable>
         <TotalPrice>
-          <p>Total: <span>{total}</span></p>
+          <p>Total: <span>
+          {new Intl.NumberFormat("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            }).format(totalPrice)}
+          </span></p>
         </TotalPrice>
       </Cart>
       <PaymentSide>
@@ -123,7 +130,13 @@ export function CheckoutPage({checkoutInfo}) {
           label="Confirmo que estou ciente de como funciona o faturamento mensal"
         />
         <TotalPayment>
-          Total a pagar: <span>{total}</span>
+          Total a pagar:
+            <span>
+              {new Intl.NumberFormat("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+              }).format(totalPrice)}
+            </span>
         </TotalPayment>
         <ButtonFinal onClick={handleConfirmPurchase}>
           Finalizar Compra
@@ -131,4 +144,6 @@ export function CheckoutPage({checkoutInfo}) {
       </PaymentSide>
     </ContainerCheckout>
   );
-}
+} ;
+
+export const CheckoutPage = React.memo(CheckoutPageComponent)

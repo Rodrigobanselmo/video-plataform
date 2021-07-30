@@ -57,7 +57,8 @@ const Item = styled.button`
 
 function Team() {
 
-  const  { data, isLoading, error } = useUsers({notDisableLoad:true})
+  const {currentUser} = useAuth()
+  const  { data, isLoading, error } = useUsers({currentUser})
   const  { dataCursos, isLoadingCursos } = useCursos({notDisableLoad:true})
   // const  { data:links, isLoading:linksIsLoading, error:linksError } = useLinks(3)
 
@@ -66,7 +67,6 @@ function Team() {
   const [usersRows, setUsersRows] = useState([])
   const [selected, setSelected] = useState([]);
 
-  const {currentUser} = useAuth()
   const {setLoad} = useLoaderScreen();
   const notification = useNotification()
   const query = new URLSearchParams(useLocation().search)

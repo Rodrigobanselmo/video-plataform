@@ -67,7 +67,7 @@ export function CompanyData({ notification,setUnform,unform,onSecondForm}) {
       ...yupCompany,
     }),
     address: Yup.object({
-      cep: Yup.string().required('Nome não pode estar em branco.'),
+      cep: Yup.string(),
       // municipio: Yup.string().required('Nome não pode estar em branco.'),
       // uf: Yup.string().required('Nome não pode estar em branco.'),
     })
@@ -174,14 +174,16 @@ export function CompanyData({ notification,setUnform,unform,onSecondForm}) {
         onSubmit={handleSubmit}
         key={_key}
       >
-        <p style={{margin:0,width:'100%'}}>Tipo de conta</p>
-        <div style={{width:'100%',display:'flex'}}>
-          <ButtonType active={unform.company.juridica} onClick={()=>checkJur(true)}>
-            Pessoa jurídica
-          </ButtonType>
-          <ButtonType active={!unform.company.juridica} onClick={()=>checkJur(false)}>
-            Pessoa física
-          </ButtonType>
+        <div style={{width:'100%'}}>
+          <p style={{margin:0,width:'100%'}}>Tipo de conta</p>
+          <div style={{width:'100%',display:'flex'}}>
+            <ButtonType active={unform.company.juridica} onClick={()=>checkJur(true)}>
+              Pessoa jurídica
+            </ButtonType>
+            <ButtonType active={!unform.company.juridica} onClick={()=>checkJur(false)}>
+              Pessoa física
+            </ButtonType>
+          </div>
         </div>
         {unform.company.juridica && <InputUnform
           // width={unform.company.juridica?'100%':'100%'}

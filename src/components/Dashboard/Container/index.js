@@ -75,7 +75,7 @@ export default function MiniDrawer({children}) {
   return (
       // <LoaderDashboard open={open}>
       <div className={`classes ${classes.root}`}>
-        {currentUser && currentUser?.access && currentUser.access === 'admin' ?
+        {currentUser && currentUser?.access ?
           <>
             <CssBaseline />
             <NavSystem  open={open} setOpen={openNavDrawer}/>

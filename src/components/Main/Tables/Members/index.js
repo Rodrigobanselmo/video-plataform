@@ -18,6 +18,8 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { PERMISSIONS } from '../../../../constants/geral';
 import { CollapseTable } from './Collapse';
+import { filterObject } from '../../../../helpers/ObjectArray';
+import { useGetMoreClients } from '../../../../services/hooks/get/useGetMoreClients';
 
 
 const ContainerTable = styled.div`
@@ -168,14 +170,25 @@ export function MembersTable({isLoading,data,filter=true,isClient}) {
   const [loading,setLoading] = useState(false)
   const [search,setSearch] = useState('')
   const [userOpen,setUserOpen] = useState({})
+  const mutation = useGetMoreClients();
   console.log('reloaded userTable')
 
   const pending = 'Esperando usuário realizar cadastro na plataforma'
   const authenticating = 'Usuário já criou sua conta na plataforma, mas não finalizado o cadastro.'
   const active = 'Usuário está ativo e em dia com suas atividades'
 
-  function filterArray(value) {
-    return data.filter(i=>!i?.link||(i?.link && i?.email));
+  function filterArray(search) {
+    const searchParams = ['name', 'cpf','email']
+    const newData = []
+    data.filter(i=>i?.status).map((row)=>{
+      if (!(!row?.link||(row?.link && row?.email))) return null
+      if (!search) return newData.push({...row})
+      if(searchParams[0] && filterObject(row,search,searchParams[0])) newData.push({...row})
+      else if (searchParams[1] && filterObject(row,search,searchParams[1])) newData.push({...row})
+      else if (searchParams[2] && filterObject(row,search,searchParams[2])) newData.push({...row})
+    })
+    return newData
+    // return data.filter(i=>!i?.link||(i?.link && i?.email));
   }
 
   const DATA = React.useMemo(() => filterArray(search), [data,search])
@@ -188,6 +201,12 @@ export function MembersTable({isLoading,data,filter=true,isClient}) {
   function handleOpenUser(uid) {
     if (userOpen?.uid===uid) return setUserOpen({})
     setUserOpen({uid})
+  }
+
+  async function handleMore(setLoad) {
+    setLoad(true)
+    await mutation.mutateAsync()
+    setLoad(false)
   }
 
   return (
@@ -276,7 +295,7 @@ export function MembersTable({isLoading,data,filter=true,isClient}) {
                 })}
               </TableBody>
             </Table>
-            <LoadMoreTableCells shown={DATA.length} total={DATA.length}/>
+            <LoadMoreTableCells handleMore={isClient?handleMore:false} shown={DATA.length} total={DATA.length}/>
           </>
         ) : (
           <MissingData text={'Nenhum usuário // disponivel no momento'}/>

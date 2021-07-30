@@ -40,18 +40,19 @@ export async function getUsers(currentUser) {
   const reduceType = 'users'
   let docId = null;
 
-  const users = await db.collection('users').orderBy('email').where("companyId", "==", currentUser.companyId).get();
-  const array2 = []
-  users.forEach(doc=>{
-    array2.push({...doc.data()})
-  })
-  console.log('usersusers',array2)
+  // const users = await db.collection('users').where("companyId", "==", currentUser.companyId).get();
+  // const array2 = []
+  // users.forEach(doc=>{
+  //   array2.push({...doc.data()})
+  // })
+  // console.log('usersusers',array2)
 
   const reduce = await reduceRef.where("id", "==", currentUser.companyId).where("reduceType", "==", reduceType).get();
   const array = []
 
   reduce.forEach(doc=>{
-    array.push(...doc.data().data)
+    if (currentUser.access == 'admin') array.push(...doc.data().data.filter(i=>(i.access !== 'client')))
+    if (currentUser.access != 'admin') array.push(...doc.data().data)
   })
 
   const sortPendent = array.filter(i=>i.status === 'Pendente').sort((a, b) => b.createdAt - a.createdAt)
@@ -72,14 +73,14 @@ export async function getUsers(currentUser) {
   return response
 }
 
-export function useUsers({notDisableLoad}) {
-  const {currentUser} = useAuth();
-  const { setLoaderDash } = useLoaderDashboard();
+export function useUsers({currentUser}) {
+  // const {currentUser} = useAuth();
+  // const { setLoaderDash } = useLoaderDashboard();
 
   return useQuery('users', ()=>getUsers(currentUser), {
     staleTime: 1000 * 60 * 60 * 1,
     onSuccess: () => {
-      if (!notDisableLoad) setLoaderDash(false)
+      // if (!notDisableLoad) setLoaderDash(false)
     }
   })
 }
