@@ -47,6 +47,7 @@ export function AddMemberModal({open,setOpen, isNewClient, update}) {
     const [cursos, setCursos] = useState({});
     const [permissions, setPermissions] = useState({});
     const [prices, setPrices] = useState([]);
+    const [credit, setCredit] = useState([]);
 
     const [checkoutInfo, setCheckoutInfo] = useState({});
 
@@ -74,25 +75,25 @@ export function AddMemberModal({open,setOpen, isNewClient, update}) {
 
       const cursosArray = [];
       Object.keys(cursos).map((key)=>{
-        if (!cursos[key]) return null
 
         const fieldIndex = key.split('--')[0]
         const cursoId = key.split('--')[1]
+        if (!cursosArray[fieldIndex]) cursosArray[fieldIndex] = []
+
+        if (!cursos[key]) return null
 
         if (Array.isArray(cursos[key])) {
           //curso de epi de segunda order
-          if (!cursosArray[fieldIndex]) cursosArray[fieldIndex] = []
 
           return cursosArray[fieldIndex].push(...cursos[key].map(i=>cursoId))
         } else {
           //curso normal de primeira order
-          if (!cursosArray[fieldIndex]) cursosArray[fieldIndex] = []
 
           return cursosArray[fieldIndex].push(cursoId)
         }
       })
 
-      const price = cursosArray.map(fieldArray=>{
+      const price = cursosArray.map(fieldArray=>{ // [ cursoId1, cursoId1, cursoId2, ..... ]
         return fieldArray.reduce((acc,item,index)=>{
           const isFirstTimePassing = fieldArray.findIndex(i=>i==item) == index
           if (!isFirstTimePassing) return acc
@@ -128,27 +129,31 @@ export function AddMemberModal({open,setOpen, isNewClient, update}) {
 
     const onTotalPrice = () => {
       return  prices.reduce((acc,price,index)=>{
-        if (isBilling && !isNewClient) return Number(acc)+Number(price)
+        if (isBilling && !isNewClient) return Number(acc)+Number(price)-Number(credit[index]?credit[index]:0)
         return acc
       },[0])
     }
 
-    const totalPrice = useMemo(() => onTotalPrice(), [prices, permissions, isBilling])
+    const totalPrice = useMemo(() => onTotalPrice(), [prices, permissions, isBilling, credit])
 
-
+    console.log('totalPrice',totalPrice)
+    console.log('credit',credit)
+    console.log('prices',prices)
     return (
-      <SellingContext.Provider value={{ onCalcUserPrice, totalPrice, isBilling, checkoutInfo, setCheckoutInfo, dataUser, setDataUser, cursos, setCursos, permissions, setPermissions, prices, setPrices, fieldEdit, setFieldEdit }}>
+      <SellingContext.Provider value={{ onCalcUserPrice, credit, setCredit, totalPrice, isBilling, checkoutInfo, setCheckoutInfo, dataUser, setDataUser, cursos, setCursos, permissions, setPermissions, prices, setPrices, fieldEdit, setFieldEdit }}>
           <ModalFullScreen open={open} arrow={position >= 2 ? true : false} onClose={onClose} infoModal={infoModal} onGoBack={onGoBack}>
             <Carrousel sections={2} position={position}>
               <FirstPageAddModal
                 setPosition={setPosition}
                 onEnd={onEnd}
                 isNewClient={isNewClient}
+                update={update}
               />
               <CheckoutPage
                 checkoutInfo={checkoutInfo}
                 totalPrice={totalPrice}
                 onEnd={onEnd}
+                update={update}
               />
             </Carrousel>
           </ModalFullScreen>

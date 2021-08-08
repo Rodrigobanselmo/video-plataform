@@ -61,7 +61,7 @@ function Client() {
             alt='E-mail letter'
           />
           <CardButton
-            onClick={()=>{}}
+            onClick={()=>setOpen('update')}
             image={'/images/next.png'}
             title={'Disponibilizar Cursos'}
             text={'Click aqui para adicinar cursos // a membros já cadastrados // em sua equipe.'}
@@ -79,7 +79,7 @@ function Client() {
         <LinksURLTable data={data?data:[]} filter={false} isLoading={isLoading}/>
         <MembersTable isClient={true} data={data?data:[]} isLoading={isLoading}/>
 
-        <AddMemberModal isNewClient open={open} setOpen={setOpen}/>
+        <AddMemberModal isNewClient open={open} setOpen={setOpen} update={open==='update'}/>
       </>
     )
 }

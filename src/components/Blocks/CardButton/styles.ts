@@ -7,6 +7,12 @@ interface Props {
 export const CardView = styled.button<Props>`
   display: flex;
   background-color: ${({ theme }) => theme.palette.background.paper};
+  /* background-image: linear-gradient(
+    -10deg,
+    ${({ theme }) => theme.palette.primary.main},
+    ${({ theme }) => theme.palette.primary.light}
+  ); */
+
   width: 240px;
   min-width: 240px;
   height: 210px;
@@ -30,15 +36,19 @@ export const CardView = styled.button<Props>`
   p.title {
     margin-bottom: 5px;
     font-size: 15px;
+    /* color: white; */
   }
 
   p.text {
     font-size: 15px;
     color: ${({ theme }) => theme.palette.text.secondary};
+    /* color: white;
+    filter: brightness(0.85); */
   }
 
   &:hover {
     opacity: 0.8;
+    /* filter: brightness(0.92); */
   }
 
   ${(props) =>

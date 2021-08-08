@@ -9,7 +9,6 @@ import { convertToRaw, EditorState, convertFromRaw } from 'draft-js';
 // import { lighten } from '@material-ui/core';
 import styled, { css } from 'styled-components';
 import { Container } from './styles';
-import '../../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import usePersistedState from '../../../hooks/usePersistedState';
 import { db } from '../../../lib/firebase.prod';
 

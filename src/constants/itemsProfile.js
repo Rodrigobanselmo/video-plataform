@@ -9,19 +9,9 @@ export const itemsProfile = [
       onClick: 'perfil'
     },
     {
-      text: "Histórico",
+      text: "Fatura",
       icon: 'History',
-      onClick: ''
-    },
-    {
-      text: "Documentos",
-      icon: 'CloudDownload',
-      onClick: ''
-    },
-    {
-      text: "Gerenciar Membros",
-      icon: 'Group',
-      onClick: ''
+      onClick: 'statement'
     },
     {
       text: "Logout",

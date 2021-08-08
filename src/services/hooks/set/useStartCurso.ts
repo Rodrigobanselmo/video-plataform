@@ -52,7 +52,9 @@ export async function setStudent(data: any, currentUser: any) {
       (Array.isArray(cursoClasses) ? cursoClasses.length : 0) +
       data.numOfClasses;
 
+    const lastView = new Date().getTime();
     batch.update(userRef, {
+      lastView,
       cursos: newCursos,
     });
 

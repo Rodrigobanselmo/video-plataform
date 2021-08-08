@@ -93,6 +93,7 @@ const InputEmail = withStyles((theme) => ({
 const OutlinedInputEnd = withStyles((theme) => ({
     root: {
         color: theme.palette.text.primary,
+        backgroundColor:'white',
     },
     input: {
         padding:"14px 0px 9px 17px",

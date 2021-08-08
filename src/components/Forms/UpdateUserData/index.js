@@ -293,9 +293,17 @@ function appendData(formData,cursos,permissions,data,user,isAddClient) {
       }
 
     })
-
-    if (data[`${key}--cpf`]) DATA['cpf'] = formatCPFeCNPJeCEPeCNAE(data[`${key}--cpf`])
-    if (data[`${key}--name`]) DATA['name'] = wordUpper((data[`${key}--name`].trim()).split(" "))
+    const isCNPJ =  permissions[(`${key}--co`)]
+    if (isCNPJ) {
+      // DATA['company'] = {cpfOrCnpj:'',razao:''};
+      if (dataUser[`${key}--company`]) DATA['company'] = dataUser[`${key}--company`]
+      if (dataUser[`${key}--address`]) DATA['address'] = dataUser[`${key}--address`]
+      if (dataUser[`${key}--cnpj`]) DATA['cnpj'] = dataUser[`${key}--cnpj`]
+      if (dataUser[`${key}--razao`]) DATA['razao'] = dataUser[`${key}--razao`]
+    } else {
+      if (dataUser[`${key}--cpf`]) DATA['cpf'] = formatCPFeCNPJeCEPeCNAE(dataUser[`${key}--cpf`])
+      if (dataUser[`${key}--name`]) DATA['name'] = wordUpper((dataUser[`${key}--name`].trim()).split(" "))
+    }
 
     DATA['type'] = getType(DATA)
     DATA['creation'] = getCreation(DATA)
@@ -606,7 +614,7 @@ export const UpdateUserData = React.memo(({ email, isAddClient, cursos, setCurso
     console.log(value)
   }
 
-  const users = queryClient.getQueryData('users');
+  const users = queryClient.getQueryData(['users', currentUser.uid]);
 
   return (
     <InputsContainer>
@@ -621,7 +629,7 @@ export const UpdateUserData = React.memo(({ email, isAddClient, cursos, setCurso
           row={({item, onHandleSelect})=>(
             <Item onClick={() => onHandleSelect(item)}>
               <p>{item.name}</p>
-              <p>{item.email}</p>
+              <p>{item?.email ?? item?.link}</p>
               <p>
                 {item?.cpf ? item.cpf : '---------------------------'}
               </p>

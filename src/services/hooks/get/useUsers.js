@@ -77,7 +77,7 @@ export function useUsers({currentUser}) {
   // const {currentUser} = useAuth();
   // const { setLoaderDash } = useLoaderDashboard();
 
-  return useQuery('users', ()=>getUsers(currentUser), {
+  return useQuery(['users', currentUser.uid], ()=>getUsers(currentUser), {
     staleTime: 1000 * 60 * 60 * 1,
     onSuccess: () => {
       // if (!notDisableLoad) setLoaderDash(false)

@@ -58,6 +58,7 @@ const SubCursosSideBarComponent = ({ hasSubCurso, check, isAdmin, curso }) => {
 
 
     const newData = { ...cursos };
+
     newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`] = newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`] ? newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`] : []
 
     if (event.target.checked)
@@ -66,10 +67,12 @@ const SubCursosSideBarComponent = ({ hasSubCurso, check, isAdmin, curso }) => {
         epi,
       ];
 
-    if (!event.target.checked)
+    if (!event.target.checked) {
+      if (newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`].find((i) => i.id !== epi.id)?.lock) return notification.warn({message:'Você não pode remover um curso que já foi iniciado pelo aluno'})
       newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`] = [
         ...newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`].filter((i) => i.id !== epi.id),
       ];
+    }
 
     setPrices(onCalcUserPrice(newData));
     setCursos(newData);

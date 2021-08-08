@@ -3,14 +3,12 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import {
+import React, {
   forwardRef,
   ForwardRefRenderFunction,
   ChangeEvent,
   useState,
   useRef,
-  useMemo,
-  useCallback,
 } from 'react';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { IInputProps, IOptions } from './@interfaces';
@@ -61,17 +59,31 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, IInputProps> = (
   const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [data, setData] = useState<IOptions[]>(options);
 
-  function onIsWriting(value: string) {
-    setSearch(value);
+  const onFilterOptions = async (
+    optionsFilter: IOptions[],
+    searchFilter: string,
+  ): Promise<void> => {
+    if (!searchFilter) {
+      setData([]);
+    } else {
+      const filterData = await filter(optionsFilter, searchFilter);
+      setData(filterData);
+    }
+  };
+
+  async function onIsWriting(value: string) {
+    await onFilterOptions(options, value);
+    setSearch(search);
     setIsLoading(false);
   }
 
   const { onDebounce, onClearDebounce } = useDebounce(onIsWriting, 500);
 
   function onChangeInput(event: ChangeEvent<HTMLInputElement>) {
-    onDebounce(event.target.value);
     if (!isLoading) setIsLoading(true);
+    onDebounce(event.target.value);
     // console.log(event.target.value);
   }
 
@@ -90,22 +102,11 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, IInputProps> = (
     onClose();
     console.log(23);
   }
+
   function onHandleSelect(item: IOptions) {
     onSelectItem(item, onClose);
   }
 
-  const onFilterOptions = useCallback(
-    (optionsFilter: IOptions[], searchFilter: string): IOptions[] => {
-      return filter(optionsFilter, searchFilter);
-    },
-    [filter],
-  );
-
-  const data = useMemo(() => onFilterOptions(options, search), [
-    options,
-    search,
-    onFilterOptions,
-  ]);
   const isEmpty = data.length === 0;
 
   return (
@@ -135,14 +136,15 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, IInputProps> = (
                 {data.map((item) => {
                   return (
                     <Row
-                      key={item.id}
+                      key={item?.uid}
+                      onClick={() => onHandleSelect(item)}
                       item={item}
-                      onHandleSelect={onHandleSelect}
+                      // onHandleSelect={onHandleSelect}
                     />
                   );
                 })}
               </SearchView>
-            ) : !isEmpty ? (
+            ) : isLoading ? (
               <SearchView empty>Carregando...</SearchView>
             ) : (
               <SearchView empty>Nenhuma opção...</SearchView>

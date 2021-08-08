@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor:darken(theme.palette.background.paper,0.080),
   },
   popper: {
-    zIndex: 1500,
+    zIndex: 11111500,
     '&[x-placement*="bottom"] $arrow': {
       top:10,
       right: 0,
@@ -163,7 +163,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   arrow: {
-    zIndex: 1500,
+    zIndex: 11111500,
     position: 'absolute',
     fontSize: 8,
     width: '3em',
@@ -194,7 +194,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-  const RichTooltip = ({open,elevation=15,setOpen,anchorRef,children, arrow=true,placement='bottom-end',width=250,translateY=0,background='dark'}) => {
+  const RichTooltip = ({open,elevation=15,setOpen,anchorRef,children, arrow=true,placement='bottom-end',width=250,translateY=0,background='dark',...rest}) => {
     const classes = useStyles();
     const [arrowRef, setArrowRef] = React.useState(null);
     const onClose = () => {
@@ -229,6 +229,7 @@ const useStyles = makeStyles((theme) => ({
             element: arrowRef,
         },
         }}
+        {...rest}
       >
             <Paper style={{transform: `translateY(${translateY}px)`,}} elevation={elevation} className={clsx(classes.paper,{
               [classes.paperDark]: background=='dark',

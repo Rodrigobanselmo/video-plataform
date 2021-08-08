@@ -122,10 +122,10 @@ function Team() {
         >
 
         </InputSearch> */}
-        <InputNew
+        {/* <InputNew
           name={'select'}
           label='Selecione Membros'
-        />
+        /> */}
         <Title >Gerenciar Membros</Title>
         <div style={{flex:1,display:'flex', flexDirection:'row',gap:30,marginBottom:40,/* padding:'3px 0',overflowX:'auto',overflowY:'visible' */}}>
           <CardButton

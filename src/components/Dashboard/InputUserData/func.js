@@ -1,5 +1,5 @@
 import {AddUserData} from '../../../services/firestoreUser'
-import {wordUpper} from '../../../helpers/StringHandle' 
+import {wordUpper} from '../../../helpers/StringHandle'
 
 export function onAddUserData({data,currentUser,setCurrentUser,setLoad,notification}) {
 
@@ -16,12 +16,12 @@ export function onAddUserData({data,currentUser,setCurrentUser,setLoad,notificat
     })
     setLoad(true)
     AddUserData(formattedData,currentUser.uid,checkSuccess,checkError)
-    
+
     function checkSuccess() {
         setCurrentUser(currentUser=>({...currentUser,...formattedData}))
         setTimeout(() => {
             setLoad(false)
-            notification.success({message:'Usuário criado com sucesso'})
+            notification.success({message:'Dados preenchidos com sucesso'})
         }, 1000);
     }
 

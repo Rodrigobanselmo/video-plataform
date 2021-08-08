@@ -5,9 +5,9 @@ import { db } from "../../../lib/firebase.prod";
 export async function getLink(code) {
 
   if (code == 0) return []
-  const linkRef = db.collection('links').where('code', '==', code).get()
+  const linkRef = db.collection('links').where('code', '==', code)
 
-  const response = await linkRef
+  const response = await linkRef.get()
   const arrayData = [];
   console.log('refreshLink')
 

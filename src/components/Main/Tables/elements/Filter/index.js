@@ -23,7 +23,7 @@ export function FilterComponent(props) {
   const [search,setSearch] = useState('');
 
   function onTimeoutFunction(value) {
-    if (props.setLoading) props.setLoading(false)
+    if (props.setLoading && !props.continueLoading) props.setLoading(false)
     props.onStop(value)
   }
 
@@ -35,9 +35,15 @@ export function FilterComponent(props) {
     setSearch(e.target.value)
 }
 
+  function onCleanSearch(e) {
+    setSearch('')
+    if (props.onCleanSearch) props.onCleanSearch()
+    if (props.setLoading) props.setLoading(false)
+}
+
   return(
     <FilterComponents style={props?.style??{}}>
-      <InputSearch icons={Icons} onInputSearch={onInputSearch} search={search} onCleanSearch={()=>setSearch('')}/>
+      <InputSearch icons={Icons} onInputSearch={onInputSearch} search={search} onCleanSearch={onCleanSearch}/>
       {props.children}
     </FilterComponents>
   )

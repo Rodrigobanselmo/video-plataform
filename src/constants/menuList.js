@@ -24,6 +24,7 @@ export const menuList = [
   {
     text: "Equipe",
     visible:'all',
+    permissions:['ea'],
     route:TEAM,
     id:Math.random(),
   },
@@ -36,6 +37,7 @@ export const menuList = [
   {
     text: "Clientes",
     visible:'admin',
+    permissions:['ea'],
     route: CLIENT_ADMIN,
     id:Math.random(),
   },

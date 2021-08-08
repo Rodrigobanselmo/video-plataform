@@ -9,6 +9,7 @@ import { LoadMoreTableCells, LoadSkeleton } from '../elements/LoadMore';
 import { LoadTable } from '../elements/LoadTable';
 import { MissingData } from '../elements/MissingData';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import Edit from '@material-ui/icons/Edit';
 import { FilterComponent } from '../elements/Filter';
 import { useDeleteUsers } from '../../../../services/hooks/del/useDeleteUsers';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -19,7 +20,13 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { PERMISSIONS } from '../../../../constants/geral';
 import { CollapseTable } from './Collapse';
 import { filterObject } from '../../../../helpers/ObjectArray';
+import { useSearchClients } from '../../../../services/hooks/get/useSearchClients';
 import { useGetMoreClients } from '../../../../services/hooks/get/useGetMoreClients';
+import { formatCPFeCNPJeCEPeCNAE } from '../../../../helpers/StringHandle';
+import { useAuth } from '../../../../context/AuthContext';
+import { useHistory } from 'react-router';
+import { PROFILE } from '../../../../routes/routesNames';
+import { queryClient } from '../../../../services/queryClient';
 
 
 const ContainerTable = styled.div`
@@ -165,12 +172,20 @@ const IconDelete = styled(DeleteOutlineIcon)`
   color: ${({theme})=>theme.palette.text.secondary};
 `;
 
+const IconEdit = styled(Edit)`
+  color: ${({theme})=>theme.palette.text.secondary};
+`;
+
 export function MembersTable({isLoading,data,filter=true,isClient}) {
 
+  const { setCurrentUser, setOldUser, currentUser } = useAuth()
   const [loading,setLoading] = useState(false)
   const [search,setSearch] = useState('')
+  const [searchData,setSearchData] = useState([])
   const [userOpen,setUserOpen] = useState({})
+  const history = useHistory()
   const mutation = useGetMoreClients();
+  const mutationS = useSearchClients();
   console.log('reloaded userTable')
 
   const pending = 'Esperando usuário realizar cadastro na plataforma'
@@ -191,11 +206,24 @@ export function MembersTable({isLoading,data,filter=true,isClient}) {
     // return data.filter(i=>!i?.link||(i?.link && i?.email));
   }
 
-  const DATA = React.useMemo(() => filterArray(search), [data,search])
+  const DATA_REDUCE = React.useMemo(() => filterArray(search), [data,search])
+  const DATA = searchData.length === 0 ? DATA_REDUCE : searchData
 
 
-  function onFilter(value) {
-    setSearch(value)
+  async function onFilter(value) {
+      console.log('uydegquy',isClient)
+    if (isClient) {
+      if (!value) {
+        setSearchData([])
+        return setLoading(false)
+      }
+      const data = await mutationS.mutateAsync(value)
+      console.log('data',data)
+      setSearchData(data)
+      setLoading(false)
+    } else {
+      setSearch(value)
+    }
   }
 
   function handleOpenUser(uid) {
@@ -209,6 +237,16 @@ export function MembersTable({isLoading,data,filter=true,isClient}) {
     setLoad(false)
   }
 
+  async function onCleanSearch() {
+    setSearchData([])
+  }
+
+  async function onEditUser(user) {
+    history.push(PROFILE)
+    setOldUser(currentUser)
+    setCurrentUser({...user,emailVerified:true,manager:true})
+  }
+
   return (
     <ContainerTable>
       <Title noFilter={!filter}>Membros</Title>
@@ -216,6 +254,8 @@ export function MembersTable({isLoading,data,filter=true,isClient}) {
         <FilterComponent
           style={{marginBottom:5}}
           setLoading={setLoading}
+          continueLoading={isClient}
+          onCleanSearch={onCleanSearch}
           onStop={onFilter}
         />
       }
@@ -226,7 +266,7 @@ export function MembersTable({isLoading,data,filter=true,isClient}) {
               <TableHeader>
                 <TableHComponent>Usuário</TableHComponent>
                 <TableHComponent>Data</TableHComponent>
-                <TableHComponent>CPF</TableHComponent>
+                <TableHComponent>CPF{isClient?' / CNPJ':''}</TableHComponent>
                 <TableHComponent>Status</TableHComponent>
               </TableHeader>
               <TableBody>
@@ -256,12 +296,12 @@ export function MembersTable({isLoading,data,filter=true,isClient}) {
                       <TableBComponent>
                         <UserComponent>
                           <AvatarView style={{gridRow:'1 / 3'}} user={user}/>
-                          <span className='name'>{user?.name ? user.name : '----------------------'}</span>
+                          <span className='name'>{user?.razao ?  user.razao : user?.name ? user.name :'----------------------'}</span>
                           <span className='email'>{user?.email ? user.email : '----------------------'}</span>
                         </UserComponent>
                       </TableBComponent>
                       <TableBComponent><span>{user?.creation ? user.creation : '----------------------'}</span></TableBComponent>
-                      <TableBComponent><span>{user?.cpf ? user.cpf : '----------------------'}</span></TableBComponent>
+                      <TableBComponent><span>{user?.cnpj ?  formatCPFeCNPJeCEPeCNAE(user.cnpj) : user?.cpf ? formatCPFeCNPJeCEPeCNAE(user.cpf) :'----------------------'}</span></TableBComponent>
                       <TableBComponent>
                         <StatusView status={user?.status}>
                           <BootstrapTooltip title={tooltip} styletooltip={{transform: 'translateY(-5px)'}}>
@@ -270,20 +310,32 @@ export function MembersTable({isLoading,data,filter=true,isClient}) {
                               <span>{user?.status ? user.status : '----------------------'}</span>
                             </div>
                           </BootstrapTooltip>
+
+                          <BootstrapTooltip title={`Editar Usuario.`} styletooltip={{transform: 'translateY(10px)'}}>
+                            <section>
+                              <IconButton onClick={()=>onEditUser(user)} aria-label={'IconArrowDown'}>
+                                <IconEdit close={user.uid === userOpen?.uid}/>
+                              </IconButton>
+                            </section>
+                          </BootstrapTooltip>
+
                           {(user?.status ==='Pendente') ? (
-                            <BootstrapTooltip title={`Revogar acesso a este usuário, o qual você receberá de volta os cursos que foram disponibilizados a ele.`} styletooltip={{transform: 'translateY(10px)'}}>
-                              <section>
-                                <IconLoadButton useMutation={useDeleteUsers} user={user} aria-label={'delete'}>
-                                  <IconDelete />
-                                </IconLoadButton>
-                              </section>
-                            </BootstrapTooltip>
+                            <>
+                              <BootstrapTooltip title={`Revogar acesso a este usuário, o qual você receberá de volta os cursos que foram disponibilizados a ele.`} styletooltip={{transform: 'translateY(10px)'}}>
+                                <section>
+                                  <IconLoadButton useMutation={useDeleteUsers} user={user} aria-label={'delete'}>
+                                    <IconDelete />
+                                  </IconLoadButton>
+                                </section>
+                              </BootstrapTooltip>
+                            </>
                             ) : (
                               <IconButton onClick={()=>handleOpenUser(user.uid)} aria-label={'IconArrowDown'}>
                                 <IconArrowDown close={user.uid === userOpen?.uid}/>
                               </IconButton>
                             )
                           }
+
                         </StatusView>
                       </TableBComponent>
                       <CollapseTable

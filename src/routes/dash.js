@@ -7,7 +7,9 @@ import {
   AllVideo,
   Cursos,
   CursoInfo,
+  CursoCreate,
   Perfil,
+  Statement,
 
   Download,
   Calendar,
@@ -24,7 +26,10 @@ import {
   ALL_VIDEO,
   CURSOS,
   CURSO_INFO,
+  CURSOS_CREATE,
   CLIENT_ADMIN,
+  PROFILE,
+  STATEMENT,
 
   CALENDAR_ADMIN,
   ADMIN_PERFIL,
@@ -51,6 +56,11 @@ const routes = [
     exact:true,
   },
   {
+    path: CURSOS_CREATE,
+    component: CursoCreate,
+    exact:true,
+  },
+  {
     path: ALL_VIDEO,
     component: AllVideo,
     exact:true,
@@ -70,20 +80,25 @@ const routes = [
     component: Client,
     admin:true,
   },
-
-
-
-
-
-
-
-
   {
-    path: ADMIN_PERFIL,
+    path: PROFILE,
     component: Perfil,
     exact:true,
     admin:true,
   },
+  {
+    path: STATEMENT,
+    component: Statement,
+    exact:true,
+    admin:true,
+  },
+
+
+
+
+
+
+
   {
     path: ADMIN_PERFIL_EDIT,
     component: Perfil,

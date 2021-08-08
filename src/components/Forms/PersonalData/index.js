@@ -11,6 +11,7 @@ import styled from "styled-components";
 import { FiCamera } from 'react-icons/fi';
 import { NumberFormatCPF } from '../../../lib/textMask';
 import { TestaCPF } from '../../../helpers/StringVerification';
+import { useAuth } from '../../../context/AuthContext';
 
 const AvatarInput = styled.div`
   position: relative;
@@ -99,6 +100,7 @@ export function PersonalData({ onUploadProfile,setUnform,unform,notification}) {
 
   const [value, setValue] = useState(unform.cell)
 
+  const { currentUser } = useAuth()
   const formRef = React.useRef()
 
   function isCPFValid(message) {
@@ -131,6 +133,9 @@ export function PersonalData({ onUploadProfile,setUnform,unform,notification}) {
     formRef.current.setErrors({})
     try {
       await validation.validate(formData, { abortEarly: false })
+      const isProfessional = currentUser.permission && currentUser.permission.includes('pr') && !currentUser?.photoURL
+
+      if (isProfessional) return notification.warn({message:`Cadastre uma foto de perfil para continuar.`})
       if (!value||(value&&value.length<6)) return notification.warn({message:`Número de celular vazio ou inválido.`})
       setUnform({...unform,...formData,cell:value})
       console.log('submitted: ', formData)
@@ -194,6 +199,7 @@ export function PersonalData({ onUploadProfile,setUnform,unform,notification}) {
               name={'cpf'}
               defaultValue={keepOnlyNumbers(unform?.cpf)}
               labelWidth={30}
+              marginTop={10}
               label={'CPF'}
               variant="outlined"
               inputProps={{placeholder:'000.000.000-00',style: {color:'#000'}}}

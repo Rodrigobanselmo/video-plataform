@@ -67,7 +67,7 @@ export const SearchView = styled.div<ISearch>`
   height: fit-content;
   max-height: 300px;
   z-index: 20000;
-  overflow: hidden;
+  overflow: auto;
 
   ${(props) =>
     props.empty &&

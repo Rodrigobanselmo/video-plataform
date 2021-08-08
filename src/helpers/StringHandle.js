@@ -126,12 +126,10 @@ export function formatCPFeCNPJeCEPeCNAE(num) {
 
     if (length === 11) { //cpf
         numFormat = (`${num}`).substring(0, 3) + '.' + (`${num}`).substring(3, 6) + '.' + (`${num}`).substring(6, 9) + '-' + (`${num}`).substring(9, 11);
-    } else if (length === 14) { //cnpj
+    } else if (length === 14 && (`${num}`).substring(3, 4) !== '.') { //cnpj
         numFormat = (`${num}`).substring(0, 2) + '.' + (`${num}`).substring(2, 5) + '.' + (`${num}`).substring(5, 8) + '/' + (`${num}`).substring(8, 12) + '-' + (`${num}`).substring(12, 14);
     } else if (length === 8) { //cep
         numFormat = (`${num}`).substring(0, 5) + '-' + (`${num}`).substring(5, 8);
-    } else if (length === 5) { //cnae
-        numFormat = (`${num}`).substring(0, 2) + '.' + (`${num}`).substring(2, 4) + '-' + (`${num}`).substring(4, 5);
     }
     return numFormat;
 }

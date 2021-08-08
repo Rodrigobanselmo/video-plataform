@@ -28,38 +28,39 @@
       "@typescript-eslint",
       "prettier"
   ],
-  //@typescript-eslint/explicit-function-return-type
-  //@typescript-eslint/explicit-module-boundary-types
   "rules": {
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"],
     "prettier/prettier": "error",
+    "react/jsx-one-expression-per-line": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
-    "react/jsx-filename-extension": [1, { "extensions": [".tsx"] }],
-    "react/jsx-uses-react": "off",
-    "react/react-in-jsx-scope": "off",
-    "react/jsx-props-no-spreading": "off",
-    "react/prop-types": "off",
+    "react/jsx-filename-extension": [1, {"extensions": [".tsx"] }],
+    "import/prefer-default-export": "off", // tira
+    "react/jsx-props-no-spreading": "off", // tira
+    "react/prop-types": "off", // tira
+    "no-empty-function": "off", // tira
+    "react/require-default-props": "off", // tira
+    "react/react-in-jsx-scope": "off", // tira
+    "array-callback-return": "off", // tira
+    "consistent-return": "off",
     "no-return-assign": "off",
-    "@typescript-eslint/no-namespace": "off",
+    "import/extensions": [
+      "off",
+      "ignorePackages",
+      {
+        "ts": "never",
+        "tsx": "never",
+        "jsx": "never",
+        "js": "never"
+      }
+    ],
     "@typescript-eslint/explicit-function-return-type": [
       "error",
       {
         "allowExpressions": true
       }
-    ],
-    "import/prefer-default-export": "off",
-    "import/extensions": [
-      "error",
-      "ignorePackages",
-      {
-        "ts": "never",
-        "tsx": "never"
-      }
-    ],
-    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
-    "no-unused-expressions": "off",
-    "no-use-before-define": "off",
-    "@typescript-eslint/no-use-before-define": ["error"]
+    ]
   },
   "settings": {
     "import/resolver": {

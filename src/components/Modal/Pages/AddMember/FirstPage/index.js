@@ -20,6 +20,8 @@ import { Form } from "@unform/web";
 import { formatCPFeCNPJeCEPeCNAE, keepOnlyNumbers, wordUpper } from '../../../../../helpers/StringHandle';
 import { v4 } from 'uuid';
 import { SIGN } from '../../../../../routes/routesNames';
+import { EditUserData } from '../../../../Forms/EditUserData';
+import { useUpdateUsers } from '../../../../../services/hooks/set/useUpdateUsers';
 
 
 
@@ -100,7 +102,7 @@ function getType(docData) {
   return 'Padrão'
 }
 
-function appendData(formData, prices, cursos, permissions, dataUser, user, isNewClient, isAdmin, isBilling) {
+function appendData(formData, prices, credit, cursos, permissions, dataUser, user, isNewClient, isAdmin) {
   const array = []
   const companyId = user.companyId
 
@@ -122,6 +124,8 @@ function appendData(formData, prices, cursos, permissions, dataUser, user, isNew
     DATA.isPrimaryAccount = !!(isAdmin && isNewClient);
     DATA.cursos = []
     DATA['statement'] = []
+
+    if (dataUser[`${key}--uid`]) DATA['uid'] = dataUser[`${key}--uid`]
 
     if (formData[key] && formData[key].includes(SIGN)) {
       DATA.link = formData[key]
@@ -225,22 +229,23 @@ function appendData(formData, prices, cursos, permissions, dataUser, user, isNew
     // })
     const isCNPJ =  permissions[(`${key}--co`)]
     if (isCNPJ) {
-      DATA['company'] = {cpfOrCnpj:'',razao:''};
+      // DATA['company'] = {cpfOrCnpj:'',razao:''};
       if (dataUser[`${key}--company`]) DATA['company'] = dataUser[`${key}--company`]
       if (dataUser[`${key}--address`]) DATA['address'] = dataUser[`${key}--address`]
-      if (dataUser[`${key}--razao`]) DATA['company'] = {...DATA['company'], razao: dataUser[`${key}--razao`]};
-      if (dataUser[`${key}--cnpj`]) DATA['company'] ={...DATA['company'], cpfOrCnpj: dataUser[`${key}--cnpj`]};
+      if (dataUser[`${key}--cnpj`]) DATA['cnpj'] = dataUser[`${key}--cnpj`]
+      if (dataUser[`${key}--razao`]) DATA['razao'] = dataUser[`${key}--razao`]
     } else {
-      if (dataUser[`${key}--cpf`]) DATA['cpf'] = formatCPFeCNPJeCEPeCNAE(dataUser[`${key}--cpf`])
+      if (dataUser[`${key}--cpf`]) DATA['cpf'] = dataUser[`${key}--cpf`]
       if (dataUser[`${key}--name`]) DATA['name'] = wordUpper((dataUser[`${key}--name`].trim()).split(" "))
     }
 
 
-    // const value = isBilling ? prices[key] : 0
-    if (prices[key]) DATA['statement'] = [{value:prices[key], type:'debit',created_at:(new Date()).getTime(),desc:'Compra de curso',buyerId:user.uid}]
+    const value = Number(prices[key]) - Number(credit[key]?credit[key]:0)
+    if (prices[key]) DATA['statement'] = [{value, type:'debit',created_at:(new Date()).getTime(),desc:'Compra de curso',buyerId:user.uid}]
 
     DATA['type'] = getType(DATA)
     DATA['creation'] = getCreation(DATA)
+    DATA['juridica'] = DATA.permission.includes('co')
 
     // if (DATA?.cursos)
     // if (DATA?.availableCursos) array.push(DATA)
@@ -252,10 +257,11 @@ function appendData(formData, prices, cursos, permissions, dataUser, user, isNew
 
 }
 
-export function FirstPageAddModal({setPosition,onEnd, isNewClient:isNew}) {
+export function FirstPageAddModal({setPosition,onEnd, isNewClient:isNew, update}) {
 
   const {currentUser} = useAuth();
   const mutation = useCreateUsers()
+  const mutationUpdate = useUpdateUsers()
 
   const formRef = React.useRef();
   const URL = 'link-url';
@@ -266,8 +272,8 @@ export function FirstPageAddModal({setPosition,onEnd, isNewClient:isNew}) {
   const notification = useNotification();
 
   const [load, setLoad] = useState(false);
-  const [emails, setEmails] = useState(['', '']);
-  const { isBilling, totalPrice, setCheckoutInfo, dataUser, setDataUser, cursos, setCursos, permissions, setPermissions, prices, setPrices, fieldEdit, setFieldEdit } = useSellingData()
+  const [emails, setEmails] = useState(update?[]:['', '']);
+  const { isBilling, totalPrice, setCheckoutInfo, dataUser, setDataUser, cursos, setCursos, permissions, setPermissions, credit, prices, setPrices, fieldEdit, setFieldEdit } = useSellingData()
 
   function isCursoSelected(message) {
     return this.test('isCursoSelected', message, function (value, schema) {
@@ -389,7 +395,7 @@ export function FirstPageAddModal({setPosition,onEnd, isNewClient:isNew}) {
 
   const validation = Yup.object({ ...yupObject });
 
-  // !remove
+
   function later(delay) {
     return new Promise((resolve) => {
       setTimeout(resolve, delay);
@@ -412,37 +418,42 @@ export function FirstPageAddModal({setPosition,onEnd, isNewClient:isNew}) {
           return alert('Preencha os campos')
         }
         const EMAIL_KEY = [];
-        await Promise.all(Object.keys(formData).map(async (key) => { //.sort((a, b) => a - b)
-          if ('0' in formData && formData[key] && !formData[key].includes(SIGN)) {
-            const usersRef = db.collection('users');
-            const invitesRef = db.collection('invites');
-            const responseUsers = await usersRef.where('email', '==', formData[key]).get()
-            const responseInvites = await invitesRef.where('email', '==', formData[key]).get()
+        if (!update) {
+          await Promise.all(Object.keys(formData).map(async (key) => { //.sort((a, b) => a - b)
+            if ('0' in formData && formData[key] && !formData[key].includes(SIGN)) {
+              const usersRef = db.collection('users');
+              const invitesRef = db.collection('invites');
+              const responseUsers = await usersRef.where('email', '==', formData[key]).get()
+              const responseInvites = await invitesRef.where('email', '==', formData[key]).get()
 
-            responseUsers.forEach(function (doc) {
-              EMAIL_KEY.push(key)
-            })
+              responseUsers.forEach(function (doc) {
+                EMAIL_KEY.push(key)
+              })
 
-            responseInvites.forEach(function (doc) {
-              EMAIL_KEY.push(key)
-            })
+              responseInvites.forEach(function (doc) {
+                EMAIL_KEY.push(key)
+              })
 
+            }
+          }));
+
+          if (EMAIL_KEY.length > 0) {
+            throw EMAIL_KEY
           }
-        }));
-
-        if (EMAIL_KEY.length > 0) {
-          throw EMAIL_KEY
         }
+        const DATA = appendData(formData, prices, credit,cursos,permissions,dataUser,currentUser,isNewClient,isAdmin)
+        if (isAdmin && update && !isNewClient) {
+          await mutationUpdate.mutateAsync({data:DATA,user:currentUser,noStatement:true})
 
-      const DATA = appendData(formData, prices,cursos,permissions,dataUser,currentUser,isNewClient,isAdmin, isBilling)
-      console.log(1234)
-        // const totalPrice = prices.reduce((acc,price)=>Number(acc)+Number(price),[0])
+          setLoad(false)
+          onEnd()
+          return console.log('DATA',DATA)
+      }
 
         if (isAdmin && !isNewClient) {
           await mutation.mutateAsync({data:DATA,user:currentUser,noStatement:true})
           onEnd()
         } else {
-      console.log(12346)
           setPosition(2)
           setLoad(false)
           setCheckoutInfo({data:DATA, total:totalPrice})
@@ -482,7 +493,7 @@ export function FirstPageAddModal({setPosition,onEnd, isNewClient:isNew}) {
         }
       }
     },
-    [cursos, dataUser, emails, permissions, prices],
+    [cursos, dataUser, emails, permissions, prices, update],
   );
 
   return (
@@ -502,7 +513,7 @@ export function FirstPageAddModal({setPosition,onEnd, isNewClient:isNew}) {
             }
             subText='Para inserir novos alunos a plataforma, basta informar email de catastro e/ou gerar link compartilhavel e escolher os cursos que deseja comprar.'
             />
-          {/* { !update ? ( */}
+          { !update ? (
             <AddUserData
               emails={emails}
               setEmails={setEmails}
@@ -513,21 +524,19 @@ export function FirstPageAddModal({setPosition,onEnd, isNewClient:isNew}) {
               setPermissions={setPermissions}
               setDataUser={setDataUser}
             />
-          {/* ) : (
-            <UpdateUserData
-              cursos={cursosSelected}
-              permissions={permissions}
+          ) : (
+            <EditUserData
+              emails={emails}
+              setEmails={setEmails}
+              formRef={formRef}
+              fieldEdit={fieldEdit}
+              setFieldEdit={setFieldEdit}
+              setCursos={setCursos}
               setPermissions={setPermissions}
-              setCursos={setCursosSelected}
-              setEmail={setEmail}
-              setData={setDataUser}
-              data={dataUser}
-              mutation={mutation}
-              onClose={onClose}
-              isAdmin={isAdmin}
-              email={email}
-          />
-          )} */}
+              setDataUser={setDataUser}
+              isClient={isNewClient && isAdmin}
+            />
+          )}
         </InputsEmail>
 
         <SideEmail

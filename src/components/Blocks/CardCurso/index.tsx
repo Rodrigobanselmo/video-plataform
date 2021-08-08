@@ -1,7 +1,8 @@
 /* eslint-disable import/extensions */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import React from 'react';
-import { CursoCard, BottomView, NameText } from './styles';
+import styled from 'styled-components';
+import { Container, CursoCard, BottomView, NameText } from './styles';
 
 interface Props {
   image: string;
@@ -17,7 +18,7 @@ export const CardCurso = ({
   text,
 }: Props): JSX.Element => {
   return (
-    <div style={{ width: 250 }}>
+    <Container>
       <CursoCard imageURL={image} onClick={onClick}>
         <div className="backImage" />
         <div className="gradient" />
@@ -37,6 +38,6 @@ export const CardCurso = ({
       >
         {text}
       </p>
-    </div>
+    </Container>
   );
 };

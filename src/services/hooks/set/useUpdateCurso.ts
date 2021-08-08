@@ -13,7 +13,7 @@ import { useAuth } from '../../../context/AuthContext.js';
 import { db } from '../../../lib/firebase.prod.js';
 import { queryClient } from '../../queryClient.js';
 
-function onNewStudentDone(data: any, stateStudent: any) {
+function onNewStudentDone(data: any, stateStudent: any, currentUser: any) {
   const {
     cursoId,
     moduleId,
@@ -88,12 +88,6 @@ function onNewStudentDone(data: any, stateStudent: any) {
   return { ...newState };
 }
 
-function later(delay: number) {
-  return new Promise((resolve: any) => {
-    setTimeout(resolve, delay);
-  });
-}
-
 export async function setUpdateCurso(
   data: any,
   stateStudent: any,
@@ -101,7 +95,9 @@ export async function setUpdateCurso(
   dispatch: any,
 ) {
   const newStudent =
-    'classIndex' in data ? onNewStudentDone(data, stateStudent) : data; // se nao tem classndex, data quer dizer que é o valor de module (dado persiste de students)
+    'classIndex' in data
+      ? onNewStudentDone(data, stateStudent, currentUser)
+      : data; // se nao tem classndex, data quer dizer que é o valor de module (dado persiste de students)
   const studentsRef = db.collection('students');
   const userRef = db.collection('users').doc(currentUser.uid);
   dispatch({ type: 'MODULE_WRITE', payload: newStudent }); // salva no module dispacth para caso caiu internet ele posso recuperar
@@ -125,7 +121,11 @@ export async function setUpdateCurso(
 export function useUpdateCurso(cursoId: string) {
   const dispatch = useDispatch();
   const { currentUser } = useAuth();
-  const student = queryClient.getQueryData<any>(['student', cursoId]);
+  const student = queryClient.getQueryData<any>([
+    'student',
+    cursoId,
+    currentUser.uid,
+  ]);
 
   return useMutation(
     async (data) =>
@@ -135,7 +135,7 @@ export function useUpdateCurso(cursoId: string) {
         console.log('onSuccess', data);
         const newStudent = { ...student };
         newStudent.student[0] = data.newStudent;
-        queryClient.setQueryData(['student', cursoId], () => ({
+        queryClient.setQueryData(['student', cursoId, currentUser.uid], () => ({
           ...newStudent,
         }));
       },

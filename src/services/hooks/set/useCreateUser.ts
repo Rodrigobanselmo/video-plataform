@@ -94,7 +94,7 @@ export function useCreateUser(setCurrentUser: any) {
   const { setLoaderDash } = useLoaderDashboard();
 
   return useMutation(async (data) => setUser(data), {
-    onSuccess: (data: any) => {
+    onSuccess: async (data: any) => {
       setCurrentUser(data);
       setLoaderDash(false);
       console.log('userMutation', { ...data });
@@ -104,6 +104,7 @@ export function useCreateUser(setCurrentUser: any) {
           notification.simple({ message: 'Seja bem-vindo!' });
         }, 1000);
       }
+      return data;
     },
     onError: (error) => {
       setTimeout(() => {

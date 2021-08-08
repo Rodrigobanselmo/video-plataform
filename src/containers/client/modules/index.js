@@ -240,7 +240,6 @@ export default function Video() {
 
 
 
-
   const student = data?.student
 
   const uploadCursoMutation = useUpdateCurso(cursoId)
@@ -260,11 +259,30 @@ export default function Video() {
     }
   }
 
-  function updateModules(cursoData,studentData) { //serve para ver qual estado (persisted ou database) esta mais atual
+  async function updateModules(cursoData,studentData) { //serve para ver qual estado (persisted ou database) esta mais atual
     console.log('modulemodule',module)
+    //observa por mudanças nos epis durante o curso
+    const watchCursos = currentUser?.cursos ?? []
+    const index = watchCursos.findIndex((i) => i.id === cursoId && i?.status === 'started' && i?.epi);
+
+    // se curso existir e tiver em progresso verfico se numero/ids de epis é o mesmo
+    if (index >= 0) {
+      const epiArray = []
+      const isEqualEpis = watchCursos[index].epi.map(epi=>{
+        epiArray.push(epi.id)
+        return studentData.classes.includes(epi.id)
+      }).filter(i=>!i).length == 0
+      if (!isEqualEpis) {
+        const newStudent = {...studentData}
+        newStudent.numOfClasses = newStudent.numOfClasses + epiArray.length - newStudent.classes.length
+        newStudent.classes = epiArray
+        await uploadCursoMutation.mutateAsync(newStudent)
+      }
+    }
+
     if (module && module[studentData.id] && module[studentData.id]?.totalWatched && module[studentData.id].totalWatched > studentData.totalWatched) {
       onSetRouteVideo(module,cursoData)
-      uploadCursoMutation.mutateAsync(module)
+      await uploadCursoMutation.mutateAsync(module[studentData.id])
       console.log('update student') // remove
     } else {
       onSetRouteVideo(studentData,cursoData)

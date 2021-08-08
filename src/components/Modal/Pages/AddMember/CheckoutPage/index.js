@@ -22,13 +22,15 @@ import {
 } from './styles';
 import Checkbox from '@material-ui/core/Checkbox';
 import { useCreateUsers } from '../../../../../services/hooks/set/useCreateUsers';
+import { useUpdateUsers } from '../../../../../services/hooks/set/useUpdateUsers';
 
-export const CheckoutPageComponent = ({checkoutInfo, totalPrice, onEnd}) => {
+export const CheckoutPageComponent = ({checkoutInfo, totalPrice, onEnd, update}) => {
 
   const {currentUser} = useAuth();
   console.log(999999)
 
   const mutation = useCreateUsers()
+  const mutationUpdate = useUpdateUsers()
   const notification = useNotification();
   const [checked, setChecked] = useState(false);
 
@@ -48,7 +50,11 @@ export const CheckoutPageComponent = ({checkoutInfo, totalPrice, onEnd}) => {
     console.log('checkoutInfo',checkoutInfo)
 
     const isAdmin = currentUser.access === 'admin'
-    await mutation.mutateAsync({user:currentUser, noStatement:isAdmin,...checkoutInfo})
+    if (update) {
+      await mutationUpdate.mutateAsync({user:currentUser,noStatement:true,...checkoutInfo})
+    } else {
+      await mutation.mutateAsync({user:currentUser, noStatement:isAdmin,...checkoutInfo})
+    }
     onEnd()
   };
 
@@ -138,7 +144,7 @@ export const CheckoutPageComponent = ({checkoutInfo, totalPrice, onEnd}) => {
               }).format(totalPrice)}
             </span>
         </TotalPayment>
-        <ButtonFinal onClick={handleConfirmPurchase}>
+        <ButtonFinal disabled={mutationUpdate.isLoading || mutation.isLoading} onClick={handleConfirmPurchase}>
           Finalizar Compra
         </ButtonFinal>
       </PaymentSide>

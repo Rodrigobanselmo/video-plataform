@@ -28,6 +28,12 @@ import RichTooltip from '../../Dashboard/Components/MultUsage/RichTooltip'
 import { ProgressBar,BottomCrontols,MarkLast,ControlsWrapper,SoundFill,SoundView,SoundColumn,IconCog,PlayView,ProgressView,TooltipSpan,TooltipMouseSpan,ProgressInput,ProgressContainer, } from './style'
 import styled from "styled-components";
 
+const ItemQualityText = styled.p`
+  color:${({ selected,theme }) => selected ? theme.palette.primary.light:'inherent'};
+  font-size:${({ auto }) => auto ? '1.4rem':'inherent'};
+`;
+
+
 const ButtonRate = styled.div`
     color: #fff;
     margin:6px;
@@ -108,10 +114,14 @@ const Controls = forwardRef(
       volume,
       onVolumeChange,
       hideMark,
+      onQualityChange,
+      quality,
     },
     ref
   ) => {
     const anchorRef = React.useRef(null);
+    const anchorQualityRef = React.useRef(null);
+    const [openQuality, setOpenQuality] = React.useState(false);
     const [openRate, setOpenRate] = React.useState(false);
     const progressMouseRef = useRef(null);
     const soundRef = useRef(null)
@@ -139,6 +149,7 @@ const Controls = forwardRef(
 
         return null
       }
+      console.log('ok')
       playerRef.current.seekTo(parseFloat(e.target.value/400),'fraction');
       progressTimeRef.current.style.transform = `translateX(${e.target.value/400*progressRef.current.offsetWidth}px)`
 
@@ -286,7 +297,10 @@ const Controls = forwardRef(
                 })}
               </SoundView>
               {/* <AccessTimeSharpIcon onClick={()=>{}} style={{fontSize:19,margin:'0 10px 0 5px'}}/> */}
-              <IconCog onClick={()=>{}} style={{fontSize:20}} rotatecog='true' />
+              <div style={{alignItems:'center',display:'flex'}} ref={anchorQualityRef}>
+                <IconCog onClick={()=>setOpenQuality(true)} style={{fontSize:18}} rotatecog='true' />
+              </div>
+
               <ButtonPlayRate
                 ref={anchorRef}
                 onClick={()=>setOpenRate(true)}
@@ -300,16 +314,31 @@ const Controls = forwardRef(
           </BottomCrontols>
 
 
-          <RichTooltip placement={'top'} background={'darkModal'} translateY={-5} anchorRef={anchorRef} width={80} open={openRate} setOpen={setOpenRate}>
+          <RichTooltip disablePortal placement={'top'} background={'darkModal'} translateY={-5} anchorRef={anchorRef} width={80} open={openRate} setOpen={setOpenRate}>
               <div style={{display:'flex',flexDirection:'column'}}>
                   {[0.25,0.5,0.75, 'normal', 1.25, 1.5, 1.75 , 2].map((rate) => (
                     <ButtonRate
                       key={rate}
-                      onClick={() =>{onPlaybackRateChange(rate=='normal'?1:rate); setOpenRate(false)}}
+                      onClick={() =>{onPlaybackRateChange(rate=='normal'?1:rate); setOpenQuality(false)}}
                     >
                       <p>
                         {rate}{rate !== 'normal' && <span>X</span>}
                       </p>
+                    </ButtonRate>
+                  ))}
+                </div>
+          </RichTooltip>
+
+          <RichTooltip disablePortal placement={'top'} background={'darkModal'} translateY={-5} anchorRef={anchorQualityRef} width={80} open={openQuality} setOpen={setOpenQuality}>
+              <div style={{display:'flex',flexDirection:'column'}}>
+                  {['auto','1080p','720p','540p','360p'].map((value) => (
+                    <ButtonRate
+                      key={value}
+                      onClick={() =>{onQualityChange(value); setOpenRate(false)}}
+                    >
+                      <ItemQualityText auto={value==='auto'} selected={value===quality} >
+                        {value}
+                      </ItemQualityText>
                     </ButtonRate>
                   ))}
                 </div>

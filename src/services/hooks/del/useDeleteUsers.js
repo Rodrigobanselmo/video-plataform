@@ -55,7 +55,7 @@ async function onAddUser(userToDelete, user, batch) {
   if (userToDelete?.statement && userToDelete.statement[0] && 'value' in userToDelete.statement[0] ) {
 
     const products = {
-        type:'newUser',
+        type:'deletedUser',
         cursos: userToDelete.cursos,
         value: userToDelete.statement[0].value,
         shared: userToDelete?.email ?? userToDelete?.link
@@ -117,7 +117,7 @@ export function useDeleteUsers() {
       notification.success({message:'Convite revogado com sucesso!'}) //Email enviado com sucesso, verifique em sua caixa de entrada e/ou span?
       setCurrentUser(data.newUser)
       if (userToDelete.isPrimaryAccount && userToDelete.access == 'client') queryClient.setQueryData('clients', (oldData)=>[...oldData.filter(i=>i.uid !== data.uid)])
-      else queryClient.setQueryData('users', (oldData)=>[...oldData.filter(i=>i.uid !== data.uid)])
+      else queryClient.setQueryData(['users', currentUser.uid], (oldData)=>[...oldData.filter(i=>i.uid !== data.uid)])
     },
     onError: (error) => {
       notification.error({message:errorCatchFirestore(error)})

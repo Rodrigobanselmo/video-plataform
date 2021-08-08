@@ -13,11 +13,9 @@ import { FilterComponent } from '../elements/Filter';
 import { useDeleteUsers } from '../../../../services/hooks/del/useDeleteUsers';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import { IconLoadButton } from '../elements/IconLoadButton';
-import Collapse from '@material-ui/core/Collapse';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { PERMISSIONS } from '../../../../constants/geral';
-import { CollapseTable } from './Collapse';
 
 
 const ContainerTable = styled.div`

@@ -60,7 +60,7 @@ export function ProfessionalData({ setUnform,unform}) {
       Object.keys(formData).sort((a, b) => a - b).map(key=>{
         !['LinkedIn','Instagram','Facebook','social','resume'].includes(key) && formData[key] && array.push(formData[key])
       })
-      setUnform({...unform,resume:formData.resume,curriculum:array})
+      setUnform({...unform, resume:formData.resume, social:formData?.social, curriculum:array})
       console.log('submitted: ', formData,{resume:formData.resume,curriculum:array})
     } catch (error) {
       const errors = {}
@@ -97,7 +97,7 @@ export function ProfessionalData({ setUnform,unform}) {
     <InputsContainer>
       <FormContainer
         noValidate
-        key={curriculum}
+        // key={curriculum}
         ref={formRef}
         onSubmit={handleSubmit}
       >

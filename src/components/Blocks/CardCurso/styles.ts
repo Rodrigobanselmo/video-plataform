@@ -4,6 +4,14 @@ interface CardProps {
   imageURL: string;
 }
 
+export const Container = styled.div`
+  width: 300px;
+
+  @media screen and (max-width: 700px) {
+    width: 250px;
+  }
+`;
+
 export const CursoCard = styled.div<CardProps>`
   box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.29);
   position: relative;
@@ -47,10 +55,15 @@ export const BottomView = styled.div`
   z-index: 2;
   background-color: #202026;
   justify-content: flex-end;
-  width: 250px;
+  width: 300px;
   padding: 0 15px 15px 15px;
-  height: fit-content;
+  height: 300px;
+  min-height: fit-content;
   flex-direction: column;
+
+  @media screen and (max-width: 700px) {
+    width: 250px;
+  }
 `;
 
 export const NameText = styled.p`

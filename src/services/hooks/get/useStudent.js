@@ -55,7 +55,7 @@ export function useStudent({cursoId}) {
   // const { setLoaderDash } = useLoaderDashboard();
   const {currentUser} = useAuth()
 
-  return useQuery(['student',cursoId], ()=>getStudent(cursoId,currentUser), {
+  return useQuery(['student',cursoId, currentUser.uid], ()=>getStudent(cursoId,currentUser), {
     staleTime: 1000 * 60 * 60 * 24,
   })
 }

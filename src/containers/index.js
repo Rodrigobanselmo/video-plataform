@@ -9,9 +9,11 @@ export { default as AllClients } from './admin/client/AllClients';
 export { default as Profession } from './admin/database/Profession';
 export { default as Perfil } from './admin/profile/Perfil';
 export { default as Client } from './admin/profile/Client';
+export { default as CursoCreate } from './admin/curso/create';
 
 
 export { default as Cursos } from './client/cursos';
 export { default as CursoInfo } from './client/cursoInfo';
 export { default as Home } from './client/home';
+export { default as Statement } from './client/statement';
 export { default as Video } from './client/modules';

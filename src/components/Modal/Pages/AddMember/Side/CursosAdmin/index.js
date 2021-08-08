@@ -67,7 +67,7 @@ export function CursosSideBarAdmin({ email, isAdmin, setCursos, cursos, setPermi
   const notification  = useNotification();
 
   const cursosAllData = queryClient.getQueryData('cursos');
-  const cursosUserData = isAdmin ?cursosAllData.filter(i=>i?.modules):currentUser?.availableCursos;
+  const cursosUserData = cursosAllData.filter(i=>i?.modules)
 
   const handleCheck = (event, cursoId, quantity, onQuantity, hasSubCurso) => {
 

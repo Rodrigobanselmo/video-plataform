@@ -10,12 +10,15 @@ import {isLocked} from '../func'
 import { useParams,useHistory } from 'react-router-dom';
 import { queryClient } from '../../../services/queryClient';
 import { VIDEO_ROUTE } from '../../../routes/routesNames';
+import { useAuth } from '../../../context/AuthContext';
 
 
 export function SideVideoBar({curso,show,...props}) {
 
+
+  const { currentUser } = useAuth();
   const { cursoId,moduleId,classId } = useParams();
-  const queryModules =  queryClient.getQueryData(['student', cursoId]);
+  const queryModules =  queryClient.getQueryData(['student',cursoId, currentUser.uid]);
   const modules =  (queryModules && queryModules?.student) ? queryModules.student[0] : {};
 
   const [open, setOpen] = useState('')

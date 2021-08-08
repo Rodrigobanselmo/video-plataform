@@ -41,7 +41,7 @@ export async function getLinks(companyId) {
 export function useLinks() {
   const {currentUser} = useAuth();
 
-  return useQuery('links', ()=>getLinks(currentUser.companyId), {
+  return useQuery(['links', currentUser.uid], ()=>getLinks(currentUser.companyId), {
     staleTime: 1000 * 60 * 60 * 1
   })
 }

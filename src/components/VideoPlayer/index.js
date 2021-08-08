@@ -33,6 +33,7 @@ import { useUpdateCurso } from "../../services/hooks/set/useUpdateCurso";
 import { queryClient } from "../../services/queryClient";
 import { VIDEO_ROUTE } from "../../routes/routesNames";
 import { TestView } from "./testView";
+import { useAuth } from "../../context/AuthContext";
 
 const ReactPlayerStyles = styled(ReactPlayer)`
   position: absolute;
@@ -72,16 +73,19 @@ let save = 0;
 
 const initialState = {
   pip: false,
-  playing: false,
+  playing: true,
   controls: false,
   light: false,
+  quality: 'auto',
   muted: false,
   played: 0,
   duration: 0,
   volume: 1,
   loop: false,
   seeking: false,
+  qualityChanged: false,
   ready: false,
+  isWaitingFirstPLay: true,
 }
 //setState({...initialState});
 
@@ -89,13 +93,14 @@ export function VideoPlayer({curso}) {
   // const [showControls, setShowControls] = useState(false);
   // const [anchorEl, setAnchorEl] = React.useState(null);
   // const [timeDisplayFormat, setTimeDisplayFormat] = React.useState("normal");
+  const {currentUser} = useAuth();
   const { cursoId,moduleId,classId } = useParams();
 
   const [autoplay, setAutoplay] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [state, setState] = useState({...initialState});
   const [playbackRate, setPlaybackRate] = useState(1);
-  const queryModules =  queryClient.getQueryData(['student', cursoId]);
+  const queryModules =  queryClient.getQueryData(['student', cursoId, currentUser.uid]);
   const modules =  (queryModules && queryModules?.student) ? queryModules.student[0] : {}; //student
 
   // const progress = useSelector(state => state.progress)
@@ -124,13 +129,16 @@ export function VideoPlayer({curso}) {
   const {
     playing,
     controls,
+    quality,
     light,
     muted,
     loop,
     pip,
     played,
+    qualityChanged,
     seeking,
     ready,
+    isWaitingFirstPLay,
     volume,
   } = state;
 
@@ -179,15 +187,29 @@ export function VideoPlayer({curso}) {
 
   const onReady = () => {
 
-
     if (!ready) {
       if (progress[`${cursoId}//${moduleId}//${classId}`] && percentage<100) {
         const setProgress = progress[`${cursoId}//${moduleId}//${classId}`];
         playerRef.current.seekTo(setProgress.percentage,'fraction');
         progressTimeRef.current.innerText = format(setProgress.seconds)
-        // progressMark.current.style.transform = `translateX(${setProgress.percentage/progressRef.current.offsetWidth}px)`
-        setState({ ...state, duration:totalDuration,ready:true, playing: autoplay?true:playing });
-        return setLoading(true)
+        progressTimeRef.current.style.transform = `translateX(${setProgress.percentage*progressRef.current.offsetWidth}px)`
+        progressRef.current.value = `${setProgress.percentage*100*4}`
+        progressMark.current.style.transform = `translateX(${setProgress.percentage*progressRef.current.offsetWidth}px)`
+
+        const newState = {
+          duration:totalDuration,
+          ready:true,
+          playing: autoplay?true:playing,
+        }
+
+        setState({
+          ...state,
+          ...newState,
+        });
+        //
+        // if (progress && progress[`${cursoId}//${moduleId}//${classId}`] && progress[`${cursoId}//${moduleId}//${classId}`].percentage)
+          // progressMark.current.style.transform = `translateX(${progress[`${cursoId}//${moduleId}//${classId}`].percentage*progressRef.current.offsetWidth}px)`
+        // return setLoading(true)
       } else {
         setState({ ...state, duration:totalDuration,ready:true, playing: autoplay?true:playing });
         progressMark.current.style.transform = `translateX(0px)`
@@ -201,9 +223,15 @@ export function VideoPlayer({curso}) {
   const handlePlayPause = () => {
     // if (state.playing) controlsRef.current.style.opacity = 1
     console.log('pause',playerRef.current.getCurrentTime())
-    if (!state.playing && playerRef.current.getCurrentTime()>1) playerRef.current.seekTo(playerRef.current.getCurrentTime());
-    else if (!state.playing && playerRef.current.getCurrentTime()<1) playerRef.current.seekTo(0);
-    setState({ ...state, playing: !state.playing });
+    // if (!state.playing && playerRef.current.getCurrentTime()>1) playerRef.current.seekTo(playerRef.current.getCurrentTime());
+    // else if (!state.playing && playerRef.current.getCurrentTime()<1) playerRef.current.seekTo(0);
+    const setProgress = progress[`${cursoId}//${moduleId}//${classId}`];
+    if (isWaitingFirstPLay && setProgress) {
+      playerRef.current.seekTo(setProgress.percentage,'fraction');
+    }
+
+    setState({ ...state, playing: !state.playing,isWaitingFirstPLay:false, qualityChanged:false });
+    // setState({ ...state, isWaitingFirstPLay:false });
   };
 
   const handleRewind = () => {
@@ -215,7 +243,6 @@ export function VideoPlayer({curso}) {
   };
 
   const handleProgress = (changeState) => {
-
     if (count > 8) {
       controlsRef.current.style.opacity = 0;
       controlsRef.current.style.cursor = 'none';
@@ -230,7 +257,12 @@ export function VideoPlayer({curso}) {
 
     const pgr = refProgress.current[`${cursoId}//${moduleId}//${classId}`] ? refProgress.current[`${cursoId}//${moduleId}//${classId}`].seconds : 0
 
-    if (Math.floor(changeState.playedSeconds) % 10 == 0 && save == 0 && Math.floor(changeState.playedSeconds) > pgr && percentage<100) {
+    if (qualityChanged) {
+      handlePlayPause()
+    }
+    if (isWaitingFirstPLay) return
+    console.log('ready')
+    if (Math.floor(changeState.playedSeconds) % 5 == 0 && save == 0 && Math.floor(changeState.playedSeconds) > pgr && percentage<100) {
 
       console.log('SAVED')
       save = 1;
@@ -306,6 +338,10 @@ export function VideoPlayer({curso}) {
 
   const handlePlaybackRate = (rate) => {
     setPlaybackRate(rate);
+  };
+
+  const onQualityChange = (quality) => {
+    setState({ ...state, quality,isWaitingFirstPLay:true,ready:false,qualityChanged:true });
   };
 
   const handlePreviewVideo = () => {
@@ -437,9 +473,18 @@ export function VideoPlayer({curso}) {
               >
                 <ReactPlayerStyles
                   ref={playerRef}
+                  key={quality}
                   width="100%"
                   height="100%"
                   url={actualClass.video}
+                  // url={'https://vimeo.com/584492307'}
+                  config={{
+                    vimeo: {
+                      playerOptions:{
+                        quality,
+                      }
+                    },
+                  }}
                   // url={'https://www.youtube.com/watch?v=jhZf_nZ6XA4&ab_channel=PrometalEPIs'}
                   // url={'https://r1---sn-bg07dn6d.c.drive.google.com/videoplayback?expire=1624723013&ei=BRbXYLKMD4S3lAPknYOYCw&ip=2804:14d:4c85:9883:4990:24b8:c43f:2c1c&cp=QVRHVkhfUlBPRFhPOkdtd2VKMXpmcTN4YUFYQzN0SGlvRzN3RjRQNUtwdldEUU5Fak05WmpjbHU&id=c54e7706caaab4d4&itag=22&source=webdrive&requiressl=yes&mh=Ax&mm=32&mn=sn-bg07dn6d&ms=su&mv=u&mvi=1&pl=48&sc=yes&ttl=transient&susc=dr&driveid=1SFAJoeJKridToyArhRRFZRgXLoWVvaWJ&app=explorer&mime=video/mp4&vprv=1&prv=1&dur=83.150&lmt=1624030804692744&mt=1624707969&sparams=expire,ei,ip,cp,id,itag,source,requiressl,ttl,susc,driveid,app,mime,vprv,prv,dur,lmt&sig=AOq0QJ8wRQIgOkuCgdPAbrSXI0E-WoJwgN_G_elXyOsWoowB9Jiy57QCIQCWc5GcuwenzzyuTUlsgxnqgKqtQuZYBG289eQF2qAgFg==&lsparams=mh,mm,mn,ms,mv,mvi,pl,sc&lsig=AG3C_xAwRgIhAJLvChJuYSP1kdBGLAX7ScrdQP5zyu4XxuK2VshtwGZrAiEA3DHMMQvK0LHDHZR-tJK8OatQGbtZofCbDhV3v877n8Q=&cpn=tfzlDZRWu1Tf0r1p&c=WEB_EMBEDDED_PLAYER&cver=1.20210623.1.0'}
                   // url={'https://www.youtube.com/watch?v=N2OG1w6bGFo&ab_channel=GoogleCloudTech'}
@@ -489,6 +534,8 @@ export function VideoPlayer({curso}) {
                   playbackRate={playbackRate}
                   onPlaybackRateChange={handlePlaybackRate}
                   onToggleFullScreen={toggleFullScreen}
+                  onQualityChange={onQualityChange}
+                  quality={quality}
                   volume={volume}
 
                 />

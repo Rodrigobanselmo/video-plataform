@@ -11,21 +11,25 @@ interface IDebounce {
 export const useDebounce = (
   fn: (value: any) => void,
   delay: number,
-  continueUnmounted?: boolean,
+  continueUnmounted?: boolean, // if want to continue to update after unmounted
 ): IDebounce => {
-  const ref = useRef<NodeJS.Timeout | null>(null);
+  const ref = useRef<number | undefined | null>(null);
 
   useEffect(() => {
     return () => {
-      if (ref.current && !continueUnmounted) clearTimeout(ref.current);
+      if (ref.current && !continueUnmounted) window.clearTimeout(ref.current);
     };
   });
 
-  function onDebounce(value: any): void {
-    if (ref.current) clearTimeout(ref.current);
-    ref.current = setTimeout(() => {
+  async function onDebounce(value: any): Promise<void> {
+    if (ref.current) {
+      await window.clearTimeout(ref.current);
+    }
+
+    const timeout = await window.setTimeout(() => {
       fn(value);
     }, delay);
+    ref.current = timeout;
   }
 
   function onClearDebounce(): void {

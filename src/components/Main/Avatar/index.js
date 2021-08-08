@@ -5,8 +5,8 @@ import { InitialsName } from '../../../helpers/StringHandle';
 import { darken } from "@material-ui/core/styles";
 
 const ProfileImage = styled.div`
-  height: 56px;
-  width: 56px;
+  height: 45px;
+  width: 45px;
   border-radius: 40px;
   justify-content: center;
   align-items: center;

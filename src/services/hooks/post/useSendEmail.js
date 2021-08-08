@@ -16,8 +16,8 @@ export async function onCallSendEmail(data,currentUser) { //data = array of user
     html
   }
 
-  const response = await axios.post('https://us-central1-reconecta-dev.cloudfunctions.net/mailer',dataInfo)
-  console.log(response)
+  // const response = await axios.post('https://us-central1-reconecta-dev.cloudfunctions.net/mailer',dataInfo)
+  // console.log(response)
   return email
 }
 

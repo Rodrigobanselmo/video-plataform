@@ -8,3 +8,13 @@ declare module 'styled-components' {
     palette: ThemeType;
   }
 }
+
+declare module 'react' {
+  export interface File {
+    webkitRelativePath?: string;
+  }
+}
+
+declare let File: {
+  webkitRelativePath?: string;
+};

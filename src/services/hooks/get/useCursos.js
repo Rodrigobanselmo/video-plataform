@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-// import { useAuth } from "../../../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 // import { useLoaderDashboard } from "../../../context/LoadDashContext";
 import { db } from "../../../lib/firebase.prod";
 
@@ -18,7 +18,7 @@ export async function getCursos(companyId) {
 
 export function useCursos() {
   // const { setLoaderDash } = useLoaderDashboard();
-  // const { currentUser } = useAuth()
+  const { currentUser } = useAuth()
 
   return useQuery('cursos', ()=>getCursos(), {
     staleTime: 1000 * 60 * 60 * 24,

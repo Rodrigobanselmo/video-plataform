@@ -94,7 +94,8 @@ export async function setUsers(checkoutInfo,actualUser) { //data = array of user
   }
 
   //Edit user statements
-  if (currentUser.access !== 'admin') batch.update(userRef,{statement:newCurrentUser.statement})
+    const lastView = new Date().getTime();
+    if (currentUser.access !== 'admin') batch.update(userRef,{statement:newCurrentUser.statement,})
 
 
   //create docs
@@ -124,29 +125,29 @@ console.log('Create users',data)
   })
 
   //Reduce Read
-  if (!data[0]?.isPrimaryAccount) {
 
-  }
-  const companyId = newCurrentUser.companyId
-  const reduceType = 'users'
-  let docIds = null;
+  if (data[0]?.isPrimaryAccount && data[0]?.isPrimaryAccount == 'client') {
+    const companyId = newCurrentUser.companyId
+    const reduceType = 'users'
+    let docIds = null;
 
-  const reduce = await reduceRef.where("id", "==", companyId).where("reduceType", "==", reduceType).get();
+    const reduce = await reduceRef.where("id", "==", companyId).where("reduceType", "==", reduceType).get();
 
-  reduce.forEach(doc=>{
-    if(doc.data().data.length < 200) docIds=doc.id
-  })
-
-  if (docIds === null) {
-    docIds = `${reduceType}-${v4()}`
-    await reduceRef.doc(docIds).set({
-      id:companyId,
-      reduceType:reduceType,
-      data:[]
+    reduce.forEach(doc=>{
+      if(doc.data().data.length < 200) docIds=doc.id
     })
-  }
 
-  batch.update(reduceRef.doc(docIds),{data:fb.firestore.FieldValue.arrayUnion(...reduceData)})
+    if (docIds === null) {
+      docIds = `${reduceType}-${v4()}`
+      await reduceRef.doc(docIds).set({
+        id:companyId,
+        reduceType:reduceType,
+        data:[]
+      })
+    }
+
+    batch.update(reduceRef.doc(docIds),{data:fb.firestore.FieldValue.arrayUnion(...reduceData)})
+  }
 
   //commit final
   await batch.commit()
@@ -208,7 +209,7 @@ export function useCreateUsers() {
         open:true,
       })
 
-      if (!data[0]?.isPrimaryAccount) queryClient.setQueryData('users', (oldData)=>[...data,...oldData])
+      if (!data[0]?.isPrimaryAccount) queryClient.setQueryData(['users', currentUser.uid], (oldData)=>[...data,...oldData])
       if (data[0]?.isPrimaryAccount) queryClient.setQueryData('clients', (oldData)=>[...data,...oldData])
     },
     onError: (error) => {

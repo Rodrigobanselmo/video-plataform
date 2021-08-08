@@ -6,11 +6,11 @@ export function onAddUserData({data,createCompany,currentUser,setCurrentUser,set
 
     let formattedData = {...data,status:'Ativo'}
     formattedData.name = wordUpper((formattedData.name.trim()).split(" "))
-    formattedData.razao = formattedData?.company?.razao ?? ''
-    formattedData.cpfOrCnpj = formattedData?.company?.cpfOrCnpj ?? ''
     formattedData.initialized = true
     formattedData.newUser = false
-    formattedData.company.juridica = formattedData.cpfOrCnpj?true:false
+    formattedData.juridica = formattedData.cnpj?true:false
+    formattedData.cpf = keepOnlyNumbers(formattedData.cpf)
+    if (currentUser?.companyId) formattedData.companyId = currentUser.companyId
 
     console.log('final',formattedData)
     setLoad(true)
@@ -22,7 +22,7 @@ export function onAddUserData({data,createCompany,currentUser,setCurrentUser,set
         setCurrentUser(currentUser=>({...currentUser,...formattedData}))
         setTimeout(() => {
             setLoad(false)
-            notification.success({message:'Usuário criado com sucesso'})
+            notification.success({message:'Dados preenchidos com sucesso'})
         }, 1000);
     }
 
@@ -37,42 +37,29 @@ export function onAddUserData({data,createCompany,currentUser,setCurrentUser,set
 
 export function onUpdateProfile({image,setUnform,currentUser,setCurrentUser,setLoad,notification}) {
 
+    function checkError(error) {
+      setLoad(false)
+      setTimeout(() => {
+          notification.error({message:error})
+      }, 500);
+  }
     setLoad(true)
     UpdateProfile(image,currentUser.uid,checkSuccess,checkError)
     function checkSuccess(url,later) {
-        AddUserData({photoURL:url},currentUser.uid,()=>{
-          setCurrentUser(currentUser=>({...currentUser,photoURL:url}))
-          setUnform(unform=>({...unform,photoURL:url}))
-          !later&&setTimeout(() => {
-            setLoad(false)
-            notification.success({message:'Imagem adicionada com sucesso'})
-          }, 500);
-        },checkError)
+        AddUserData({
+          data:{photoURL:url},
+          uid:currentUser.uid,
+          checkSuccess:()=>{
+            setCurrentUser(currentUser=>({...currentUser,photoURL:url}))
+            setUnform(unform=>({...unform,photoURL:url}))
+            !later&&setTimeout(() => {
+              setLoad(false)
+              notification.success({message:'Imagem adicionada com sucesso'})
+            }, 500);
+          },
+          checkError
+        })
     }
 
-    function checkError(error) {
-        setLoad(false)
-        setTimeout(() => {
-            notification.error({message:error})
-        }, 500);
-    }
 
 }
-
-// export function onCheckCEP(value,setData,notification){
-
-//   function checkSuccess(response) {
-//     // if (response) {
-//     //   setData(data=>({...data,cep:value, status:'Warn',message:'Cep já cadastrado'}))
-//     // } else {
-//     //   setData(data=>({...data,cep:value, status:'Check',message:'Cep válido'}))
-//     // }
-//   }
-
-//   function checkError(error) {
-//     notification.error({message:error?error:'Erro os adquirir CNPJ',modal:true})
-//     setData(data=>({...data,CNPJ:value, status:'Warn',message:error}))
-//   }
-
-//   SeeIfCEPExists(formatCPFeCNPJeCEPeCNAE(value),companyId,checkSuccess,checkError)
-// }

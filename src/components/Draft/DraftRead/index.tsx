@@ -5,7 +5,6 @@ import React from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import { convertToRaw, EditorState, convertFromRaw } from 'draft-js';
 import { Container } from './styles';
-import '../../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import usePersistedState from '../../../hooks/usePersistedState';
 // interface Props {
 //   image: string;

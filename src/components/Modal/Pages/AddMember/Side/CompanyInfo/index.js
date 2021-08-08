@@ -24,6 +24,7 @@ const CompanyInfoComp = ({ isUrl=false,fieldEdit, dataUser, setDataUser }) => {
       if (value && value.length == 14) {
         const data =  await mutation.mutateAsync(value)
         if (data) newData[`${fieldEdit.index}--company`] = data.company
+        if (data) newData[`${fieldEdit.index}--razao`] = data.company.razao
         if (data) newData[`${fieldEdit.index}--address`] = data.address
         if (data) setRazao(data.company.razao)
       }

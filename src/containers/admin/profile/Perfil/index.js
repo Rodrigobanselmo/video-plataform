@@ -6,19 +6,21 @@ import {useAuth} from '../../../../context/AuthContext'
 import {useLoaderScreen} from '../../../../context/LoaderContext'
 import { useLocation,useParams } from 'react-router-dom';
 import {useLoaderDashboard} from '../../../../context/LoadDashContext'
+import {ProfilePrimaryUserData} from '../../../../components/Containers/Profile/ProfilePrimaryUserData'
+import {ProfileHistory} from '../../../../components/Containers/Profile/ProfileHistory'
+import styled from "styled-components";
 
-// const initialData = [
-//   { name: 'Educador Físico',activities:['Opção 1 Educador Físico','Opção 2 Educador Físico']},
-//   { name: 'Enfereiro',activities:['Opção 1 Enfereiro','Opção 2 Enfereiro']},
-//   { name: 'Farmacêutico',activities:['Opção 1 Farmacêutico' ,'Opção 2 Farmacêutico']},
-//   { name: 'Fisoterapeuta',activities:['Opção 1 Fisoterapeuta','Opção 2 Fisoterapeuta']},
-//   { name: 'Fonoaudiólogo',activities:['Opção 1 Fonoaudiólogo','Opção 2 Fonoaudiólogo']},
-//   { name: 'Médico',inputs:['CRM'],activities:['Opção 1 Médico','Opção 2 Médico']},
-//   { name: 'Naturopata',activities:['Opção 1 Naturopata','Opção 2 Naturopata']},
-//   { name: 'Nutricionista',activities:['Opção 1 Nutricionista','Opção 2 Nutricionista']},
-//   { name: 'Psicólogo',activities:['Opção 1 Psicólogo','Opção 2 Psicólogo' ]},
-//   { name: 'Psicopedagogo',activities:['Opção 1 Psicopedagogo','Opção 2 Psicopedagogo']},
-// ]
+const Container = styled.div`
+  max-width:1200px;
+  margin: auto;
+`;
+
+
+const Section = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+`;
 
 function Team() {
 
@@ -36,25 +38,18 @@ function Team() {
   const isOtherUser = userId && currentUser?.permissions && Array.isArray(currentUser.permissions) && currentUser.permissions.includes('ea')
 
   useEffect(() => {
+    setUser(currentUser)
+    setLoaderDash(false)
   }, []) //query,
 
-  // const handleAvatarChange = React.useCallback(
-  //   (event) => {
-  //     // if (isOtherUser) notification.error({message:'Você não é capaz',modal:false})
-  //     if (isOtherUser && event.target.files && event.target.files[0]) {
-  //       notification.error({message:'Somente o usuário responsavel pela conta é permitido editar a foto de perfil',modal:false})
-  //       // onUpdateProfile({image:event.target.files[0],currentUser:user,setCurrentUser:setUser,setLoad,notification})
-  //     } else if (event.target.files && event.target.files[0]) {
-  //       onUpdateProfile({image:event.target.files[0],currentUser,setCurrentUser,setLoad,notification})
-  //     }
-  //   },
-  //   [userId],
-  // );
     if (!user?.email) return <></>
     return (
-        <>
-
-        </>
+        <Container>
+          <Section>
+            <ProfilePrimaryUserData user={user} setCurrentUser={setCurrentUser}/>
+            <ProfileHistory user={user} />
+          </Section>
+        </Container>
     )
 }
 

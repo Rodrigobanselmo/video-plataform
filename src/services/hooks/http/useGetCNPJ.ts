@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useMutation, UseMutationResult } from 'react-query';
 import axios from 'axios';
 import { useNotification } from '../../../context/NotificationContext.js';

@@ -113,48 +113,48 @@ export default function Video() {
 
   const pathname = '/app/admin/video'
 
-  function onError(error) {
-    notification.error({message:error})
-    setLoaderDash(false)
-  }
+  // function onError(error) {
+  //   notification.error({message:error})
+  //   setLoaderDash(false)
+  // }
 
-  function onSetRouteVideo(data,curso) {
-    if (data?.nextModule) {
-      history.replace(pathname+'/'+data.nextModule+'/'+data.nextClass)
-    } else {
-      history.replace(pathname+'/'+curso.modules[0].id+'/'+curso.modules[0].classes[0].id)
-    }
+  // function onSetRouteVideo(data,curso) {
+  //   if (data?.nextModule) {
+  //     history.replace(pathname+'/'+data.nextModule+'/'+data.nextClass)
+  //   } else {
+  //     history.replace(pathname+'/'+curso.modules[0].id+'/'+curso.modules[0].classes[0].id)
+  //   }
 
-  }
+  // }
 
-  function onSuccessGetCurso(data,userData) {
-    if (Array.isArray(userData)) {
-      history.replace(pathname+'/'+userData[0].moduleId+'/'+userData[0].aulaId)
-    } else {
-      updateModules(userData,data)
-      setCurso(data)
-      setLoaderDash(false)
-    }
-  }
+  // function onSuccessGetCurso(data,userData) {
+  //   if (Array.isArray(userData)) {
+  //     history.replace(pathname+'/'+userData[0].moduleId+'/'+userData[0].aulaId)
+  //   } else {
+  //     updateModules(userData,data)
+  //     setCurso(data)
+  //     setLoaderDash(false)
+  //   }
+  // }
 
-  function updateModules(userData,curso) {
-    // // console.log('update',userData)
-    // dispatch({ type: 'MODULE_WRITE', payload: data })
-    // dispatch({ type: 'PROGRESS_LOGOUT', payload: data })
-    // UpdateStudentProgress(data,currentUser,()=>{},onError)
+  // function updateModules(userData,curso) {
+  //   // // console.log('update',userData)
+  //   // dispatch({ type: 'MODULE_WRITE', payload: data })
+  //   // dispatch({ type: 'PROGRESS_LOGOUT', payload: data })
+  //   // UpdateStudentProgress(data,currentUser,()=>{},onError)
 
-    if (('percentage' in modules && modules.percentage < userData.percentage) || !('percentage' in modules)) {
-      // dispatch({ type: 'MODULE_WRITE', payload: userData })
-      onSetRouteVideo(userData,curso)
-      console.log('update modules')
-    } else if (modules?.percentage && modules.percentage > userData.percentage) {
-      onSetRouteVideo(modules,curso)
-      UpdateStudentProgress(modules,currentUser,()=>{},onError)
-      console.log('update student')
-    } else {
-      onSetRouteVideo(modules,curso)
-    }
-  }
+  //   if (('percentage' in modules && modules.percentage < userData.percentage) || !('percentage' in modules)) {
+  //     // dispatch({ type: 'MODULE_WRITE', payload: userData })
+  //     onSetRouteVideo(userData,curso)
+  //     console.log('update modules')
+  //   } else if (modules?.percentage && modules.percentage > userData.percentage) {
+  //     onSetRouteVideo(modules,curso)
+  //     UpdateStudentProgress(modules,currentUser,()=>{},onError)
+  //     console.log('update student')
+  //   } else {
+  //     onSetRouteVideo(modules,curso)
+  //   }
+  // }
 
   useEffect(() => {
     // CreateCursoData(modulesAll,()=>notification.success({message:'Curso criado com sucesso'}),(e)=>notification.error({message:e}))

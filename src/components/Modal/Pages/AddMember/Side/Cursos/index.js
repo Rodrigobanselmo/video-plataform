@@ -81,6 +81,7 @@ export function CursosSideBar({ email, isAdmin }) {
   const handleCheck = (event, curso, hasSubCurso) => {
 
     const newData = { ...cursos };
+    if (newData[`${fieldEdit.index}--${curso.id}--${curso.name}`] == 'lock') return notification.warn({message:'Você não pode remover um curso que já foi iniciado pelo aluno'})
 
     newData[`${fieldEdit.index}--${curso.id}--${curso.name}`] = event.target.checked;
 

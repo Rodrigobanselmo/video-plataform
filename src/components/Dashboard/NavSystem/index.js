@@ -30,7 +30,7 @@ import {useStyles,DarkModeSwitch as DarkModeSwitchMui} from './styles'
 import {onLogout} from './func'
 import {Icons} from '../../Icons/iconsDashboard'
 
-import {DASHBOARD,ADMIN_PERFIL} from '../../../routes/routesNames'
+import {DASHBOARD,ADMIN_PERFIL, PROFILE, STATEMENT} from '../../../routes/routesNames'
 import {AbreviarNome,InitialsName} from '../../../helpers/StringHandle'
 import usePersistedState from '../../../hooks/usePersistedState.js';
 import {useLoaderDashboard} from '../../../context/LoadDashContext'
@@ -130,7 +130,14 @@ const NavBar = ({open,setOpen}) => {
   function onProfileClick(action) {
     if (action === 'logout') onLogout({setLoad,notification})
     if (action === 'perfil') {
-      history.push(ADMIN_PERFIL)
+      if (pathname.includes(PROFILE)) return
+      history.push(PROFILE)
+      setOpenProfile(false)
+      setLoaderDash(true)
+    }
+    if (action === 'statement') {
+      if (pathname.includes(STATEMENT)) return
+      history.push(STATEMENT)
       setOpenProfile(false)
       setLoaderDash(true)
     }
@@ -164,16 +171,25 @@ const NavBar = ({open,setOpen}) => {
             }
             const isActive = pathActive()
 
-            if ((item.visible === 'all' || (currentUser?.access && item.visible.includes(currentUser.access)))) {
-              return (
-                <NaveLink onClick={()=>{pathname!==item.route && setLoaderDash(true)}} key={item.id} active={isActive.toString()} to={item.route}>
-                  <p>{item.text}</p>
-                  {isActive && <BottomBar />}
-                </NaveLink>
-              )
-            }
+            const isPermissionGranted = !item?.permissions ? true :
+              currentUser?.permission &&
+              currentUser.permission.some(i=>item.permissions.includes(i))
 
+            const isAccessGranted =
+              item.visible === 'all' || (
+                currentUser?.access &&
+                item.visible.includes(currentUser.access)
+              )
+
+
+            if (isPermissionGranted && isAccessGranted) return (
+              <NaveLink onClick={()=>{pathname!==item.route && setLoaderDash(true)}} key={item.id} active={isActive.toString()} to={item.route}>
+                <p>{item.text}</p>
+                {isActive && <BottomBar />}
+              </NaveLink>
+            )
             return null
+
           })}
           </div>
 

@@ -1,0 +1,57 @@
+.wrapper_content {
+  box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.19);
+  width: 100%;
+  border: none;
+  padding: 0.3rem 0.5rem;
+  margin: 1px 0px;
+  border-radius: 10px;
+  /* height: 100%; */
+  /* background-color: RED !important; */
+  /* margin: 20px 0 20px 0; */
+  padding-bottom: 5rem;
+  background-color: white;
+  height: 100%;
+}
+
+.editor_content {
+  background-color: white;
+  width: 100%;
+  max-height: 300px;
+  padding: 0rem 1rem;
+  margin: 0;
+  min-height: 300px;
+  max-height: 100%;
+}
+.editor_content::placeholder  {
+  font-size:1rem !important;
+  color: white !important;
+}
+
+.maxHeight_xs {
+  min-height: 100px;
+  max-height: 300px;
+}
+
+.maxHeight_s {
+  min-height: 200px;
+  max-height: 300px;
+}
+
+.maxHeight_m {
+  min-height: 300px;
+  max-height: 400px;
+}
+
+.maxHeight_l {
+  min-height: 400px;
+  max-height: 600px;
+}
+
+.maxHeight_xl {
+  min-height: 400px;
+  max-height: 900px;
+}
+
+.full {
+  max-height: 100%;
+}

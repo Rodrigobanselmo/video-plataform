@@ -7,6 +7,7 @@ import storage from 'redux-persist/lib/storage';
 import { Provider } from 'react-redux';
 import Reducers from './Reducers.js';
 import { App } from './App';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 const persistConfig = {
   key: 'root',
