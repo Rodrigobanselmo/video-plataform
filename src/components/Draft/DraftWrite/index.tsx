@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import {
   convertToRaw,
@@ -9,10 +9,11 @@ import {
 } from 'draft-js';
 import styled, { css } from 'styled-components';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import { Container } from './styles';
-import '../style.css';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import { useNewDebounce } from '../../../hooks/useNewDebounce';
 import { DraftButtons } from '../components/DraftButtons';
+import { Container } from './styles';
+import '../style.css';
 
 type Props = React.ComponentPropsWithoutRef<typeof Container>;
 
@@ -23,32 +24,55 @@ interface IDraftWrite extends Props {
   onSave: (value: RawDraftContentState) => void;
   autoSave?: boolean;
   placeholder?: string;
+  selector?: string;
   allVisible?: boolean;
+  restart?: boolean;
 }
 // esse component salva automaticamente, para controla quando salvar criar funcionalidade
 export const DraftWrite = ({
   size = 'm',
   allVisible = false,
   initialEditorState,
+  restart,
   placeholder = 'Escreva aqui',
   onSave,
+  selector,
   autoSave,
   ...rest
 }: IDraftWrite): ReactElement => {
+  // const draftContent = useSelector((state: any) => state[selector || 'user']);
+  const store = useStore();
+  const dispatch = useDispatch();
   const [toolbar, setToolbar] = React.useState(false);
-  const { onDebounce } = useNewDebounce();
-  const { onDebounce: onDebounceAway, onClearDebounce } = useNewDebounce();
+  const [save, setSave] = React.useState(false);
+  const { onDebounce, onClearDebounce } = useNewDebounce();
+  const {
+    onDebounce: onDebounceAway,
+    onClearDebounce: onClearDebounceAway,
+  } = useNewDebounce();
   const [editorState, setEditorState] = React.useState(
     initialEditorState
       ? EditorState.createWithContent(convertFromRaw(initialEditorState))
       : EditorState.createEmpty(),
   );
 
+  useEffect(() => {
+    const draftContent = store.getState()[selector || 'none'];
+    if (draftContent)
+      setEditorState(
+        EditorState.createWithContent(convertFromRaw(draftContent)),
+      );
+    if (!draftContent) setEditorState(EditorState.createEmpty());
+  }, [restart]);
+
   const handleChange = (value: EditorState): void => {
-    onClearDebounce();
+    dispatch({ type: 'TO_SAVE' });
+    onClearDebounceAway();
+    if (!save) setSave(true);
     onDebounce(() => {
+      setSave(false);
       onSave(convertToRaw(value.getCurrentContent()));
-    }, 3000);
+    }, 1000);
     setEditorState(value);
   };
 
@@ -56,6 +80,12 @@ export const DraftWrite = ({
     onDebounceAway(() => {
       setToolbar(false);
     }, 10000);
+  };
+
+  const handleSave = (): void => {
+    onClearDebounce();
+    setSave(false);
+    onSave(convertToRaw(editorState.getCurrentContent()));
   };
 
   const onTab = (e: React.KeyboardEvent): void => {
@@ -101,7 +131,9 @@ export const DraftWrite = ({
         <DraftButtons
           toolbar={toolbar}
           autoSave={autoSave}
+          save={save}
           setToolbar={setToolbar}
+          handleSave={handleSave}
         />
       </Container>
     </ClickAwayListener>

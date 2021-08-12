@@ -1,18 +1,16 @@
-const initialState = false
+const initialState = null
 
 
 export default (state = initialState, action) => {
 
 
     switch(action.type) {
-        case 'SAVE':
+        case 'DRAFT_ABOUT':
+          console.log(`action.payload`, action.payload)
         return action.payload;
 
-        case 'SAVED':
-        return false;
-
-        case 'TO_SAVE':
-        return true;
+        case 'DRAFT_ABOUT_RESET':
+        return null;
 
         default:
         return state;

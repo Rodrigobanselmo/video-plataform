@@ -100,11 +100,11 @@ export default function Cursos() {
           <p className="text">Click aqui para adicinar <br/> novos cursos.</p>
         </CardButtonHorizontal>
 
-        <CardButtonHorizontal >
+        {/* <CardButtonHorizontal >
           <AutorenewIcon/>
           <p className="title">Editar Cursos Existentes</p>
           <p className="text">Click aqui para editar <br/> seus cursos.</p>
-        </CardButtonHorizontal>
+        </CardButtonHorizontal> */}
       </div>
 
       {isContinueCurso &&

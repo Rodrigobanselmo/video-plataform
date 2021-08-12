@@ -5,21 +5,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import styled, {css} from "styled-components";
 import IconButton from '@material-ui/core/IconButton';
-import {Icons} from '../../Icons/iconsDashboard'
-import {useNotification} from '../../../context/NotificationContext'
-
-const FullModalContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: ${props=>props.transparent?'#000000bb':props.theme.palette.background.default};
-  position:relative;
-  z-index:1111110;
-  width:100%;
-  height:100%;
-  overflow-y:scroll;
-`;
-
+import { Icons } from '../../Icons/iconsDashboard';
 
 const IconCloseButton = styled.div`
   position: absolute;
@@ -33,17 +19,6 @@ const IconCloseButton = styled.div`
   ${props => props.padding && css`
       top: 10px;
   `}
-
-`;
-
-const IconCloseFull = styled.div`
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  font-size: 30px;
-  padding:7px;
-  border-radius:4px;
-  z-index:111441110;
 
 `;
 
@@ -64,12 +39,45 @@ const Icon = styled(Icons)`
   }
 `;
 
-const IconGoBackFull = styled(IconCloseButton)`
-  top: 30px;
-  left: 30px;
-  font-size: 30px;
-  max-width:100px;
-  z-index:111441110;
+const IconLeft = styled(Icons)`
+  color: ${props=>props.theme.palette.text.primary};
+  font-size: 22px;
+  margin-right:10px;
+
+  ${props => props.icon == 'success' && css`
+    color: ${props=>props.theme.palette.status.success};
+  `}
+`;
+
+const TitleView = styled.p`
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  display:flex;
+  align-items: center;
+  flex-direction:row;
+
+  ${props => props.padding && css`
+      left:0;
+      position: relative;
+      margin: 0 0 30px 0;
+      align-self:left;
+      margin-right:auto;
+  `}
+
+`;
+
+const Title = styled.p`
+  color: ${props=>props.theme.palette.text.primary};
+  font-size: 22px;
+  font-weight: bold;
+
+  ${props => props.padding && css`
+      text-align:left;
+      align-self:left;
+      margin-right:auto;
+  `}
+
 `;
 
 export function ModalNormal({children,open,onClose,title,padding,icon}) { // TODO:ainda tem que faze

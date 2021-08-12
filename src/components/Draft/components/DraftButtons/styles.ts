@@ -13,13 +13,9 @@ interface IButon {
 }
 
 export const Button = styled.button<IButon>`
-  padding: 10px 0px;
-  width: 100px;
-  background-image: linear-gradient(
-    -10deg,
-    ${({ theme }) => theme.palette.primary.main},
-    ${({ theme }) => theme.palette.primary.light}
-  );
+  padding: 0.5rem 0px;
+  width: 110px;
+  background-color: ${({ theme }) => theme.palette.primary.main};
   color: ${({ theme }) => theme.palette.primary.contrastText};
   font-weight: bold;
   font-size: 1rem;

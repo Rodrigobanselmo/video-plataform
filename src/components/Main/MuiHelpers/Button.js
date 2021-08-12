@@ -82,9 +82,8 @@ export const ContinueButton = styled(Button)`
       }
     `};
 
-
     ${props => props.disable === 'true' && css`
-      border: 1px ${({theme})=>theme.palette.background.line} solid;
+    border: 1px ${({theme})=>theme.palette.background.line} solid;
       background: ${({theme})=>theme.palette.background.inactive};
       opacity:1;
       color:${({theme})=>theme.palette.primary.contrastText};
@@ -93,6 +92,18 @@ export const ContinueButton = styled(Button)`
         background-color: ${({theme})=>theme.palette.background.inactive};
       }
     `};
+
+
+    &:disabled {
+        border: 1px ${({theme})=>theme.palette.background.line} solid;
+      background: ${({theme})=>theme.palette.background.inactive};
+      opacity:1;
+      color:${({theme})=>theme.palette.primary.contrastText};
+      pointer-events: none;
+      &:hover {
+        background-color: ${({theme})=>theme.palette.background.inactive};
+      }
+      }
 
     > .MuiTouchRipple-root span {
       background-color: ${({theme})=>'#ffffff44'};

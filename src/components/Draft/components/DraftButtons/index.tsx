@@ -1,18 +1,21 @@
+/* eslint-disable no-nested-ternary */
 import React, { ReactElement } from 'react';
-import { Editor } from 'react-draft-wysiwyg';
-import { convertToRaw, EditorState, convertFromRaw, Modifier } from 'draft-js';
 import { ButtonView, Button } from './styles';
 
 interface IButtonComponent {
   toolbar: boolean;
+  save: boolean;
   autoSave?: boolean;
   setToolbar: React.Dispatch<React.SetStateAction<boolean>>;
+  handleSave: () => void;
 }
 
 export const DraftButtons = ({
   toolbar,
   autoSave,
+  save,
   setToolbar,
+  handleSave,
 }: IButtonComponent): ReactElement => {
   const handleOnSave = (): void => {
     setToolbar(false);
@@ -23,8 +26,10 @@ export const DraftButtons = ({
   };
 
   const handleOnEditStop = (): void => {
-    if (toolbar && autoSave) setToolbar(false);
-    else setToolbar(true);
+    if (toolbar && autoSave) {
+      handleSave();
+      setToolbar(false);
+    } else setToolbar(true);
   };
 
   return (
@@ -35,7 +40,7 @@ export const DraftButtons = ({
           onClick={handleOnEditStop}
           type="button"
         >
-          {toolbar ? 'Parar' : 'Editar'}
+          {save ? 'salvando...' : toolbar ? 'Parar' : 'Editar'}
         </Button>
       ) : (
         <>

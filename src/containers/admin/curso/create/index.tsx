@@ -2,11 +2,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useState, useEffect } from 'react';
 // import Modal from './Modal'
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import ScreenShareIcon from '@material-ui/icons/ScreenShare';
 import HelpIcon from '@material-ui/icons/Help';
 import * as Yup from 'yup';
+import { RawDraftContentState } from 'draft-js';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import HeaderProfile from '../../../../components/Dashboard/Components/Blocks/HeaderProfile';
 import { useNotification } from '../../../../context/NotificationContext';
 import { useAuth } from '../../../../context/AuthContext';
@@ -22,6 +24,39 @@ import { InputUnform } from '../../../../components/Main/MuiHelpers/Input.js';
 import { NumberOnly } from '../../../../lib/textMask';
 import { CursoAddData } from '../../../../components/Forms/CursoAddData';
 import { ButtonForm } from '../../../../components/Dashboard/Components/Form/comp';
+import { keepOnlyNumbers } from '../../../../helpers/StringHandle';
+import { ModalNormal } from '../../../../components/Modal/Modal';
+import { ModalCreateCurso } from './modal';
+import { InputImage } from '../../../../components/Forms/components/InputImage';
+import { useCreateCurso } from '../../../../services/hooks/set/useCreateCurso';
+import { onLater } from '../../../../helpers/DataHandler';
+import { useUploadImage } from '../../../../services/hooks/set/useUploadImage';
+import { ModuleData } from '../../../../components/Forms/ModuleData';
+
+const ButtonsContainer = styled.div`
+  display: grid;
+  grid-template-columns: 100px 100px 100px;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
+const BackButton = styled.button`
+  position: fixed;
+  bottom: 1rem;
+  right: 2rem;
+  width: 70px;
+  height: 70px;
+  background-color: white;
+  border-radius: 50px;
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
+  align-items: center;
+  justify-content: center;
+  border: none;
+  color: ${({ theme }) => theme.palette.text.secondary};
+  font-weight: bold;
+  font-size: 1rem;
+`;
 
 const Container = styled.div`
   max-width: 1200px;
@@ -39,6 +74,11 @@ const Subtitle = styled.p`
   font-size: 1rem;
 `;
 
+interface IDraft {
+  text: RawDraftContentState;
+  public: RawDraftContentState;
+}
+
 interface IUser {
   currentUser: {
     uid: string;
@@ -48,19 +88,204 @@ interface IUser {
 
 const Team: React.FC = () => {
   const { currentUser }: IUser = useAuth();
-  // const [user, setUser] = useState(false)
 
   // const notification = useNotification()
   // const query = new URLSearchParams(useLocation().search)
+  const store = useStore();
+  const save = useSelector((state: any) => state.save);
+  const history = useHistory();
   const { setLoaderDash } = useLoaderDashboard();
+  const notification = useNotification();
+  const dispatch = useDispatch();
+  const mutation = useCreateCurso();
+  const uploadImage = useUploadImage();
+
+  // const [draftPublic, setDraftPublic] = useState<RawDraftContentState | null>(
+  //   null,
+  // );
+  // const [draftAbout, setDraftAbout] = useState<RawDraftContentState | null>(
+  //   null,
+  // );
+
+  const [open, setOpen] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [initialData, setInitialData] = useState<any>({});
+  const [cursoData, setCursoData] = useState<any>({});
+  const [imageURL, setImageURL] = useState('');
+  const [modules, setModules] = useState<any[]>([]);
+  const [combos, setCombos] = useState<any[]>([]);
+
+  const handleOnClose = (close?: boolean, curso?: any): void => {
+    if (close) return setOpen(false);
+    if (curso) return setCursoData(curso);
+    history.goBack();
+    // notification.warn({
+    //   message: 'Selecione um curso ou crie um novo para continuar.',
+    // });
+  };
+
+  const onHandleSelectImage = async (file: File): Promise<void> => {
+    console.log(file);
+    // setImageURL()
+    const URL = await uploadImage.mutateAsync({
+      imageFile: file,
+      ...cursoData.main,
+    });
+    setImageURL(URL);
+    document.getElementById('onCursoSaveButton')?.click();
+  };
+
+  const handleSelectModules = (arrayModules: any[]): void => {
+    setModules(arrayModules);
+  };
+
+  const handleSelectCourse = ([curso, Draft]: [any, IDraft]): void => {
+    console.log(`data curso create`, curso, Draft);
+    if (Draft?.text) dispatch({ type: 'DRAFT_ABOUT', payload: Draft.text });
+    if (Draft?.public)
+      dispatch({ type: 'DRAFT_PUBLIC', payload: Draft.public });
+    setInitialData({
+      name: curso.name,
+      daysToExpire: curso.daysToExpire,
+      duration: curso.duration,
+    });
+    setModules([...curso.modules]);
+    setOpen(false);
+    setCombos(curso?.combos || []);
+    setCursoData({ main: curso, draft: { id: curso.id, editorState: true } });
+  };
 
   useEffect(() => {
     setLoaderDash(false);
-  }, [setLoaderDash]); // query,
+  }, []); // query,
 
-  const onSubmit = (event: React.FormEvent): void => {
+  useEffect(() => {
+    if (open) {
+      setInitialData({});
+      dispatch({ type: 'DRAFT_PUBLIC_RESET' });
+      dispatch({ type: 'DRAFT_ABOUT_RESET' });
+      dispatch({ type: 'SAVED' });
+      setImageURL('');
+      setModules([]);
+    }
+  }, [open]); // query,
+
+  const isPublished = cursoData?.main && cursoData?.main?.published;
+  const image = imageURL || (cursoData?.main && cursoData?.main?.image);
+
+  const onSubmit = async (event: any): Promise<void> => {
     event.preventDefault();
-    console.log(event.target);
+    setSaving(true);
+    await onLater(1000);
+    const { draftPublic } = store.getState();
+    const { draftAbout } = store.getState();
+
+    if (!event.target.name) {
+      setSaving(false);
+
+      return notification.warn({
+        message: 'Nome do curso não pode ser nulo.',
+      });
+    }
+    if (!event.target.daysToExpire) {
+      setSaving(false);
+      return notification.warn({
+        message: 'Dias até expirar não pode ser nulo.',
+      });
+    }
+    if (!event.target.duration) {
+      setSaving(false);
+      return notification.warn({
+        message: 'Duração não pode ser nulo.',
+      });
+    }
+
+    if (!draftPublic) {
+      setSaving(false);
+      return notification.warn({
+        message: 'O campo de público alvo não pode ser nulo.',
+      });
+    }
+
+    if (!draftAbout) {
+      setSaving(false);
+
+      return notification.warn({
+        message: 'O campo sobre o curso não pode ser nulo.',
+      });
+    }
+
+    const name = event.target?.name ? event.target.name.value : '';
+    const daysToExpire = event.target?.daysToExpire
+      ? keepOnlyNumbers(event.target.daysToExpire.value)
+      : '';
+    const duration = event.target?.duration
+      ? keepOnlyNumbers(event.target.duration.value)
+      : '';
+
+    if (!name || !daysToExpire || !duration) {
+      setSaving(false);
+      return notification.warn({
+        message: 'Preencha todos os campos para continuar.',
+      });
+    }
+
+    if (modules.length === 0) {
+      setSaving(false);
+      return notification.warn({
+        message: 'Insira os módulos e aulas para salvar.',
+      });
+    }
+
+    if (!image) {
+      setSaving(false);
+      return notification.warn({
+        message: 'Insira uma imagem de capa do curso.',
+      });
+    }
+
+    const newData = {
+      main: {
+        ...cursoData.main,
+        name,
+        modules,
+        daysToExpire,
+        duration,
+      },
+      draft: {
+        ...cursoData.draft,
+        text: draftAbout,
+        public: draftPublic,
+      },
+    };
+    console.log('combos', combos);
+    if (combos && Array.isArray(combos) && combos.length > 0)
+      newData.main.combos = combos;
+    if (imageURL) newData.main.image = imageURL;
+    if (!save) {
+      if (
+        modules.some((md) => {
+          console.log(`md.classes`, md.classes);
+          if (!md?.classes) return true;
+          return md.classes.some((cl: any) => !cl?.video && !cl?.type);
+        })
+      ) {
+        setSaving(false);
+        return notification.warn({
+          message: 'Insira a url dos videos nos modulos para publicar.',
+        });
+      }
+      delete newData.draft;
+      newData.main.published = !isPublished;
+      const newCursoData = await mutation.mutateAsync(newData);
+      setCursoData(newCursoData);
+      setSaving(false);
+    } else {
+      const newCursoData = await mutation.mutateAsync(newData);
+      setCursoData(newCursoData);
+      dispatch({ type: 'SAVED' });
+      setSaving(false);
+    }
   };
 
   return (
@@ -72,25 +297,69 @@ const Team: React.FC = () => {
           icon={<ScreenShareIcon />}
           video
         />
-        <InputFile />
-        <ButtonForm
-          style={{ marginBottom: '10px', minWidth: 100 }}
-          primary
-          type="submit"
-          loading={false}
-          // justify="right"
-        >
-          Salvar
-        </ButtonForm>
-        <CursoAddData />
+        <InputImage imageURL={image} onHandleSelect={onHandleSelectImage} />
+        <ButtonsContainer>
+          <ButtonForm
+            style={{ marginBottom: '10px', minWidth: 100 }}
+            primary="outlined"
+            type="button"
+            loading={false}
+            // justify="right"
+          >
+            Deletar
+          </ButtonForm>
+          <ButtonForm
+            style={{ marginBottom: '10px', minWidth: 100 }}
+            primary
+            type="submit"
+            loading={false}
+            disabled={save}
+            // justify="right"
+          >
+            {isPublished ? 'Despublicar' : 'Publicar'}
+          </ButtonForm>
+          <ButtonForm
+            id="onCursoSaveButton"
+            style={{ marginBottom: '10px', minWidth: 100 }}
+            primary
+            type="submit"
+            loading={saving}
+            disabled={!save}
+            // justify="right"
+          >
+            Salvar
+          </ButtonForm>
+        </ButtonsContainer>
+        <CursoAddData initialData={initialData} />
+        {modules.length === 0 ? (
+          <InputFile handleSelectModules={handleSelectModules} />
+        ) : (
+          <ModuleData
+            modules={modules}
+            setModules={setModules}
+            setCombos={setCombos}
+            combos={combos}
+          />
+        )}
+        {/* <div>
+          <p>Módulo 1</p>
+          <div>
+
+          </div>
+        </div> */}
         <HeaderBlock
           title="Público Alvo"
           text="Aqui você deve inserir quem é o público alvo do curso"
+          mt={1}
         />
         <DraftWrite
           size="xs"
-          initialEditorState={null}
-          onSave={(value) => console.log('value', value)}
+          // initialEditorState={draftPublic}
+          onSave={(value) => {
+            dispatch({ type: 'DRAFT_PUBLIC', payload: value });
+          }}
+          selector="draftPublic"
+          restart={open}
           autoSave
         />
         <HeaderBlock
@@ -101,11 +370,23 @@ const Team: React.FC = () => {
         <DraftWrite
           size="s"
           allVisible
-          initialEditorState={null}
-          onSave={(value) => console.log('value', value)}
+          restart={open}
+          // initialEditorState={draftAbout}
+          onSave={(value) => {
+            dispatch({ type: 'DRAFT_ABOUT', payload: value });
+          }}
+          selector="draftAbout"
           autoSave
         />
       </form>
+      <ModalCreateCurso
+        handleSelectCourse={handleSelectCourse}
+        open={open}
+        handleOnClose={handleOnClose}
+      />
+      <BackButton type="button" onClick={() => setOpen(true)}>
+        Voltar
+      </BackButton>
     </Container>
   );
 };

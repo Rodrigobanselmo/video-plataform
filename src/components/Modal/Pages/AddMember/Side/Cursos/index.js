@@ -75,7 +75,7 @@ export function CursosSideBar({ email, isAdmin }) {
 
 
   const cursosAllData = queryClient.getQueryData('cursos');
-  const cursosFullData = cursosAllData.filter(i=>i?.modules)
+  const cursosFullData = cursosAllData.filter(i=>i?.modules&&i?.published)
   // const cursosFullData = isAdmin ?cursosAllData.filter(i=>i?.modules):currentUser?.availableCursos;
 
   const handleCheck = (event, curso, hasSubCurso) => {
@@ -102,7 +102,7 @@ export function CursosSideBar({ email, isAdmin }) {
         const hasSubCurso = !!curso?.subCursos
         const combos = curso?.combos ?? []
 
-        const isUniqueProduct = curso.combos.length === 1 ? 'Preço único:' : 'Preço inicial:'
+        const isUniqueProduct = combos.length === 1 ? 'Preço único:' : 'Preço inicial:'
         const check = Boolean(cursos[`${fieldEdit.index}--${curso.id}--${curso.name}`]);
 
         return (
