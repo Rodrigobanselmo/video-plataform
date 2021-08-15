@@ -413,7 +413,7 @@ export function VideoPlayer({curso}) {
       handlePlayPause();
     } else if  (e.key === 'ArrowLeft') {
       // handleRewind()
-      onEndVideo() // !remover
+      // onEndVideo() // !remover
     } else if  (e.key === 'ArrowRight') {
       // handleFastForward()
     } else if  (e.key === 'ArrowUp') {
@@ -422,24 +422,24 @@ export function VideoPlayer({curso}) {
     } else if  (e.key === 'ArrowDown') {
       if (volume>0) handleVolumeChange(volume-0.2)
     } else if  (e.key === 'r') { // !remover
-      const resetData = {
-        uid: modules.uid,
-        id: modules.id,
-        status: 'started',
-        percentage: 0,
-        startDate: modules.startDate,
-        expireDate: modules.expireDate,
-        finishedDate: false,
-        cursoId: modules.cursoId,
-        modules: 'all',
-        watched: {},
-        classes:  modules.classes,
-        position: '0/0',
-        totalWatched: 0,
-        numOfClasses: modules.numOfClasses,
-      }
-      mutation.mutateAsync(resetData,modules)
-      console.log('r')
+      // const resetData = {
+      //   uid: modules.uid,
+      //   id: modules.id,
+      //   status: 'started',
+      //   percentage: 0,
+      //   startDate: modules.startDate,
+      //   expireDate: modules.expireDate,
+      //   finishedDate: false,
+      //   cursoId: modules.cursoId,
+      //   modules: 'all',
+      //   watched: {},
+      //   classes:  modules.classes,
+      //   position: '0/0',
+      //   totalWatched: 0,
+      //   numOfClasses: modules.numOfClasses,
+      // }
+      // mutation.mutateAsync(resetData,modules)
+      // console.log('r')
     }
     // Do something when the user has pressed the Escape key
   });
