@@ -165,8 +165,8 @@ export default function Video() {
 
   return (
     <Container >
-      <h1 style={{marginBottom:10}}>Seus cursos</h1>
-      <div style={{display:'flex',flexDirection:'row',gap:30}}>
+      {/* <h1 style={{marginBottom:10}}>Home</h1> */}
+      {/* <div style={{display:'flex',flexDirection:'row',gap:30}}>
         <div style={{display:'flex',flexDirection:'column',gap:0}}>
           <CursoCard onClick={()=>history.push(pathname+'/dyuwqf2')} >
             <GradientView />
@@ -189,7 +189,7 @@ export default function Video() {
           <p style={{fontSize:'14px',color:'#000',zIndex:10,textAlign:'right',padding:5,paddingRight:0}} >Em andamento com validade até 22/02</p>
         </div>
 
-      </div>
+      </div> */}
     </Container>
   );
 }
