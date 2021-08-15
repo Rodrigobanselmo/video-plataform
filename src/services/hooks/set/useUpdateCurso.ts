@@ -51,8 +51,14 @@ function onNewStudentDone(data: any, stateStudent: any, currentUser: any) {
         total += 1;
       });
     });
+
+    let totalTest = 0;
+    Object.values(newState).map((test: any) => {
+      if (test?.data && test.percentage === 100) totalTest += 1;
+    });
+
     newState.totalWatched = total;
-    newState.percentage = total / newState.numOfClasses;
+    newState.percentage = (total + totalTest) / newState.numOfClasses;
   } else {
     // adicionar percentage
 
@@ -68,6 +74,21 @@ function onNewStudentDone(data: any, stateStudent: any, currentUser: any) {
     } else {
       newState[`${cursoId}//${moduleId}//${classId}`] = testData;
     }
+
+    let total = 0;
+    Object.values(newState.watched).map((i: any) => {
+      i.map((t: any) => {
+        total += 1;
+      });
+    });
+
+    let totalTest = 0;
+    Object.values(newState).map((test: any) => {
+      if (test?.data && test.percentage === 100) totalTest += 1;
+    });
+
+    newState.totalWatched = total;
+    newState.percentage = (total + totalTest) / newState.numOfClasses;
   }
 
   // adicionar module last position //

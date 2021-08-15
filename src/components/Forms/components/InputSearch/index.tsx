@@ -51,6 +51,7 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, IInputProps> = (
     label,
     error = null,
     pr = 0,
+    isTeam,
     ...rest
   },
   ref,
@@ -107,7 +108,7 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, IInputProps> = (
     onSelectItem(item, onClose);
   }
 
-  const isEmpty = data.length === 0;
+  const isEmpty = isTeam ? options.length === 0 : data.length === 0;
 
   return (
     <ClickAwayListener onClickAway={onClose}>
@@ -133,7 +134,7 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, IInputProps> = (
           {open &&
             (!isLoading && !isEmpty ? (
               <SearchView>
-                {data.map((item) => {
+                {(isTeam ? options : data).map((item) => {
                   return (
                     <Row
                       key={item?.uid}

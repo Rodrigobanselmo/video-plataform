@@ -23,6 +23,7 @@ const AvatarInput = styled.div`
     width: 150px;
     height: 150px;
     border-radius: 50%;
+    object-fit: cover;
     cursor: pointer;
   }
   div {

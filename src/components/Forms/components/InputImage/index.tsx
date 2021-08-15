@@ -84,9 +84,9 @@ export const InputImage = ({
 
   const onInputFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      if (event.target.files[0].size > 2 * 10 ** 6)
+      if (event.target.files[0].size > 1 * 10 ** 6)
         return notification.error({
-          message: 'Sua imagem não pode ser maior que 2 MB',
+          message: 'Sua imagem não pode ser maior que 1 MB',
         });
       onHandleSelect(event.target.files[0]);
     }

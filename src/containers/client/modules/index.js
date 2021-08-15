@@ -22,72 +22,6 @@ import { useUpdateCurso } from '../../../services/hooks/set/useUpdateCurso';
 import { useStudent } from '../../../services/hooks/get/useStudent';
 import { queryClient } from '../../../services/queryClient';
 
-
-
-
-
-const modulesAll = {
-  id:'dyuwqf2',
-  professionals:[{name:"Alex Abreu",id:'123213'},{name:"Carla Muller",id:'qw7e62'}],
-  name:'EPI',
-  numOfClasses:10,
-  numOfModules:3,
-  name:'EPI',
-  name:'EPI',
-  name:'EPI',
-  modules:[
-  {
-    name:'Introdução',
-    id:'1254636125',
-    classes:[
-      {private:false,name:'Abertura?',id:'1',video:'https://firebasestorage.googleapis.com/v0/b/reconecta-dev.appspot.com/o/Parte-01-Vi%CC%81deo-0001%20(0001-0003)-G.m4v?alt=media&token=d1a3d63b-4a85-4dd5-b0c2-24e88ddd6e65'},
-      {private:false,name:'O que é médicina e segurança do trabalho?',id:'2',video:'https://firebasestorage.googleapis.com/v0/b/reconecta-dev.appspot.com/o/Parte-01-Vi%CC%81deo-0002%20(0004-0007)-G.m4v?alt=media&token=8cbc889d-c4bf-4c8c-bb01-5dbd5cab49e4'},
-      {private:false,name:'Responsaveis por organizar o curso',id:'3',lock:['order']},
-      {private:false,name:'Por que esse curso?',id:'4',lock:['order']},
-      {private:false,name:'Professores que estarão presentes',id:'5',lock:['order']},
-    ]
-  },
-  {
-    name:'Equipe tecnica responsavel',
-    id:'ewrew324',
-    classes:[
-      {private:true,lock:['order'],name:'Quem são seus mentores',id:'6'},
-      {private:true,lock:['order'],name:'O que você vai aprender',id:'7'},
-      {private:true,lock:['order'],name:'Requisitos',id:'8'},
-      {private:true,lock:['order'],name:'Todas as normas que você poderá encontrar em um trabalho home ofice',id:'9'},
-      {private:true,lock:['order'],name:'Professores que estarão presentes',id:'q'},
-    ]
-  },
-  {
-    name:'Professores',
-    id:'xxwerweafes',
-    classes:[
-      {private:true,lock:['order'],name:'Quem são seus mentores',id:'w'},
-      {private:true,lock:['order'],name:'O que você vai aprender',id:'e'},
-      {private:true,lock:['order'],name:'Requisitos',id:'r'},
-      {private:true,lock:['order'],name:'Todas as normas que você poderá encontrar em um trabalho home ofice',id:'t'},
-      {private:true,lock:['order'],name:'Professores que estarão presentes',id:'y'},
-    ]
-  },
-]}
-
- // const data = {
-  //   curso:'EPI',
-  //   percentage:'0',
-  //   id:'dyuwqf2',
-  //   buyDate:new Date() * 1,
-  //   startDate:new Date() * 1,
-  //   endDate:null,
-  //   numOfClasses:15,
-  //   watched:{},
-  //   modules:'all',
-  //   classes:'all',
-  //   position:'0/0'
-  //   // '1254636125': {
-  //   //   '1':'0'
-  //   // }
-  // }
-
 export default function Video() {
 
   const {currentUser} = useAuth();
@@ -101,145 +35,6 @@ export default function Video() {
   const cursoPrev = data?.curso
   let curso = {...cursoPrev}
 
-
-  useEffect(() => {
-    if (cursoPrev) curso.modules[0].classes.push({
-      id:'091283',
-      lock:['order'],
-      name:'Teste',
-      questions: [
-        {
-          text:'Normalmente, quantos litros de sangue uma pessoa tem? Em média, quantos são retirados numa doação de sangue?',
-          id:Math.random().toString(36),
-          options:[
-            {text:'Tem entre 2 a 4 litros. São retirados 450 mililitros'},
-            {text:'Tem entre 4 a 6 litros. São retirados 450 mililitros'},
-            {text:'Tem 10 litros. São retirados 2 litros'},
-            {text:'Tem 7 litros. São retirados 1,5 litros'},
-            {text:'Tem 0,5 litros. São retirados 0,5 litros'},
-          ],
-          answer:'Tem entre 4 a 6 litros. São retirados 450 mililitros',
-          why:'A quantidade de sangue varia de pessoa para pessoa. O volume de sangue é entre 7% e 8% o peso corporal. Assim, um adulto com 50 e 80 quilos, pode ter entre 4 e 6 litros de sangue, respectivamente.',
-        },
-        {
-          text:'De quem é a famosa frase “Penso, logo existo”?',
-          id:Math.random().toString(36),
-          options:[
-            {text:'Platão'},
-            {text:'Galileu Galilei'},
-            {text:'Descartes'},
-            {text:'Sócrates'},
-            {text:'Francis'},
-          ],
-          answer:'Descartes'
-        },
-        // {
-        //   text:' De onde é a invenção do chuveiro elétrico?',
-        //   id:Math.random().toString(36),
-        //   options:[
-        //     {text:'França'},
-        //     {text:'Inglaterra'},
-        //     {text:'Brasil'},
-        //     {text:'Austrália'},
-        //     {text:'Itália'},
-        //   ],
-        //   answer:'Brasil',
-        // },
-        // {
-        //   text:'Normalmente, quantos litros de sangue uma pessoa tem? Em média, quantos são retirados numa doação de sangue?',
-        //   id:Math.random().toString(36),
-        //   options:[
-        //     {text:'Tem entre 2 a 4 litros. São retirados 450 mililitros'},
-        //     {text:'Tem entre 4 a 6 litros. São retirados 450 mililitros'},
-        //     {text:'Tem 10 litros. São retirados 2 litros'},
-        //     {text:'Tem 7 litros. São retirados 1,5 litros'},
-        //     {text:'Tem 0,5 litros. São retirados 0,5 litros'},
-        //   ],
-        //   answer:Tem entre 4 a 6 litros. São retirados 450 mililitros',
-        // },
-        // {
-        //   text:'De quem é a famosa frase “Penso, logo existo”?',
-        //   id:Math.random().toString(36),
-        //   options:[
-        //     {text:'Platão'},
-        //     {text:'Galileu Galilei'},
-        //     {text:'Descartes'},
-        //     {text:'Sócrates'},
-        //     {text:'Francis'},
-        //   ],
-        //   answer:['Descartes',2]
-        // },
-        // {
-        //   text:' De onde é a invenção do chuveiro elétrico?',
-        //   id:Math.random().toString(36),
-        //   options:[
-        //     {text:'França Bandeira insígnia da presidência, bandeira nacional, brasão, hinos e selo Bandeira insígnia da presidência, bandeira nacional, brasão, hinos e selo Bandeira insígnia da presidência, bandeira nacional, brasão, hinos e selo'},
-        //     {text:'Inglaterra'},
-        //     {text:'Brasil'},
-        //     {text:'Austrália'},
-        //     {text:'Itália'},
-        //   ],
-        //   answer:['Brasil',2]
-        // },
-        // {
-        //   text:'Normalmente, quantos litros de sangue uma pessoa tem? Em média, quantos são retirados numa doação de sangue?',
-        //   id:Math.random().toString(36),
-        //   options:[
-        //     {text:'Tem entre 2 a 4 litros. São retirados 450 mililitros'},
-        //     {text:'Tem entre 4 a 6 litros. São retirados 450 mililitros'},
-        //     {text:'Tem 10 litros. São retirados 2 litros'},
-        //     {text:'Tem 7 litros. São retirados 1,5 litros'},
-        //     {text:'Tem 0,5 litros. São retirados 0,5 litros'},
-        //   ],
-        //   answer:['Tem entre 4 a 6 litros. São retirados 450 mililitros',1]
-        // },
-        // {
-        //   text:'De quem é a famosa frase “Penso, logo existo”?',
-        //   id:Math.random().toString(36),
-        //   options:[
-        //     {text:'Platão'},
-        //     {text:'Galileu Galilei'},
-        //     {text:'Descartes'},
-        //     {text:'Sócrates'},
-        //     {text:'Francis'},
-        //   ],
-        //   answer:['Descartes',2]
-        // },
-        // {
-        //   text:' De onde é a invenção do chuveiro elétrico?',
-        //   id:Math.random().toString(36),
-        //   options:[
-        //     {text:'França'},
-        //     {text:'Inglaterra'},
-        //     {text:'Brasil'},
-        //     {text:'Austrália'},
-        //     {text:'Itália'},
-        //   ],
-        //   answer:['Brasil',2]
-        // },
-        // {
-        //   text:' De onde é a invenção do chuveiro elétrico?',
-        //   id:Math.random().toString(36),
-        //   options:[
-        //     {text:'França'},
-        //     {text:'Inglaterra'},
-        //     {text:'Brasil'},
-        //     {text:'Austrália'},
-        //     {text:'Itália'},
-        //   ],
-        //   answer:['Brasil',2]
-        // },
-      ],
-      numQuestions:2,
-      numToPass:1,
-      maxTime:30,
-      private:true,
-      type:'test'
-    })
-  }, [data])
-
-
-
   const student = data?.student
 
   const uploadCursoMutation = useUpdateCurso(cursoId)
@@ -252,6 +47,11 @@ export default function Video() {
 
 
   function onSetRouteVideo(studentData,cursoData) {
+    console.log('studentData',studentData)
+    if (studentData.percentage === 1) {
+      return history.replace(pathname+'/'+'certificado')
+    }
+
     if (studentData?.nextModule) {
       history.replace(pathname+'/'+studentData.nextModule+'/'+studentData.nextClass)
     } else {
@@ -269,8 +69,8 @@ export default function Video() {
     if (index >= 0) {
       const epiArray = []
       const isEqualEpis = watchCursos[index].epi.map(epi=>{
-        epiArray.push(epi.id)
-        return studentData.classes.includes(epi.id)
+        epiArray.push(...epi.id.split('//'))
+        return studentData.classes.includes(epi.id.split('//')[0])
       }).filter(i=>!i).length == 0
       if (!isEqualEpis) {
         const newStudent = {...studentData}

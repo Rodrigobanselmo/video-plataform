@@ -33,6 +33,7 @@ import { useUpdateCurso } from "../../services/hooks/set/useUpdateCurso";
 import { queryClient } from "../../services/queryClient";
 import { VIDEO_ROUTE } from "../../routes/routesNames";
 import { TestView } from "./testView";
+import { CertificadoView } from "./certificadoView";
 import { useAuth } from "../../context/AuthContext";
 
 const ReactPlayerStyles = styled(ReactPlayer)`
@@ -159,7 +160,7 @@ export function VideoPlayer({curso}) {
   const totalDuration = format(duration);
 
 
-  const isLastClass = classIndex == curso.modules[moduleIndex].classes.length - 1
+  const isLastClass = curso.modules[moduleIndex] && curso.modules[moduleIndex].classes && classIndex == curso.modules[moduleIndex].classes.length - 1
 
   const nextModuleIndex = isLastClass
     ? moduleIndex+1
@@ -445,7 +446,21 @@ export function VideoPlayer({curso}) {
 
   return (
         <div style={{width:'100%'}}>
-          {actualClass?.type === 'test' ?
+          {moduleId === 'certificado'?
+            <>
+              <PlayerWrapper>
+                <CertificadoView
+                  curso={curso}
+                />
+              </PlayerWrapper>
+              <BottomControls
+                autoplay={autoplay}
+                setAutoplay={setAutoplay}
+                handleNextVideo={handleNextVideo}
+                handlePreviewVideo={handlePreviewVideo}
+              />
+            </>
+          : actualClass?.type === 'test' ?
               <>
                 <PlayerWrapper>
                   <TestView

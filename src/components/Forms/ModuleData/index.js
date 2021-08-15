@@ -19,7 +19,7 @@ import { useNotification } from '../../../context/NotificationContext';
 const ModuleView = styled.div`
   background-color: ${({ theme }) => theme.palette.background.paper};
   border-radius: 8px;
-  margin: 0 0 20px 0;
+  margin: 10px 0 20px 0;
   padding: 10px;
   box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.23);
 
@@ -100,7 +100,7 @@ const Input = styled.input`
   border-radius: 10px;
 `;
 
-export const ModuleData = ({modules = {}, setModules, setCombos, combos}) => {
+export const ModuleData = ({modules = {}, setModules, setCombos, combos, subCursos, setSubCursos}) => {
   const dispatch = useDispatch();
   const ref = React.useRef(null);
   const notification = useNotification();
@@ -153,6 +153,8 @@ export const ModuleData = ({modules = {}, setModules, setCombos, combos}) => {
         data.name = dataClass?.name
         data.className = dataClass?.name
         data.maxTime = dataClass?.maxTime
+        data.subName = subCursos.length > 0 ? subCursos.find(i=>i.id.includes(dataClass.id)) ? subCursos.find(i=>i.id.includes(dataClass.id)).name : '' : ''
+        data.epi = dataClass?.epi ? 'SIM' : 'NÃO'
       }
       return data
     })
@@ -170,18 +172,21 @@ export const ModuleData = ({modules = {}, setModules, setCombos, combos}) => {
           if (!testData) return
           modulesTestArray.push(testData)
           console.log('testData[0]',testData)
-          return modulesClassesArray.push({...testData[0],moduleId:module.id})
+          return modulesClassesArray.push({...testData[0],moduleId:module.id,})
         }
+
+        console.log('subCursos',subCursos)
 
         const data = {
           moduleName:indexCLS===0?module.name:'',
           moduleIndex:indexCLS===0?index+1:'',
-          // type:cls?.questions?'teste':'video',
           className:cls.name,
           video:cls?.video ?? '',
           epi:cls?.epi ? 'SIM' : 'NÃO',
           moduleId:module.id,
           classId:cls.id,
+          subName:subCursos.length > 0 ? subCursos.find(i=>i.id.includes(cls.id)) ? subCursos.find(i=>i.id.includes(cls.id)).name : '' : '',
+          // type:cls?.questions?'teste':'video',
         }
         modulesClassesArray.push(data)
       })
@@ -300,6 +305,12 @@ export const ModuleData = ({modules = {}, setModules, setCombos, combos}) => {
         type: String,
         width: 28,
         value: data => data.epi
+      },
+      {
+        column: 'Nome do pacote caso for vendido separadamente',
+        type: String,
+        width: 45,
+        value: data => data.subName
       },
       {
         column: 'ID do Módulo',
@@ -438,16 +449,16 @@ export const ModuleData = ({modules = {}, setModules, setCombos, combos}) => {
       }
     })
 
-    const percentage = cls?.percentageToPass && (
-      typeof cls?.percentageToPass === 'number'
-        ? `${cls.percentageToPass*100}%`
-        : cls?.percentageToPass.includes('%')
-          ? cls.percentageToPass
-          : `${Number(cls.percentageToPass*100)}%`
+    const percentage = moduleData?.percentageToPass && (
+      typeof moduleData?.percentageToPass === 'number'
+        ? moduleData.percentageToPass
+        : Number(moduleData.percentageToPass.replace('%',''))/100
       )
 
     return {
       ...moduleData,
+      id: moduleData.id,
+      // id: moduleData.id.includes('-test') ? moduleData.id : `${v4()}-test`,
       private: true,
       lock: ['order'],
       questions:questionsData,
@@ -483,6 +494,10 @@ export const ModuleData = ({modules = {}, setModules, setCombos, combos}) => {
       },
       'Vendido Separadamente': {
         prop: 'epi',
+        type: String,
+      },
+      'Nome do pacote caso for vendido separadamente': {
+        prop: 'subGroup',
         type: String,
       },
       'ID do Módulo': {
@@ -537,13 +552,34 @@ export const ModuleData = ({modules = {}, setModules, setCombos, combos}) => {
           }
         })
 
+        const subs = [];
         rows.map((i) => {
           const index = modules.findIndex(item=>item.id === i.idM)
 
           if (index === -1) throw 'Id de modulo inválido'
           const indexTest = testFiles.findIndex(item=>item.id === i.id)
+
+          const epi = i?.epi && i.epi === 'SIM' ? true : false;
+
+          if (epi) {
+            console.log(i,i?.subGroup)
+            if (!i?.subGroup) throw 'O campo "Nome do pacote caso for vendido separadamente" não pode ser nulo para resposatas "SIM"'
+            if (subs.some(sub=>sub.name === i.subGroup)) {
+              const indexSub = subs.findIndex(sub=>sub.name === i.subGroup)
+              subs[indexSub].id = subs[indexSub].id + '//' + i.id
+            } else {
+              subs.push({
+                name:i.subGroup,
+                id:i.id
+              })
+            }
+          }
+
           if (indexTest !== -1) {
-            modules[index].classes.push(testFiles[indexTest])
+            modules[index].classes.push({
+              ...testFiles[indexTest],
+              epi
+            })
           } else {
 
             const addClass = {
@@ -551,7 +587,7 @@ export const ModuleData = ({modules = {}, setModules, setCombos, combos}) => {
               lock:['order'],
               name:i.name,
               private:true,
-              epi: i?.epi && i.epi === 'SIM' ? true : false,
+              epi,
               video: i?.video ? i.video : ''
             }
             modules[index].classes.push(addClass)
@@ -560,6 +596,8 @@ export const ModuleData = ({modules = {}, setModules, setCombos, combos}) => {
         })
 
         console.log('testFiles',testFiles)
+        console.log('subs',subs)
+        setSubCursos(subs)
         onChangeModule(modules)
         if (ref.current) ref.current.value = '';
       }

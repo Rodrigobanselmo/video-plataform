@@ -69,9 +69,9 @@ if (!data || (data && !data[0])) return null
   const numSubClasses = cursoData?.subCursos ?? 0;
 
 
-  const daysToExpire = data[0].daysToExpire;
+  const daysToExpire = Number(data[0].daysToExpire);
   const expire = new Date(
-    new Date().setDate(new Date().getDate() + daysToExpire),
+    new Date().setDate(new Date().getDate() + Number(daysToExpire)),
   );
   const expireFotmated = new Intl.DateTimeFormat("pt-BR").format(
     new Date(expire)

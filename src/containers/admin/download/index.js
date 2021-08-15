@@ -127,8 +127,8 @@ function name(params) {
   return (
     <div style={{display:'flex',flexDirection:'row',flex:1,height:'88%'}}>
       <div style={{display:'flex',flex:3,marginRight:10}}>
-        <div onClick={()=>{}}>
-          <a  target="_blank" href={'https://firebasestorage.googleapis.com/v0/b/reconecta-dev.appspot.com/o/AAASABESP.pdf?alt=media&token=0995fc68-c045-48e0-9e80-c93c13d1c506'}>
+        <div onClick={()=>name()}>
+          <a  target="_blank" href={'https://firebasestorage.googleapis.com/v0/b/reconecta-dev.appspot.com/o/rodrigo%2FPasta%20Sem%20Ti%CC%81tulo.zip?alt=media&token=59f7ddbd-a270-44da-af03-0f19d51d2a64'}>
           <Icons style={{fontSize:140}} type={`Avatar`}/>
           </a>
         </div>

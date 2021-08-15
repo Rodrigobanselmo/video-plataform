@@ -1,7 +1,22 @@
 import styled, {css} from "styled-components";
 import LockIcon from '@material-ui/icons/Lock';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import { FaList } from 'react-icons/fa';
 
+export const TestIcon = styled(FaList)`
+  position: absolute;
+  z-index: 10;
+  color: ${({theme})=>theme.palette.text.primary};
+
+
+  ${props => props.active && css`
+    color: ${({theme})=>theme.palette.status.success};
+  `}
+
+  ${props => props.selected && css`
+    color: white;
+  `}
+`;
 
 export const AulasContainer = styled.div`
   padding: 30px;
@@ -21,6 +36,8 @@ export const Circle = styled.div`
   display: flex;
   flex-shrink: 0;
   position: relative;
+  justify-content: center;
+  align-items: center;
 
 `;
 
@@ -58,6 +75,26 @@ export const ShadowCircle = styled.div`
     border: 2px solid ${({theme})=>theme.palette.status.success};
     background-color: ${({theme})=>theme.palette.background.default};
     z-index:1;
+  `}
+
+  ${props => props.test && css`
+    width: 25px;
+    height: 25px;
+    right: calc(50% - 12.5px);
+    top: calc(50% - 12.5px);
+    border-radius: 15px;
+    background-color: transparent;
+    opacity:0.7;
+
+    &:hover {
+      opacity:1;
+      background-color: ${({theme})=>theme.palette.background.default};
+    }
+
+    ${props => props.selected && css`
+      background-color: ${({theme})=>theme.palette.status.success};
+    `}
+
   `}
 `;
 
@@ -103,6 +140,10 @@ export const Text = styled.span`
 
   ${props => props.active && css`
     color:  ${({theme})=>theme.palette.status.successD};
+  `}
+
+  ${props => props.material && css`
+    color:  ${({theme})=>theme.palette.primary.main};
   `}
 `;
 

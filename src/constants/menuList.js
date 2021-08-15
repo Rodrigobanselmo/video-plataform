@@ -24,7 +24,7 @@ export const menuList = [
   {
     text: "Equipe",
     visible:'all',
-    permissions:['ea'],
+    permissions:['ea','co'],
     route:TEAM,
     id:Math.random(),
   },

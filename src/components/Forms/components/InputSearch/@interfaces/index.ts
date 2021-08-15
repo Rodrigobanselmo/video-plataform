@@ -21,6 +21,7 @@ export interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: FieldError;
   pr?: number;
+  isTeam?: boolean;
   row: (data: IRow) => JSX.Element;
 }
 

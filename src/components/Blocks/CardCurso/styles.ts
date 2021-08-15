@@ -57,7 +57,6 @@ export const BottomView = styled.div`
   justify-content: flex-end;
   width: 300px;
   padding: 0 15px 15px 15px;
-  height: 300px;
   min-height: fit-content;
   flex-direction: column;
 

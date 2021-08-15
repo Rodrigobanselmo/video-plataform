@@ -214,12 +214,17 @@ const NavBar = ({open,setOpen}) => {
           </div>
 
           <RichTooltip anchorRef={anchorRef}  open={openProfile} setOpen={setOpenProfile} translateY={18}>
-            {itemsProfile.map((item, index) => (
+            {itemsProfile.map((item, index) => {
+
+              const IsVisibleAndHasPermission = !item?.visible ? true : item.visible.some(permission=>currentUser.permission && currentUser.permission.includes(permission))
+              if (!IsVisibleAndHasPermission) return null
+              return (
                 <div onClick={()=>onProfileClick(item.onClick)} className={classes.boxItem} key={item.text} >
                     <Icons className={classes.icons} type={item.icon}/>
                     <p style={{color:themes.palette.text.secondary,fontSize:'15px',marginRight:20}} >{item.text}</p>
                 </div>
-            ))}
+              )
+            })}
           </RichTooltip>
 
           <div onClick={()=>setOpenProfile(true)} className={classes.divName}>

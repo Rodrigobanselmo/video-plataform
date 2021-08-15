@@ -52,6 +52,8 @@ const SubCursosSideBarComponent = ({ hasSubCurso, check, isAdmin, curso }) => {
   const notification  = useNotification();
   const { fieldEdit, cursos, setCursos, setPrices, onCalcUserPrice } = useSellingData()
 
+
+  const EPIs  = curso?.subs
   const EPI  = EPIs.sort((a, b) => AscendentObject(a, b, 'name'));
 
   const handleEPICheck = (event, cursoId, epi,) => {
@@ -68,7 +70,7 @@ const SubCursosSideBarComponent = ({ hasSubCurso, check, isAdmin, curso }) => {
       ];
 
     if (!event.target.checked) {
-      if (newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`].find((i) => i.id !== epi.id)?.lock) return notification.warn({message:'Você não pode remover um curso que já foi iniciado pelo aluno'})
+      if (newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`].find((i) => i.id === epi.id)?.lock) return notification.warn({message:'Você não pode remover um curso que já foi iniciado pelo aluno'})
       newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`] = [
         ...newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`].filter((i) => i.id !== epi.id),
       ];

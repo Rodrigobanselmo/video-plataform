@@ -58,6 +58,7 @@ export const AvatarInput = styled.div`
   img {
     width: 130px;
     height: 130px;
+    object-fit: cover;
     border-radius: 50%;
   }
   div {

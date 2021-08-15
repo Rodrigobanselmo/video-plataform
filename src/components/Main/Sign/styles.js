@@ -226,8 +226,8 @@ export const Input = styled.input`
   color: #000;
   height: 40px;
   flex:1;
-  line-height: 50px;
-  padding: 5px 20px;
+  /* line-height: 10px; */
+  padding: 0px 20px;
   margin-bottom: 20px;
   padding-right:33px;
   z-index:9;

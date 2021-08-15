@@ -68,7 +68,11 @@ const Tabs = styled.div`
   overflow-x: auto;
 `;
 
-const TabSection = styled.div`
+interface ISection {
+  hide: boolean;
+}
+
+const TabSection = styled.div<ISection>`
   width: 100%;
   /* display: flex; */
   /* flex-direction: column; */
@@ -81,6 +85,8 @@ const TabSection = styled.div`
   background-color: white;
   overflow-y: auto;
   padding: 0 20px;
+
+  display: ${(props) => (props.hide ? 'none' : 'block')};
 `;
 
 interface Props extends React.ComponentPropsWithoutRef<typeof Container> {
@@ -113,13 +119,26 @@ export const CursoTabs = ({ data, ...rest }: Props): JSX.Element => {
           );
         })}
       </Tabs>
-      <TabSection>
-        {tabValue === 0 && (
+      <TabSection hide={tabValue !== 0}>
+        {tabValue === 0 && data[1]?.text && (
           <Editor
             toolbarHidden
             readOnly
             defaultEditorState={EditorState.createWithContent(
               convertFromRaw(data[1].text),
+            )}
+            wrapperClassName="wrapper-class"
+            editorClassName="editor-class"
+          />
+        )}
+      </TabSection>
+      <TabSection hide={tabValue !== 1}>
+        {tabValue === 1 && data[1]?.public && (
+          <Editor
+            toolbarHidden
+            readOnly
+            defaultEditorState={EditorState.createWithContent(
+              convertFromRaw(data[1].public),
             )}
             wrapperClassName="wrapper-class"
             editorClassName="editor-class"

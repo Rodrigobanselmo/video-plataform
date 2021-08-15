@@ -12,7 +12,7 @@ import { v4 } from 'uuid';
 import readXlsxFile from 'read-excel-file';
 import { useNotification } from '../../../../context/NotificationContext';
 
-const Text = styled.p`
+const Text = styled.h3`
   margin: 10px 0px 5px 0;
 `;
 
@@ -181,7 +181,7 @@ export const InputFile = ({
             modules[moduleIndex].classes[courseIndex].name = courseName.join(
               '',
             );
-            modules[moduleIndex].classes[courseIndex].id = v4();
+            modules[moduleIndex].classes[courseIndex].id = `${v4()}-test`;
             modules[moduleIndex].classes[courseIndex].lock = ['order'];
             modules[moduleIndex].classes[courseIndex].private = true;
 

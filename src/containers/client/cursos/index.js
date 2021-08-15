@@ -52,6 +52,7 @@ export default function Cursos() {
   const history = useHistory()
   const notification = useNotification()
   const { setLoaderDash } = useLoaderDashboard();
+  const isAdmin = currentUser.access==='admin';
 
   useEffect(() => {
       if (!isLoadingCursos) setLoaderDash(false)
@@ -92,20 +93,24 @@ export default function Cursos() {
 
   return (
     <Container >
-      <Title >Gerenciar Cursos</Title>
-      <div style={{flex:1,display:'flex', flexDirection:'row',gap:30,marginBottom:40,padding:'3px 0',overflowX:'auto',overflowY:'visible'}}>
-        <CardButtonHorizontal onClick={()=>handleChangeCurso()}>
-          <ImportantDevicesIcon/>
-          <p className="title">Adicinar Novos Cursos</p>
-          <p className="text">Click aqui para adicinar <br/> novos cursos.</p>
-        </CardButtonHorizontal>
+      {isAdmin &&
+        <>
+        <Title >Gerenciar Cursos</Title>
+        <div style={{flex:1,display:'flex', flexDirection:'row',gap:30,marginBottom:40,padding:'3px 0',overflowX:'auto',overflowY:'visible'}}>
+          <CardButtonHorizontal onClick={()=>handleChangeCurso()}>
+            <ImportantDevicesIcon/>
+            <p className="title">Adicinar Novos Cursos</p>
+            <p className="text">Click aqui para adicinar <br/> novos cursos.</p>
+          </CardButtonHorizontal>
 
-        {/* <CardButtonHorizontal >
-          <AutorenewIcon/>
-          <p className="title">Editar Cursos Existentes</p>
-          <p className="text">Click aqui para editar <br/> seus cursos.</p>
-        </CardButtonHorizontal> */}
-      </div>
+          {/* <CardButtonHorizontal >
+            <AutorenewIcon/>
+            <p className="title">Editar Cursos Existentes</p>
+            <p className="text">Click aqui para editar <br/> seus cursos.</p>
+          </CardButtonHorizontal> */}
+        </div>
+      </>
+      }
 
       {isContinueCurso &&
       <>

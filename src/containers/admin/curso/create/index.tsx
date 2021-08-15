@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-curly-newline */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useState, useEffect } from 'react';
@@ -32,6 +33,8 @@ import { useCreateCurso } from '../../../../services/hooks/set/useCreateCurso';
 import { onLater } from '../../../../helpers/DataHandler';
 import { useUploadImage } from '../../../../services/hooks/set/useUploadImage';
 import { ModuleData } from '../../../../components/Forms/ModuleData';
+import { InputMaterial } from '../../../../components/Forms/components/InputMaterial';
+import { useUploadFile } from '../../../../services/hooks/set/useUploadFile';
 
 const ButtonsContainer = styled.div`
   display: grid;
@@ -99,6 +102,7 @@ const Team: React.FC = () => {
   const dispatch = useDispatch();
   const mutation = useCreateCurso();
   const uploadImage = useUploadImage();
+  const uploadFile = useUploadFile();
 
   // const [draftPublic, setDraftPublic] = useState<RawDraftContentState | null>(
   //   null,
@@ -112,11 +116,19 @@ const Team: React.FC = () => {
   const [initialData, setInitialData] = useState<any>({});
   const [cursoData, setCursoData] = useState<any>({});
   const [imageURL, setImageURL] = useState('');
+  const [materialURL, setMaterialURL] = useState<[name: string, url: string]>([
+    '',
+    '',
+  ]);
   const [modules, setModules] = useState<any[]>([]);
   const [combos, setCombos] = useState<any[]>([]);
+  const [subCursos, setSubCursos] = useState<any[]>([]);
 
   const handleOnClose = (close?: boolean, curso?: any): void => {
-    if (close) return setOpen(false);
+    if (close) {
+      if (curso) setCursoData(curso);
+      return setOpen(false);
+    }
     if (curso) return setCursoData(curso);
     history.goBack();
     // notification.warn({
@@ -132,6 +144,17 @@ const Team: React.FC = () => {
       ...cursoData.main,
     });
     setImageURL(URL);
+    document.getElementById('onCursoSaveButton')?.click();
+  };
+
+  const onHandleSelectMaterial = async (file: File): Promise<void> => {
+    console.log(file);
+    // setImageURL()
+    const URL = await uploadFile.mutateAsync({
+      file,
+      ...cursoData.main,
+    });
+    setMaterialURL([file.name, URL]);
     document.getElementById('onCursoSaveButton')?.click();
   };
 
@@ -152,6 +175,7 @@ const Team: React.FC = () => {
     setModules([...curso.modules]);
     setOpen(false);
     setCombos(curso?.combos || []);
+    setSubCursos(curso?.subs || []);
     setCursoData({ main: curso, draft: { id: curso.id, editorState: true } });
   };
 
@@ -167,11 +191,17 @@ const Team: React.FC = () => {
       dispatch({ type: 'SAVED' });
       setImageURL('');
       setModules([]);
+      setCombos([]);
+      setSubCursos([]);
+      setMaterialURL(['', '']);
     }
   }, [open]); // query,
 
   const isPublished = cursoData?.main && cursoData?.main?.published;
   const image = imageURL || (cursoData?.main && cursoData?.main?.image);
+  const material = materialURL[0]
+    ? materialURL
+    : (cursoData?.main && cursoData.main?.material) || materialURL;
 
   const onSubmit = async (event: any): Promise<void> => {
     event.preventDefault();
@@ -251,6 +281,25 @@ const Team: React.FC = () => {
         modules,
         daysToExpire,
         duration,
+        numOfModules: modules.length,
+        subCursos: modules.reduce((acc: number, item: any) => {
+          let accumulator = acc;
+          if (item?.classes)
+            item.classes.map((i: any) => {
+              if (i?.epi) accumulator += 1;
+              // * if (!(i?.type && i.type === 'test') && i?.epi) accumulator += 1;
+            });
+          return accumulator;
+        }, 0),
+        numOfClasses: modules.reduce((acc: number, item: any) => {
+          let accumulator = acc;
+          if (item?.classes)
+            item.classes.map((i: any) => {
+              if (!i?.epi) accumulator += 1;
+              // * if (!(i?.type && i.type === 'test') && !i?.epi) accumulator += 1;
+            });
+          return accumulator;
+        }, 0),
       },
       draft: {
         ...cursoData.draft,
@@ -258,9 +307,12 @@ const Team: React.FC = () => {
         public: draftPublic,
       },
     };
-    console.log('combos', combos);
     if (combos && Array.isArray(combos) && combos.length > 0)
       newData.main.combos = combos;
+    if (subCursos && Array.isArray(subCursos) && subCursos.length > 0)
+      newData.main.subs = subCursos;
+    if (materialURL && materialURL[0] && materialURL[1])
+      newData.main.material = materialURL;
     if (imageURL) newData.main.image = imageURL;
     if (!save) {
       if (
@@ -304,6 +356,9 @@ const Team: React.FC = () => {
             primary="outlined"
             type="button"
             loading={false}
+            onClick={() =>
+              document.getElementById('onCursoSaveButton')?.click()
+            }
             // justify="right"
           >
             Deletar
@@ -331,6 +386,11 @@ const Team: React.FC = () => {
           </ButtonForm>
         </ButtonsContainer>
         <CursoAddData initialData={initialData} />
+        <InputMaterial
+          materialURL={material}
+          onHandleSelect={onHandleSelectMaterial}
+          isLoading={uploadFile.isLoading}
+        />
         {modules.length === 0 ? (
           <InputFile handleSelectModules={handleSelectModules} />
         ) : (
@@ -339,6 +399,8 @@ const Team: React.FC = () => {
             setModules={setModules}
             setCombos={setCombos}
             combos={combos}
+            subCursos={subCursos}
+            setSubCursos={setSubCursos}
           />
         )}
         {/* <div>

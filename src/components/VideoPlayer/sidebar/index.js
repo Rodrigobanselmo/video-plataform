@@ -1,16 +1,37 @@
 import React, { useEffect, useState } from 'react';
-import {AulasContainer,NumberOfClassesText,TitleModule,TextWrapper,CircleView,NumberCircle,ModuleContainer,SideContainer,IconArrow,IconLock,Text,Line,ShadowCircle,FillCircle,Circle,AulaWrapper} from './style'
+import {TestIcon, AulasContainer,NumberOfClassesText,TitleModule,TextWrapper,CircleView,NumberCircle,ModuleContainer,SideContainer,IconArrow,IconLock,Text,Line,ShadowCircle,FillCircle,Circle,AulaWrapper} from './style'
 import { useSelector,useDispatch } from 'react-redux'
 import Collapse from '@material-ui/core/Collapse';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {useNotification} from '../../../context/NotificationContext'
 import {isLocked} from '../func'
+import { FaFileDownload } from 'react-icons/fa';
+import { GiPartyPopper } from 'react-icons/gi';
+
 // import {DASHBOARD,ADMIN_PERFIL} from '../../../routes/routesNames'
 
 import { useParams,useHistory } from 'react-router-dom';
 import { queryClient } from '../../../services/queryClient';
 import { VIDEO_ROUTE } from '../../../routes/routesNames';
 import { useAuth } from '../../../context/AuthContext';
+import styled, {css} from "styled-components";
+
+const EndIcon = styled(GiPartyPopper)`
+  position: absolute;
+  z-index: 10;
+  color:  ${({theme})=>theme.palette.text.secondary};
+
+  ${props => props.selected && css`
+    color: ${({theme})=>theme.palette.status.success};
+  `}
+`;
+
+const MaterialIcon = styled(FaFileDownload)`
+  position: absolute;
+  z-index: 10;
+  color:  ${({theme})=>theme.palette.text.secondary};
+`;
+
 
 
 export function SideVideoBar({curso,show,...props}) {
@@ -64,6 +85,28 @@ export function SideVideoBar({curso,show,...props}) {
     history.push(pathname+'/'+moduleId+'/'+classId)
   }
 
+  function handleEndClasses() {
+    console.log('modules',modules)
+    if (modules.percentage < 1) return notification.warn({message:'Você precisa finalizar o curso para ter acesso a essa parte'})
+    history.push(pathname+'/certificado')
+  }
+
+  function handleDownloadMaterial(url) {
+    if (!url) return null;
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('target', '_blank');
+
+    // Append to html link element page
+    document.body.appendChild(link);
+
+    // Start download
+    link.click();
+
+    // Clean up and remove the link
+    link.parentNode?.removeChild(link);
+  }
+
 
   return (
     <SideContainer {...props}>
@@ -91,6 +134,14 @@ export function SideVideoBar({curso,show,...props}) {
             </ModuleContainer>
             <Collapse unmountOnExit={true} in={open == module.id}>
               <AulasContainer >
+                {index === 0 && curso?.material &&
+                  <AulaWrapper onClick={()=>handleDownloadMaterial(curso.material[1])}>
+                    <Circle >
+                      <MaterialIcon size={18}/>
+                    </Circle>
+                    <Text>Material Didático</Text>
+                  </AulaWrapper>
+                }
                 {module.classes.map((aula,aulaIndex)=>{
                   const percentage = modules[`${curso.id}//${module.id}//${aula.id}`] && modules[`${curso.id}//${module.id}//${aula.id}`]?.percentage
                     ? modules[`${curso.id}//${module.id}//${aula.id}`]?.percentage
@@ -103,8 +154,14 @@ export function SideVideoBar({curso,show,...props}) {
                   return (
                     <AulaWrapper onClick={()=>handleSetClass(module.id,aula.id,isLocked(modules,aula,index,aulaIndex))} key={aula.id}>
                       <Circle >
-                        <FillCircle active={classId==aula.id || percentage === 100}/>
-                        <ShadowCircle selected={classId==aula.id}/>
+                        {isTest
+                          ? <TestIcon active={percentage === 100} selected={classId==aula.id}  size={12}/>
+                          :
+                          <>
+                            <FillCircle active={classId==aula.id || percentage === 100}/>
+                          </>
+                        }
+                        <ShadowCircle test={isTest} selected={classId==aula.id}/>
                         <Line active={percentage === 100} last={isLast || isNextTest || isTest}/>
                       </Circle>
                       <Text active={percentage === 100}>{aula.name}</Text>
@@ -112,6 +169,15 @@ export function SideVideoBar({curso,show,...props}) {
                     </AulaWrapper>
                   )
                 })}
+                {index === curso.modules.length - 1 && curso?.material &&
+                  <AulaWrapper  onClick={()=>handleEndClasses()}>
+                    <Circle >
+                      <EndIcon selected={moduleId === 'certificado'} size={18}/>
+                    </Circle>
+                    <Text active={moduleId === 'certificado'}>Certificado</Text>
+                    {modules.percentage < 1 && <IconLock style={{fontSize:'14px'}}/>}
+                  </AulaWrapper>
+                }
               </AulasContainer>
             </Collapse>
           </div>

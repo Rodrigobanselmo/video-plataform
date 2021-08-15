@@ -33,8 +33,12 @@
     "@typescript-eslint/no-use-before-define": ["error"],
     "prettier/prettier": "error",
     "react/jsx-one-expression-per-line": "off",
+    "no-console": "off",
+    "react-hooks/exhaustive-deps": "off",
+    // "react-hooks/exhaustive-deps": "warn",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-explicit-any": "off",
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
     "react/jsx-filename-extension": [1, {"extensions": [".tsx"] }],
     "import/prefer-default-export": "off", // tira
     "react/jsx-props-no-spreading": "off", // tira

@@ -28,7 +28,7 @@ export async function setStudent(data: any, currentUser: any) {
     // criar students e remover uma unidade de curso
     const today = new Date(new Date().setHours(23, 59, 0, 0));
     const expireDate = new Date(
-      today.setDate(today.getDate() + data.daysToExpire),
+      today.setDate(today.getDate() + Number(data.daysToExpire)),
     ).getTime();
     const newCursos = [...cursos];
     if (typeof newCursos[index].quantity === 'number')
@@ -42,11 +42,18 @@ export async function setStudent(data: any, currentUser: any) {
     newCursos[index].expireDate = expireDate;
 
     const curso = newCursos[index];
-    const cursoClasses = curso?.epi
-      ? curso.epi.map((item: any) => {
-          return item.id;
-        })
-      : 'all';
+    const epiArr: any[] = [];
+
+    if (curso?.epi) {
+      curso.epi.map((item: any) => {
+        return epiArr.push(
+          ...item.id.split('//'),
+          // .filter((classId: string) => !classId.includes('-test')),
+        );
+      });
+    }
+
+    const cursoClasses = curso?.epi ? epiArr : 'all';
 
     const numOfClasses =
       (Array.isArray(cursoClasses) ? cursoClasses.length : 0) +

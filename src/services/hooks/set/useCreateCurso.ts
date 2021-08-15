@@ -27,10 +27,12 @@ import { queryClient } from '../../queryClient.js';
 export async function setCreateCurso(data: any) {
   const cursoRef = db.collection('curso');
   const batch = db.batch();
+
+  console.log('data', data);
   // upload image
   if (data?.main) batch.set(cursoRef.doc(data.main.id), data.main);
   if (data?.draft)
-    batch.set(cursoRef.doc(`${data.draft.id}-editorState`), data.draft);
+    batch.set(cursoRef.doc(`${data.main.id}-editorState`), data.draft);
 
   console.log('setCreateCurso', data);
   await batch.commit();
@@ -66,6 +68,7 @@ export function useCreateCurso() {
         return newData;
       });
       return data;
+      // return {};
     },
     onError: (error) => {
       notification.error({

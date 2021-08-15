@@ -77,15 +77,17 @@ export default function RouteComponent({ component: Component,privateRoute, ...r
   function isVerification() {
 
     const ROUTE_IS_VERIFY_EMAIL = rest?.location?.pathname === VERIFY_EMAIL
+    // const IS_EMAIL_VERIFY = currentUser.emailVerified
+    const IS_EMAIL_VERIFY = true
 
 
-    if (!currentUser.emailVerified && !ROUTE_IS_VERIFY_EMAIL) { //verification screen if not verified
+    if (!IS_EMAIL_VERIFY && !ROUTE_IS_VERIFY_EMAIL) { //verification screen if not verified
       locationRedirect = VERIFY_EMAIL
       return false;
-    } else if (currentUser.emailVerified && ROUTE_IS_VERIFY_EMAIL) { // in verification screen and verify is true go to dashboard
+    } else if (IS_EMAIL_VERIFY && ROUTE_IS_VERIFY_EMAIL) { // in verification screen and verify is true go to dashboard
       locationRedirect = DASHBOARD
       return false;
-    } else if (!currentUser.emailVerified && ROUTE_IS_VERIFY_EMAIL) { // preciso verficar email e estou na rota certa
+    } else if (!IS_EMAIL_VERIFY && ROUTE_IS_VERIFY_EMAIL) { // preciso verficar email e estou na rota certa
       return true
     }
 

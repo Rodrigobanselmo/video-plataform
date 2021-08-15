@@ -11,6 +11,7 @@ export const itemsProfile = [
     {
       text: "Fatura",
       icon: 'History',
+      visible:['co'],
       onClick: 'statement'
     },
     {

@@ -94,12 +94,12 @@ export async function setUsers(checkoutInfo,actualUser) { //data = array of user
   }
 
   //Edit user statements
-    const lastView = new Date().getTime();
-    if (currentUser.access !== 'admin') batch.update(userRef,{statement:newCurrentUser.statement,})
+    // const lastView = new Date().getTime();
+    // if (currentUser.access !== 'admin') batch.update(userRef,{statement:newCurrentUser.statement,})
 
 
-  //create docs
-console.log('Create users',data)
+  //create docs links and invites
+  console.log('Create users',data)
 
   data.map(user => {
     if (user?.link) {
@@ -126,7 +126,8 @@ console.log('Create users',data)
 
   //Reduce Read
 
-  if (data[0]?.isPrimaryAccount && data[0]?.isPrimaryAccount == 'client') {
+  // if (data[0]?.isPrimaryAccount && data[0]?.access == 'client') {
+  if (data[0].access == 'admin' || newCurrentUser.access == 'client') {
     const companyId = newCurrentUser.companyId
     const reduceType = 'users'
     let docIds = null;

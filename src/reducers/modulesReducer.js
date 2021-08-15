@@ -45,7 +45,12 @@ export default (state = initialState, action) => {
               total += 1
             })
           })
-          newState.percentage = total/newState.numOfClasses
+
+          let totalTest = 0;
+          Object.values(newState).map((test) => {
+            if (test?.data && test.percentage === 100) totalTest += 1;
+          });
+          newState.percentage = (total+totalTest)/newState.numOfClasses
 
           //adicionar module last position
           newState.lastModule = moduleId

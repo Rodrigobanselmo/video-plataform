@@ -201,26 +201,40 @@ const EditUserDataComponent = ({ formRef, emails, setEmails, isClient  }) => { /
     //deletar name e cpf
 
     setDataUser(oldData => {
-      const newData = { ...oldData };
+      const newData = {};
       Object.keys(oldData).map((key) => {
-        if (key.split('--')[0] === index.toString()) delete newData[key];
+        // delete newData[key]
+        const keySplit = key.split('--')
+        const firstSplit = Number(keySplit.splice(0,1))
+        console.log('keySplit',keySplit,firstSplit)
+        if (firstSplit < index.toString()) newData[key] = oldData[key];
+        if (firstSplit > index.toString()) newData[[Number(firstSplit-1),...keySplit].join('--')] = oldData[key];
       });
+      console.log('newDataemailsemailsemailsemailsemailsemailsemails',oldData,newData)
       return newData
     });
 
     setCursos(oldCursos => {
-      const newCursos = { ...oldCursos };
+      const newCursos = {};
       Object.keys(oldCursos).map((key) => {
-        if (key.split('--')[0] === index.toString()) delete newCursos[key];
+        const keySplit = key.split('--')
+        const firstSplit = Number(keySplit.splice(0,1))
+        console.log('keySplit',keySplit,firstSplit)
+        if (firstSplit < index.toString()) newCursos[key] = oldCursos[key];
+        if (firstSplit > index.toString()) newCursos[[Number(firstSplit-1),...keySplit].join('--')] = oldCursos[key];
       });
       setPrices(onCalcUserPrice(newCursos))
       return newCursos
     });
 
     setPermissions(oldPermissions => {
-      const newPermissions = { ...oldPermissions };
+      const newPermissions = {};
       Object.keys(oldPermissions).map((key) => {
-        if (key.split('--')[0] === index.toString()) delete newPermissions[key];
+        const keySplit = key.split('--')
+        const firstSplit = Number(keySplit.splice(0,1))
+        console.log('keySplit',keySplit,firstSplit)
+        if (firstSplit < index.toString()) newPermissions[key] = oldPermissions[key];
+        if (firstSplit > index.toString()) newPermissions[[Number(firstSplit-1),...keySplit].join('--')] = oldPermissions[key];
       });
       return newPermissions
     });
@@ -320,6 +334,7 @@ const EditUserDataComponent = ({ formRef, emails, setEmails, isClient  }) => { /
     <InputsContainer style={{gap:20}}>
       <InputSearch
         filter={filter}
+        isTeam={!isClient}
         onSelectItem={handleSelect}
         row={({item, ...rest})=>(
           <Item {...rest}>

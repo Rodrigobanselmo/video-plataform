@@ -6,9 +6,8 @@
 import { useMutation } from 'react-query';
 import { useLoaderDashboard } from '../../../context/LoadDashContext.js';
 import { useNotification } from '../../../context/NotificationContext.js';
-import { db, st } from '../../../lib/firebase.prod.js';
+import { st } from '../../../lib/firebase.prod.js';
 import { errorCatchFirestore } from '../../error.js';
-import { LogOut } from '../../firebaseAuth.js';
 
 // interface UserData {
 //   cursos: any;
@@ -23,20 +22,27 @@ import { LogOut } from '../../firebaseAuth.js';
 //   uid: string;
 // }
 
-export async function setUploadImageCourse(data: any) {
+export async function setUpload(data: any) {
   // const cursoRef = db.collection('curso');
 
+  // pegando tipo de arquivo
+  const nameFile = data.file.name;
+  // const splitNameFile = nameFile.split('.');
+  // const extensionFileName = `.${splitNameFile[splitNameFile.length - 1]}`;
+
+  // const downloadFileName = `Material${extensionFileName}`;
+
   // upload image
-  await st.ref(`curso/${data.id}/image`).put(data.imageFile);
-  const ulr = await st.ref(`curso/${data.id}`).child('image').getDownloadURL();
+  await st.ref(`curso/${data.id}/${nameFile}`).put(data.file);
+  const ulr = await st.ref(`curso/${data.id}`).child(nameFile).getDownloadURL();
 
   return ulr;
 }
 
-export function useUploadImage() {
+export function useUploadFile() {
   const notification = useNotification();
 
-  return useMutation(async (data: any) => setUploadImageCourse(data), {
+  return useMutation(async (data: any) => setUpload(data), {
     onSuccess: async (ulr: string) => {
       return ulr;
     },

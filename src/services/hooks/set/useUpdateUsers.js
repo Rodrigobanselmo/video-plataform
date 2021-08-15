@@ -91,16 +91,31 @@ export async function setUsers(checkoutInfo,actualUser) { //data = array of user
 
   //Edit user statements
   if (currentUser.access !== 'admin' && false) batch.update(userRef,{statement:newCurrentUser.statement})
-
+  const users = queryClient.getQueryData(['users', currentUser.uid]);
 
   //create docs
   const newData = [];
   data.map(user => {
     console.log('user.uid',user.uid)
+
+    const thisUser = users.find(i=>i.uid == user.uid)
+    const cursos = (thisUser && thisUser?.cursos) ? thisUser.cursos : []
+
+    const newCurso = [];
+    user.cursos.map(i=>{
+
+      const hasCursoAlreadyInUser = cursos.find(fi => fi.id == i.id)
+      if (hasCursoAlreadyInUser) {
+        newCurso.push({...hasCursoAlreadyInUser,epi:i.epi})
+      } else {
+        newCurso.push(i)
+      }
+    })
+
     const newUser = {}
     if (user?.name) newUser.name = user.name
     if (user?.cpf) newUser.cpf = user.cpf
-    if (user?.cursos) newUser.cursos = user.cursos
+    if (user?.cursos) newUser.cursos = newCurso
     if (user?.cnpj) newUser.cnpj = user.cnpj
     if (user?.razao) newUser.razao = user.razao
     if (user?.permission) newUser.permission = user.permission

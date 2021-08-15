@@ -110,7 +110,7 @@ export function AuthProvider({ children }) {
         <CurrentUserButton onClick={()=>setCurrentUser(oldUser)}>
           Voltar
           <IconArrow />
-          <span>{currentUser.name} </span>
+          {oldUser?.name && <span>{oldUser.name} </span>}
         </CurrentUserButton>}
     </AuthContext.Provider>
   )
