@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -8,6 +8,7 @@ import {NavLogo} from '../../Main/NavLogo'
 import MenuIcon from '@material-ui/icons/Menu';
 import MenuOpen from '@material-ui/icons/MenuOpen';
 import InputBase from '@material-ui/core/InputBase';
+import Collapse from '@material-ui/core/Collapse';
 import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
@@ -39,6 +40,139 @@ import {ThemeContext} from "styled-components";
 import { menuList } from '../../../constants/menuList';
 import styled, {css} from "styled-components";
 import { AvatarView } from '../../Main/Avatar';
+import { useDebounce } from '../../../hooks/useDebounceJs';
+
+const MenuButton = styled.button`
+  position: absolute;
+  left:45px;
+  display: flex;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  gap: 0.5rem;
+  span {
+    display: inline-block;
+    border-top: 2px solid #202020;
+    border-top-color: #202020;
+    width: 20px;
+    &:before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: #202020;
+      margin-top: 5px;
+      transition: 0.3s;
+      position: relative;
+    }
+    &:after {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: #202020;
+      margin-top: 5px;
+      transition: 0.3s;
+      position: relative;
+    }
+
+    ${(props) =>
+      props.active &&
+        css`
+          border-top-color: transparent;
+          &:before {
+            transform: rotate(135deg);
+          }
+          &:after {
+            transform: rotate(-135deg);
+            top: -7px;
+          }
+
+      `}
+  }
+`;
+
+
+const AppContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 60px;
+  padding: 2px 25px;
+
+  @media screen and (max-width: 900px) {
+    height:50px;
+    padding: 2px 1rem;
+  }
+`;
+
+
+const Container = styled.div`
+  display: flex;
+  flex: 1;
+  margin-left: 60px;
+  justify-content: flex-start;
+  flex-direction: row;
+  position:relative;
+
+  @media screen and (max-width: 900px) {
+    margin-left: 0px;
+    margin-top: 62px;
+    display:flex;
+    flex-direction:column;
+    background-color: ${({theme})=> theme.palette.background.paper};
+    border-radius:10px;
+    align-self: flex-start;
+    min-width:200px;
+  }
+`;
+
+const ContainerNav = styled.div`
+  display: flex;
+  flex: 1;
+  justify-content: flex-start;
+  flex-direction: row;
+  position:relative;
+
+  @media screen and (max-width: 900px) {
+    margin-left: 0px;
+    display:flex;
+    flex-direction:column;
+    background-color: ${({theme})=> theme.palette.background.paper};
+    border-radius:10px;
+    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.20);
+    align-self: flex-start;
+    min-width:200px;
+  }
+`;
+
+
+const NavArea = styled.div`
+
+  display:block;
+  flex-direction:column;
+  position: absolute;
+  top:10px;
+  height:200px;
+  @media screen and (max-width: 900px) {
+  }
+`;
+
+
+const ContainerNavLinks = styled.div`
+
+  display:flex;
+  display:block;
+  flex-direction:column;
+  background-color:red;
+  position:relative;
+
+  @media screen and (max-width: 900px) {
+  }
+`;
+
 
 const BottomBar = styled.div`
   position: absolute;
@@ -48,19 +182,32 @@ const BottomBar = styled.div`
   height: 3px;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
+
+
+  @media screen and (max-width: 900px) {
+    height: 100%;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    width: 3px;
+    left: 0;
+    bottom: 0;
+    top: 0;
+  }
+
 `;
 
 
 const NaveLink = styled(Link)`
-  margin: 0px 20px;
+  margin: 0px 1.5rem;
   position: relative;
-  min-width: 40px;
+  min-width: 2.5rem;
   display: flex;
   height: 60px;
-  font-size: 16px;
+  font-size: 1rem;
   text-decoration: none;
   color: ${({theme})=> theme.palette.text.primary };
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   opacity:0.7;
   transition: opacity 0.3s ease;
@@ -91,6 +238,13 @@ const NaveLink = styled(Link)`
 
   `}
 
+  @media screen and (max-width: 900px) {
+    margin: 0.4rem 1.5rem;
+    height: 30px;
+    width: 100%;
+    padding: 0 1rem;
+  }
+
 `;
 
 const NavBar = ({open,setOpen}) => {
@@ -107,6 +261,9 @@ const NavBar = ({open,setOpen}) => {
   const notification = useNotification();
   const {currentUser} = useAuth();
   const themes = React.useContext(ThemeContext)
+  const [openLinks, setOpenLinks] = useState(false)
+  const [dimensionWidth, setDimensionWidth] = useState(window.innerWidth)
+  const [onDebounce,onClearDebounce] = useDebounce((value)=>setDimensionWidth(value),500)
 
   function ReactLink(props) {
     return(
@@ -124,6 +281,17 @@ const NavBar = ({open,setOpen}) => {
     )
   }
 
+  React.useEffect(() => {
+    function handleResize() {
+      onDebounce(window.innerWidth)
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  })
 
   const classes = useStyles();
 
@@ -152,47 +320,57 @@ const NavBar = ({open,setOpen}) => {
         })}
       >
         {/* <div style={{backgroundColor:themes.palette.background.nav}}> */}
-        <div style={{backgroundColor:themes.palette.background.nav,display:'flex',flexDirection:'row',alignItems:'center',height:'60px',padding:'2px 25px'}}>
+        <AppContainer >
           <NavLogo to={DASHBOARD} small='true' />
 
 
-          <div style={{display:'flex',flex:1,marginLeft:60,justifyContent:'flex-start',flexDirection:'row'}}>
-          {menuList.map((item, index) => {
+            <MenuButton
+              style={{display:dimensionWidth<900?'inline-block':'none'}}
+              onClick={()=>setOpenLinks(!openLinks)}
+              active={openLinks}
+            >
+              <span></span>
+            </MenuButton>
+          <Container >
+          <Collapse in={openLinks || dimensionWidth>900}>
+          <ContainerNav >
+            {menuList.map((item, index) => {
 
-            function pathActive() {
-              if (item?.contain) {
-                const array = item.contain.map((route) => {
-                  return pathname.includes(route)
-                })
-                if (array.findIndex(i=>i === false) !== -1) return false
-                return true
+              function pathActive() {
+                if (item?.contain) {
+                  const array = item.contain.map((route) => {
+                    return pathname.includes(route)
+                  })
+                  if (array.findIndex(i=>i === false) !== -1) return false
+                  return true
+                }
+                return pathname==item.route
               }
-              return pathname==item.route
-            }
-            const isActive = pathActive()
+              const isActive = pathActive()
 
-            const isPermissionGranted = !item?.permissions ? true :
-              currentUser?.permission &&
-              currentUser.permission.some(i=>item.permissions.includes(i))
+              const isPermissionGranted = !item?.permissions ? true :
+                currentUser?.permission &&
+                currentUser.permission.some(i=>item.permissions.includes(i))
 
-            const isAccessGranted =
-              item.visible === 'all' || (
-                currentUser?.access &&
-                item.visible.includes(currentUser.access)
+              const isAccessGranted =
+                item.visible === 'all' || (
+                  currentUser?.access &&
+                  item.visible.includes(currentUser.access)
+                )
+
+
+              if (isPermissionGranted && isAccessGranted) return (
+                <NaveLink onClick={()=>{pathname!==item.route && setLoaderDash(true)}} key={item.id} active={isActive.toString()} to={item.route}>
+                  <p>{item.text}</p>
+                  {isActive && <BottomBar />}
+                </NaveLink>
               )
+              return null
 
-
-            if (isPermissionGranted && isAccessGranted) return (
-              <NaveLink onClick={()=>{pathname!==item.route && setLoaderDash(true)}} key={item.id} active={isActive.toString()} to={item.route}>
-                <p>{item.text}</p>
-                {isActive && <BottomBar />}
-              </NaveLink>
-            )
-            return null
-
-          })}
-          </div>
-
+            })}
+          </ContainerNav>
+          </Collapse>
+          </Container>
 
           {/* <div className={classes.grow} /> */}
           <div className={classes.sectionDesktop}>
@@ -239,7 +417,7 @@ const NavBar = ({open,setOpen}) => {
 
 
 
-        </div>
+        </AppContainer>
       </AppBar>
   );
 };

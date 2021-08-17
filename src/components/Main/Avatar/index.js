@@ -79,6 +79,12 @@ const ProfileContainer = styled.div`
     width: 53px;
     padding:2px;
     border: 2px solid ${({theme})=> theme.palette.text.primaryNav };
+
+
+    @media screen and (max-width: 900px) {
+      transform: scale(0.8)
+    }
+
   `}
 
   ${props => props.borderApplied && css`

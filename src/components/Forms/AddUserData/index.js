@@ -15,6 +15,42 @@ import { BootstrapTooltip } from '../../Main/MuiHelpers/Tooltip';
 import { useSellingData } from '../../../context/data/SellingContext';
 import { useNotification } from '../../../context/NotificationContext';
 
+const EmailLinkView = styled.div`
+  button {
+      /* background-color: ${({ theme }) => theme.palette.text.third}; */
+    color: ${({ theme }) => theme.palette.text.primary};
+    opacity:0.9;
+    background-color: #eee;
+    padding: 3px 10px;
+    border-radius:5px;
+    border:none;
+    width:100%;
+    justify-content:flex-start;
+    align-items: center;
+    text-align: left;
+
+    & + button {
+      margin-top:5px;
+    }
+    div {
+      display:inline-block;
+      width:12px;
+      height:12px;
+      border-radius:2px;
+      margin-right:10px;
+      margin-top:2px;
+    }
+    &.url div {
+      background-color: ${({ theme,url }) => url ? theme.palette.primary.light : 'white'};
+    }
+    &.email div {
+      background-color: ${({ theme,url }) => !url ? theme.palette.primary.light : 'white'};
+    }
+
+  }
+`;
+
+
 const ShowCursosView = styled.div`
   display:flex;
   flex-direction:row;
@@ -239,7 +275,22 @@ const AddUserDataComp = ({ formRef, emails, setEmails,  }) => { //fieldEdit, set
 
   function handleURL(index) {
     const newEmails = [...emails];
+    console.log('123',newEmails)
 
+    if (!emails[index].includes(URL)) {
+      const code = `${Math.random().toString(36).slice(2, 10)}${Math.random().toString(36).slice(2, 10)}`;
+      const link = `${URL}-${code}`;
+      newEmails[index] = link
+
+      setFieldEdit({ value:`${location}${code}`, index:index.toString() });
+      setEmails(newEmails);
+    } else {
+      onFocus(`${index}`)
+    }
+  }
+
+  function handleEmail(index) {
+    const newEmails = [...emails];
     if (!emails[index].includes(URL)) {
       const code = `${Math.random().toString(36).slice(2, 10)}${Math.random().toString(36).slice(2, 10)}`;
       const link = `${URL}-${code}`;
@@ -285,23 +336,39 @@ const AddUserDataComp = ({ formRef, emails, setEmails,  }) => { //fieldEdit, set
                       </IconButton>
                     </BootstrapTooltip>
                   }
-                  endComponent={()=>
-                    <BootstrapTooltip title={`Você também pode gerar um link para encaminhar ao aluno que deseja disponibilizar os cursos.`} styletooltip={{transform: 'translateY(5px)'}}>
-                      <LinkButton
-                        activeURL={isURL}
-                        type="button"
-                        onClick={() => handleURL(index)}
-                      >
-                      gerar link <br/>compartilhavel
-                    </LinkButton>
-                  </BootstrapTooltip>
-                  }
+                  // endComponent={()=>
+                  //   <BootstrapTooltip title={`Você também pode gerar um link para encaminhar ao aluno que deseja disponibilizar os cursos.`} styletooltip={{transform: 'translateY(5px)'}}>
+                  //     <LinkButton
+                  //       activeURL={isURL}
+                  //       type="button"
+                  //       onClick={() => handleURL(index)}
+                  //     >
+                  //     gerar link <br/>compartilhavel
+                  //   </LinkButton>
+                  // </BootstrapTooltip>
+                  // }
                   {...(isURL
                     ? { value: `${location}${item.split('-')[2]}` }
                     : {})
                   }
                 />
                 {(fieldEdit?.index&&fieldEdit?.index===`${index}`) && <KeyboardArrowRightIcon style={{fontSize:30,position:'absolute',right:-25,top:6}} type={'Trash'} />}
+                <EmailLinkView url={isURL}>
+                  <button
+                    type='button'
+                    onClick={() => handleDeleteURL(index)}
+                    className='email'
+                  >
+                      <div/>Convidar utilizando o <b>E-mail</b> do aluno
+                  </button>
+                  <button
+                    onClick={() => handleURL(index)}
+                    type='button'
+                    className='url'
+                  >
+                      <div/>Convidar a partir de um <b>link conpartilhavel</b>
+                  </button>
+                </EmailLinkView>
               </InputArea>
               <ShowCursosView>
                 {Object.keys(cursos).map((key)=>{

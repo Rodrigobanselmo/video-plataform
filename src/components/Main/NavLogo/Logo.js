@@ -31,6 +31,10 @@ export const NavLogoSC = styled(Link)`
     font-size: 1.3rem;
   `}
 
+  @media screen and (max-width: 900px) {
+    font-size: 1rem;
+  }
+
 `;
 
 export const NavLogoSCDiv = styled.div`

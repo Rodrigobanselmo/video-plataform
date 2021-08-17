@@ -71,9 +71,12 @@ export const useStyles = makeStyles((theme) => ({
     color:theme.palette.primary.contrastText
   },
   divName: {
-    // marginTop:8,
-    marginLeft:20,
-    cursor:'pointer'
+    display:'none',
+    [theme.breakpoints.up('md')]: {
+      display:'block',
+      marginLeft:20,
+      cursor:'pointer'
+    },
   },
   search: {
     position: 'relative',
