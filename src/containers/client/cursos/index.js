@@ -73,7 +73,12 @@ export default function Cursos() {
     return currentUser.cursos.map((curso,index)=>{
       const cursoIndex = dataCursos.findIndex(i=>i.id == curso.id)
       if (cursoIndex == -1) return null
-      if (curso?.expireDate && 'percentage' in curso && curso.percentage < 100) return true
+      const isFinished = curso?.status === 'finished';
+      const isExpired = curso?.expireDate && (new Date().getTime() > curso.expireDate);
+
+      if (isExpired && isFinished) return null
+      if ('percentage' in curso) return true
+      // if (curso?.expireDate && 'percentage' in curso && curso.percentage < 100) return true
       return null
     }).some(i=>i)
   }, [currentUser,dataCursos])
@@ -121,11 +126,17 @@ export default function Cursos() {
             const cursoData = dataCursos[cursoIndex]
 
             if (cursoIndex == -1) return null
-            if (curso?.expireDate && curso?.status && 'percentage' in curso && curso.percentage < 100) {
+            const isFinished = curso?.status === 'finished';
+            const isExpired = curso?.expireDate && (new Date().getTime() > curso.expireDate);
+
+            if (isExpired && isFinished) return null
+            if (curso?.status && 'percentage' in curso) {
 
               function getDateMessage() {
+                if (!curso.expireDate) return ''
+                const textInfo = curso?.status === 'started' ? 'Vencimento' : 'Permanência:'
                 const actualTime = new Date().getTime()
-                if (actualTime < curso.expireDate) return `Vencimento: ${new Intl.DateTimeFormat("pt-BR").format(
+                if (actualTime < curso.expireDate) return `${textInfo} ${new Intl.DateTimeFormat("pt-BR").format(
                   new Date(curso.expireDate)
                 )}`
 

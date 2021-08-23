@@ -4,7 +4,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { db } from "../../../lib/firebase.prod";
 
 export async function getStudent(cursoId,currentUser) {
-  const studentRef = db.collection('students').where('cursoId', '==', cursoId).where('uid', '==', currentUser.uid);
+  const studentRef = db.collection('students').where('status', '==', 'started').where('cursoId', '==', cursoId).where('uid', '==', currentUser.uid);
   const cursoRef = db.collection('curso').where('id', '==', cursoId);
 
   const cursos = await cursoRef.get();

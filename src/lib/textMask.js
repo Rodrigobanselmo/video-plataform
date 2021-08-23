@@ -232,6 +232,28 @@ export function NumberDays(props) {
     );
   }
 
+  export function NumberMonths(props) {
+    const { inputRef, onChange, ...other } = props;
+
+    return (
+      <NumberFormat
+        {...other}
+        getInputRef={inputRef}
+        onValueChange={(values) => {
+          onChange({
+            target: {
+              name: props.name,
+              value: values.value,
+            },
+          });
+        }}
+        isNumericString
+        allowLeadingZeros
+        suffix=" meses"
+      />
+    );
+  }
+
   export function NumberFormatCPF(props) {
     const { inputRef, onChange, ...other } = props;
 

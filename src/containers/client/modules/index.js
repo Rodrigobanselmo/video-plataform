@@ -94,6 +94,13 @@ export default function Video() {
     console.log('modules',modules)
     const isLoadFinished = !isLoading
     const isStudent = curso && student && student.length > 0
+    const isExpired = isStudent && student[0]?.expireDate && student[0].expireDate < new Date().getTime()
+    // const isExpired = isStudent && student[0]?.expireDate && student[0].expireDate > new Date().getTime()
+    if (isExpired) {
+      console.log('expired',student[0].expireDate,new Date().getTime())
+      notification.error({message:'Seu curso expirou, reinicie para obter seu certificado!'})
+      return history.push(CURSOS)
+    }
 
     if (isLoadFinished && isStudent) {
       updateModules(curso,student[0]) //se tiver tudo certo manda pra cá
@@ -105,7 +112,12 @@ export default function Video() {
       return history.push(CURSOS)
     }
 
-}, [isLoading])
+  }, [isLoading])
+
+  useEffect(() => {
+    console.log('modules finished')
+    if (modules.percentage == 1) console.log('finished')
+  }, [modules])
 
   return (
     <Container>

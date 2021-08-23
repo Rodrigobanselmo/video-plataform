@@ -163,8 +163,36 @@ export default function Video() {
     setLoaderDash(false)
   }, [])
 
+  const createAndDownloadPdf = () => {
+    console.log(0)
+    axios({
+      method:'post',
+      url:'http://localhost:3333/pdf',
+      responseType: 'blob',
+      data:{
+        name: 'Rodrigo Barbosa Anselmo',
+        cpf:'401.951.858-03',
+        date:'26 de agosto de 2021',
+        cursoName:'Curso de EPI (NR 1)',
+      }
+    }).then((res) => {
+      const pdfBlob = new Blob([res.data], { type: 'application/pdf' });
+      console.log(1)
+      saveAs(pdfBlob, 'newPdf.pdf');
+    }).catch(async error=>{
+      const errorString = JSON.parse(await error.response.data.text());
+      console.log(errorString.message)
+    })
+  }
+
+
+
+  {/* <Logo  height="400px" width="400px"/> */}
+
+
   return (
     <Container >
+          <button onClick={createAndDownloadPdf}>Download PDFs</button>
       {/* <h1 style={{marginBottom:10}}>Home</h1> */}
       {/* <div style={{display:'flex',flexDirection:'row',gap:30}}>
         <div style={{display:'flex',flexDirection:'column',gap:0}}>

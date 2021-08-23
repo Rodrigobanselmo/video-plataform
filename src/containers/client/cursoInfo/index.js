@@ -45,6 +45,8 @@ if (!data || (data && !data[0])) return null
     if (!currentUser?.cursos) return false
     const userCursoIndex = currentUser.cursos.findIndex(i=>i.id == data[0].id)
     if (userCursoIndex === -1) return false
+    if (currentUser.cursos[userCursoIndex]?.expireDate && currentUser.cursos[userCursoIndex]?.expireDate < new Date().getTime()) return false
+    if (!currentUser.cursos[userCursoIndex]?.expireDate && currentUser.cursos[userCursoIndex].status == 'finished') return true
     if (currentUser.cursos[userCursoIndex].status == 'started') return true
   }
 
@@ -104,7 +106,7 @@ if (!data || (data && !data[0])) return null
       <CardInfo
         image={'/images/target.png'}
         title={'Tempo para Conclusão'}
-        text={`Você terá até --${daysToExpire}-- --_-- --dias-- para finalizar o curso`}
+        text={daysToExpire?`Você terá até --${daysToExpire}-- --_-- --dias-- para finalizar o curso`:'Você não terá um limite de tempo para finalizar o curso'}
         alt='novo curso'
         style={{gridArea:'c2'}}
         horizontal
@@ -149,10 +151,10 @@ if (!data || (data && !data[0])) return null
       >
         <p style={{marginTop:0,fontSize:'1.1rem'}}>Curso: <strong>{cursoName}</strong></p>
         <p style={{marginTop:5,fontSize:'1.1rem'}}>Tempo Estimado: <strong>{duration} horas</strong></p>
-        <div style={{marginTop:15,border:'1px solid grey',padding:10,borderRadius:10,backgroundColor:'#fafafa'}}>
+        { data[0].daysToExpire ? <div style={{marginTop:15,border:'1px solid grey',padding:10,borderRadius:10,backgroundColor:'#fafafa'}}>
           <p style={{marginTop:0,fontWeight:'bold',fontSize:'0.99rem',color:'#990000'}}>Você tem certeza?</p>
           <p style={{marginTop:5,marginBottom:20,fontSize:'1.1rem',width:'80vw',maxWidth:600}}>Ao começar o curso você terá até <strong style={{color:'#990000'}}>{expireFotmated}</strong> para finaliza-lo, caso contrário terá que assistir novamente todas as aulas para obter o certificado.</p>
-        </div>
+        </div> : null}
       </ModalButtons>
     </Container>
   );

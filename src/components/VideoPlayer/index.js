@@ -347,6 +347,17 @@ export function VideoPlayer({curso}) {
 
   const handlePreviewVideo = () => {
 
+    if (moduleId == 'certificado') {
+
+      const oldModuleIndex = curso.modules.length - 1
+      const oldClassIndex = curso.modules[oldModuleIndex].classes.length-1
+
+      const oldModule = curso.modules[oldModuleIndex]
+      const oldClass = curso.modules[oldModuleIndex].classes[oldClassIndex]
+      handleMouseMove()
+      history.push(pathname+'/'+oldModule.id+'/'+oldClass.id)
+      return
+    }
     if (classIndex==0 && moduleIndex == 0) return null
     const isFirstClass = classIndex == 0;
 
@@ -372,7 +383,22 @@ export function VideoPlayer({curso}) {
   const handleNextVideo = (next) => {
 
     const lock = isLocked(modules,nextClass,nextModuleIndex,nextClassIndex)
-    if (lock === 'lastModule') return notification.success({message:'Você não possui mais aulas'})
+    if (lock === 'lastModule') {
+      history.push(pathname+'/'+ 'certificado')
+      return
+      // return notification.success({message:'Você não possui mais aulas'})
+    }
+    if (moduleId == 'certificado') {
+
+      const oldModuleIndex = curso.modules.length - 1
+      const oldClassIndex = curso.modules[oldModuleIndex].classes.length-1
+
+      const oldModule = curso.modules[oldModuleIndex]
+      const oldClass = curso.modules[oldModuleIndex].classes[oldClassIndex]
+      handleMouseMove()
+      history.push(pathname+'/'+oldModule.id+'/'+oldClass.id)
+      return
+    }
     if (lock !== 'ok' && next != 'endNext') return notification.warn({message:lock})
 
     handleMouseMove()
@@ -413,7 +439,7 @@ export function VideoPlayer({curso}) {
       handlePlayPause();
     } else if  (e.key === 'ArrowLeft') {
       // handleRewind()
-      // onEndVideo() // !remover
+      onEndVideo() // !remover
     } else if  (e.key === 'ArrowRight') {
       // handleFastForward()
     } else if  (e.key === 'ArrowUp') {
@@ -422,24 +448,24 @@ export function VideoPlayer({curso}) {
     } else if  (e.key === 'ArrowDown') {
       if (volume>0) handleVolumeChange(volume-0.2)
     } else if  (e.key === 'r') { // !remover
-      // const resetData = {
-      //   uid: modules.uid,
-      //   id: modules.id,
-      //   status: 'started',
-      //   percentage: 0,
-      //   startDate: modules.startDate,
-      //   expireDate: modules.expireDate,
-      //   finishedDate: false,
-      //   cursoId: modules.cursoId,
-      //   modules: 'all',
-      //   watched: {},
-      //   classes:  modules.classes,
-      //   position: '0/0',
-      //   totalWatched: 0,
-      //   numOfClasses: modules.numOfClasses,
-      // }
-      // mutation.mutateAsync(resetData,modules)
-      // console.log('r')
+      const resetData = {
+        uid: modules.uid,
+        id: modules.id,
+        status: 'started',
+        percentage: 0,
+        startDate: modules.startDate,
+        expireDate: modules.expireDate,
+        finishedDate: false,
+        cursoId: modules.cursoId,
+        modules: 'all',
+        watched: {},
+        classes:  modules.classes,
+        position: '0/0',
+        totalWatched: 0,
+        numOfClasses: modules.numOfClasses,
+      }
+      mutation.mutateAsync(resetData,modules)
+      console.log('r')
     }
     // Do something when the user has pressed the Escape key
   });
@@ -450,6 +476,7 @@ export function VideoPlayer({curso}) {
             <>
               <PlayerWrapper>
                 <CertificadoView
+                  student={modules}
                   curso={curso}
                 />
               </PlayerWrapper>

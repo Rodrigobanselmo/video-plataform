@@ -508,8 +508,10 @@ export function FirstPageAddModal({setPosition,onEnd, isNewClient:isNew, update}
           <HeaderModal
             center
             text={!isAdmin
-              ? 'Adicionar Novos Alunos a Plataforma'
-              : 'Adicionar Novos Clientes a Plataforma'
+              ? 'Adicionar novos alunos no AVA'
+              : isNewClient
+                ? 'Adicionar Novos Clientes a Plataforma'
+                : 'Adicionar Novos Membros a Plataforma'
             }
             subText='Para inserir novos alunos a plataforma, basta informar email de catastro e/ou gerar link compartilhavel e escolher os cursos que deseja comprar.'
             />

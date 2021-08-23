@@ -72,7 +72,8 @@ export async function setUsers(checkoutInfo,actualUser) { //data = array of user
         type:'newUser',
         cursos: user.cursos,
         value: user.statement[0].value,
-        shared: user?.email ?? user?.link
+        shared: user?.email ?? user?.link,
+        data: user
       }
     })
 

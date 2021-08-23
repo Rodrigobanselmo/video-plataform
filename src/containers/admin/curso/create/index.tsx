@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-curly-newline */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 // import Modal from './Modal'
 import { useLocation, useParams, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
@@ -35,6 +35,7 @@ import { useUploadImage } from '../../../../services/hooks/set/useUploadImage';
 import { ModuleData } from '../../../../components/Forms/ModuleData';
 import { InputMaterial } from '../../../../components/Forms/components/InputMaterial';
 import { useUploadFile } from '../../../../services/hooks/set/useUploadFile';
+import { useDeleteCurso } from '../../../../services/hooks/del/useDeleteCurso';
 
 const ButtonsContainer = styled.div`
   display: grid;
@@ -103,6 +104,7 @@ const Team: React.FC = () => {
   const mutation = useCreateCurso();
   const uploadImage = useUploadImage();
   const uploadFile = useUploadFile();
+  const mutationDelete = useDeleteCurso();
 
   // const [draftPublic, setDraftPublic] = useState<RawDraftContentState | null>(
   //   null,
@@ -111,6 +113,7 @@ const Team: React.FC = () => {
   //   null,
   // );
 
+  const refInputData = useRef({} as any);
   const [open, setOpen] = useState(true);
   const [saving, setSaving] = useState(false);
   const [initialData, setInitialData] = useState<any>({});
@@ -162,6 +165,19 @@ const Team: React.FC = () => {
     setModules(arrayModules);
   };
 
+  const handleDeleteCurso = async (): Promise<void> => {
+    if (!cursoData?.main)
+      return notification.warn({ message: 'Erro ao localizar curso' });
+
+    if ('published' in cursoData.main && cursoData?.main.published !== 0)
+      return notification.warn({
+        message: 'Este Curso já foi publicado e não pode ser excluido',
+      });
+
+    await mutationDelete.mutateAsync(cursoData.main);
+    setOpen(true);
+  };
+
   const handleSelectCourse = ([curso, Draft]: [any, IDraft]): void => {
     console.log(`data curso create`, curso, Draft);
     if (Draft?.text) dispatch({ type: 'DRAFT_ABOUT', payload: Draft.text });
@@ -171,6 +187,11 @@ const Team: React.FC = () => {
       name: curso.name,
       daysToExpire: curso.daysToExpire,
       duration: curso.duration,
+      accessTimeAfter: curso.accessTimeAfter,
+      cursoValidation: curso.cursoValidation,
+      validSignature: curso.validSignature,
+      answerEmail: curso.answerEmail,
+      certificationEmail: curso.certificationEmail,
     });
     setModules([...curso.modules]);
     setOpen(false);
@@ -205,28 +226,69 @@ const Team: React.FC = () => {
 
   const onSubmit = async (event: any): Promise<void> => {
     event.preventDefault();
+    console.log('refInputData.current', refInputData.current);
+    const {
+      accessTimeAfter: ata,
+      daysToExpire: dte,
+      duration: drt,
+      cursoValidation: cv,
+      answerEmail,
+      certificationEmail,
+      name,
+      validSignature,
+    } = refInputData.current;
+
+    const daysToExpire = String(dte) ? keepOnlyNumbers(String(dte)) : '';
+    const duration = String(drt) ? keepOnlyNumbers(String(drt)) : '';
+    const accessTimeAfter = String(ata) ? keepOnlyNumbers(String(ata)) : '';
+    const cursoValidation = String(cv) ? keepOnlyNumbers(String(cv)) : '';
+
     setSaving(true);
     await onLater(1000);
     const { draftPublic } = store.getState();
     const { draftAbout } = store.getState();
 
-    if (!event.target.name) {
+    if (!name) {
       setSaving(false);
 
       return notification.warn({
         message: 'Nome do curso não pode ser nulo.',
       });
     }
-    if (!event.target.daysToExpire) {
+    if (!daysToExpire) {
       setSaving(false);
       return notification.warn({
         message: 'Dias até expirar não pode ser nulo.',
       });
     }
-    if (!event.target.duration) {
+    if (!duration) {
       setSaving(false);
       return notification.warn({
         message: 'Duração não pode ser nulo.',
+      });
+    }
+    if (!accessTimeAfter) {
+      setSaving(false);
+      return notification.warn({
+        message: 'Dias de acesso após conslusão não pode ser nulo.',
+      });
+    }
+    if (!cursoValidation) {
+      setSaving(false);
+      return notification.warn({
+        message: 'Você deve informar se o curso possui validade.',
+      });
+    }
+    if (!answerEmail) {
+      setSaving(false);
+      return notification.warn({
+        message: 'Email de dúvidas não pode ser nulo.',
+      });
+    }
+    if (validSignature && !certificationEmail) {
+      setSaving(false);
+      return notification.warn({
+        message: 'Email de dúvidas não pode ser nulo.',
       });
     }
 
@@ -242,21 +304,6 @@ const Team: React.FC = () => {
 
       return notification.warn({
         message: 'O campo sobre o curso não pode ser nulo.',
-      });
-    }
-
-    const name = event.target?.name ? event.target.name.value : '';
-    const daysToExpire = event.target?.daysToExpire
-      ? keepOnlyNumbers(event.target.daysToExpire.value)
-      : '';
-    const duration = event.target?.duration
-      ? keepOnlyNumbers(event.target.duration.value)
-      : '';
-
-    if (!name || !daysToExpire || !duration) {
-      setSaving(false);
-      return notification.warn({
-        message: 'Preencha todos os campos para continuar.',
       });
     }
 
@@ -279,9 +326,14 @@ const Team: React.FC = () => {
         ...cursoData.main,
         name,
         modules,
-        daysToExpire,
-        duration,
+        daysToExpire: Number(daysToExpire),
+        duration: Number(duration),
+        accessTimeAfter: Number(accessTimeAfter),
+        cursoValidation: Number(cursoValidation),
         numOfModules: modules.length,
+        validSignature,
+        certificationEmail: validSignature ? certificationEmail : '',
+        answerEmail,
         subCursos: modules.reduce((acc: number, item: any) => {
           let accumulator = acc;
           if (item?.classes)
@@ -355,10 +407,8 @@ const Team: React.FC = () => {
             style={{ marginBottom: '10px', minWidth: 100 }}
             primary="outlined"
             type="button"
-            loading={false}
-            onClick={() =>
-              document.getElementById('onCursoSaveButton')?.click()
-            }
+            loading={mutationDelete.isLoading}
+            onClick={handleDeleteCurso}
             // justify="right"
           >
             Deletar
@@ -368,7 +418,7 @@ const Team: React.FC = () => {
             primary
             type="submit"
             loading={false}
-            disabled={save}
+            disabled={save || mutationDelete.isLoading}
             // justify="right"
           >
             {isPublished ? 'Despublicar' : 'Publicar'}
@@ -379,13 +429,13 @@ const Team: React.FC = () => {
             primary
             type="submit"
             loading={saving}
-            disabled={!save}
+            disabled={!save || mutationDelete.isLoading}
             // justify="right"
           >
             Salvar
           </ButtonForm>
         </ButtonsContainer>
-        <CursoAddData initialData={initialData} />
+        <CursoAddData initialData={initialData} refInputData={refInputData} />
         <InputMaterial
           materialURL={material}
           onHandleSelect={onHandleSelectMaterial}

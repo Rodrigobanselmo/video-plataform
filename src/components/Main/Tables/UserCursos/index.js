@@ -168,12 +168,12 @@ export function UserCursosTable({data}) {
           </TableHeader>
           <TableBody>
             {data.map((curso) => {
-              const isExpired = new Date().getTime() > (curso?.expireDate ?? 0)
+              const isExpired = curso?.expireDate ? new Date().getTime() > (curso?.expireDate ?? 0) : false
 
               return (
                 <TableRow key={curso.id}>
                   <TableBComponent><span>{cursosText(curso)}</span></TableBComponent>
-                  <TableBComponent><span>{expireFormate(curso?.expireDate)}</span></TableBComponent>
+                  <TableBComponent><span>{curso?.expireDate?expireFormate(curso?.expireDate):'- - - - -'}</span></TableBComponent>
                   <TableBComponent><span>{setStatus(curso?.status,isExpired)}</span></TableBComponent>
                   <TableBComponent>
                     <PercentageView percentage={setPercentage(curso.percentage,isExpired)}>

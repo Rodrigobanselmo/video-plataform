@@ -6,15 +6,15 @@
 import { useMutation } from 'react-query';
 import { v4 } from 'uuid';
 import { useHistory } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext.js';
-import { useLoaderDashboard } from '../../../context/LoadDashContext.js';
-import { useNotification } from '../../../context/NotificationContext.js';
-import { db } from '../../../lib/firebase.prod.js';
-import { errorCatchFirestore } from '../../error.js';
-import { queryClient } from '../../queryClient.js';
-import { VIDEO_ROUTE } from '../../../routes/routesNames.js';
+import { useAuth } from '../../../../context/AuthContext';
+import { useLoaderDashboard } from '../../../../context/LoadDashContext.js';
+import { useNotification } from '../../../../context/NotificationContext.js';
+import { db } from '../../../../lib/firebase.prod.js';
+import { errorCatchFirestore } from '../../../error.js';
+import { queryClient } from '../../../queryClient.js';
+import { VIDEO_ROUTE } from '../../../../routes/routesNames.js';
 
-export async function setStudent(data: any, currentUser: any) {
+export async function setExpire(data: any, currentUser: any) {
   // data = array of users {}
   const userId = currentUser?.uid;
   const userRef = db.doc(`users/${userId}`);
@@ -35,7 +35,7 @@ export async function setStudent(data: any, currentUser: any) {
       // se qunatity dentro do curso for numero
       newCursos[index] = {
         ...newCursos[index],
-        quantity: newCursos[index].quantity ? newCursos[index].quantity - 1 : 0,
+        quantity: newCursos[index].quantity - 1,
       };
     newCursos[index].status = 'started';
     newCursos[index].percentage = 0;
@@ -72,7 +72,7 @@ export async function setStudent(data: any, currentUser: any) {
       status: 'started',
       percentage: 0,
       startDate: new Date().getTime(),
-      expireDate: data.daysToExpire ? expireDate : 0,
+      expireDate,
       finishedDate: false,
       cursoId: curso.id,
       modules: 'all',
@@ -95,21 +95,6 @@ export async function setStudent(data: any, currentUser: any) {
     const index = cursos.findIndex((i: any) => i.id === data.id);
     if (index >= 0) {
       // se index existir
-      if (
-        // curso expirado
-        cursos[index]?.expireDate &&
-        cursos[index].expireDate > new Date().getTime()
-      ) {
-        if (cursos[index]?.status === 'finished') {
-          return { cursoId: cursos[index].id };
-        }
-        console.log('expired');
-        const response = await onAddCurso({ cursos, index }); // se o curso existe e possui quantidade maior que 0 ele vai criar students e remover uma unidade de curso
-        return response;
-      }
-      if (cursos[index]?.status === 'finished' && !cursos[index]?.expireDate) {
-        return { cursoId: cursos[index].id };
-      }
       if (cursos[index]?.status === 'started') {
         // TODO: aqui vai ter que ver como fazer qunado finalizar curso
         console.log('started');
@@ -143,13 +128,13 @@ export async function setStudent(data: any, currentUser: any) {
   return { error: 'Você não possui este curso.' };
 }
 
-export function useStartCurso() {
+export function useExpireCurso() {
   const notification = useNotification();
   const { setLoaderDash } = useLoaderDashboard();
   const history = useHistory();
   const { currentUser, setCurrentUser } = useAuth();
 
-  return useMutation(async (data) => setStudent(data, currentUser), {
+  return useMutation(async (data) => setExpire(data, currentUser), {
     onSuccess: async (data: any) => {
       // console.log(data)
       if (data?.newCursos) {

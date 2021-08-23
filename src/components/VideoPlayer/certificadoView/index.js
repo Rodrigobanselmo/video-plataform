@@ -11,6 +11,8 @@ import CloseIcon from '@material-ui/icons/Close';
 import { fade, lighten, darken } from '@material-ui/core/styles';
 import { GiPartyPopper } from 'react-icons/gi';
 import { Rating } from 'react-simple-star-rating'
+import { db } from '../../../lib/firebase.prod.js';
+import { useAuth } from '../../../context/AuthContext';
 
 const TestWrapper = styled.div`
   /* position: absolute; */
@@ -90,19 +92,23 @@ export const TextArea = styled.textarea`
 
 export function CertificadoView({
   curso,
+  student
 }) {
 
   // const { cursoId,moduleId,classId } = useParams();
   // const mutation = useUpdateCurso(cursoId)
   // const [open, setOpen] = useState(false)
+  const {currentUser} = useAuth();
+  const reviewsRef = db.collection('curso').doc(curso.id).collection('reviews');
+
   const [rating, setRating] = useState(0) // initial rating value
+  const [textValue, setTextValue] = useState('') // initial rating value
 
   // Catch Rating value
   const handleRating = (rate) => {
     setRating(rate)
     // Some logic
   }
-
 
   function handleDownloadMaterial() {
     console.log('curso',curso)
@@ -122,6 +128,25 @@ export function CertificadoView({
     link.parentNode?.removeChild(link);
   }
 
+  const handleFinishedCourse = async () => {
+
+    const data = {
+      rating,
+      text:textValue,
+      id:currentUser.uid,
+      studentId:student.id,
+
+    }
+
+    console.log(data,student)
+    if (rating || textValue) {
+      await reviewsRef.doc(currentUser.uid+'--'+student.id).set(data);
+    }
+
+    return
+
+  }
+
   return (
     <TestWrapper >
 
@@ -131,9 +156,10 @@ export function CertificadoView({
       </TitleView>
 
       <InfoWrapper>
-        <p>Parabens por ter finalizado o curso e muito obrigaod por ter confiando em nós, Realiza, para ficarmo responsavel por seu aprendizado.</p>
-        <p>Este curso ainda estará disponivel para visualizar por mais 7 dias.</p>
-        <p>Seu certificado já foi enviado para ser assinado por nossos instrutores  e avisaremos você por email quando estiver tudo certo. Ele tambem poderá ser encontrado na parte inferior da area de cursos da plataforma.</p>
+        <p> Parabens por ter finalizado o curso e muito obrigado por ter confiando em nós, Realiza, para ficarmo responsavel por seu aprendizado.</p>
+        {curso?.accessTimeAfter ? <p>Este curso ainda estará <b>disponivel para visualizar por mais {curso.accessTimeAfter} dias.</b></p> : ''}
+        <p> Seu certificado já foi enviado para ser assinado por nossos instrutores  e avisaremos você por email quando estiver tudo certo. Seu certificado poderá também ser encontrado na parte inferior da área de cursos da plataforma.</p>
+        {curso.cursoValidation ? <p>O certificado deste curso é <b>válido por {curso.cursoValidation} {curso.cursoValidation==1?'mês':'meses'}</b></p>:null}
       </InfoWrapper>
       <p>Ainda não baixou nosso material didatico?</p>
       <ButtonForm
@@ -149,12 +175,14 @@ export function CertificadoView({
       <TextStars>Avaliar curso:</TextStars>
       <Rating onClick={handleRating} ratingValue={rating}/>
       <TextArea
+        onChange={(e)=>setTextValue(e.target.value)}
+        value={textValue}
         placeholder='Descreva o motivo de sua nota'
       />
       <p>Qualquer dúvida entre em contato com nosso suporte</p>
       <ButtonForm
         // loading={mutation.isLoading}
-        onClick={handleDownloadMaterial}
+        onClick={handleFinishedCourse}
         justify="flex-end"
         primary="true"
         style={{ width: '200px' }}

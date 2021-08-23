@@ -101,9 +101,13 @@ export const ModalCreateCurso = ({
     const initialData = {
       main: {
         id,
-        published: false,
+        published: 0,
         daysToExpire: '',
         duration: '',
+        accessTimeAfter: '',
+        validSignature: false,
+        answerEmail: '',
+        certificationEmail: '',
         name: '',
         image: '',
         modules: [],

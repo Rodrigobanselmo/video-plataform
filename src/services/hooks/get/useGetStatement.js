@@ -12,9 +12,9 @@ export async function getStatement(newUser) {
 
   let response = [];
   if (user?.companyId) {
-    response = await statementRef.where('companyId', '==', user.companyId).orderBy('created_at', 'desc').get()
+    response = await statementRef.where('companyId', '==', user.companyId).orderBy('created_at', 'desc').limit(6).get()
   } else {
-    response = await statementRef.where('customerId', '==', user.uid).orderBy('created_at', 'desc').get()
+    response = await statementRef.where('customerId', '==', user.uid).orderBy('created_at', 'desc').limit(6).get()
   }
   const arrayData = [];
   console.log('refreshLink')
