@@ -48,8 +48,7 @@ const Header = styled.div`
   align-items:center;
 `;
 
-const HeaderComponent = React.memo(({icons, title,path, video=false,subTitle}) => {
-    console.log('header')
+const HeaderComponent = React.memo(({icons, title,path=false, video=false,subTitle}) => {
     const [open, setOpen] = React.useState(false) //dados dos email inseridos nos inputs
 
     return (

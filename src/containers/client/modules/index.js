@@ -94,6 +94,7 @@ export default function Video() {
     console.log('modules',modules)
     const isLoadFinished = !isLoading
     const isStudent = curso && student && student.length > 0
+    console.log('student',student)
     const isExpired = isStudent && student[0]?.expireDate && student[0].expireDate < new Date().getTime()
     // const isExpired = isStudent && student[0]?.expireDate && student[0].expireDate > new Date().getTime()
     if (isExpired) {
@@ -116,7 +117,7 @@ export default function Video() {
 
   useEffect(() => {
     console.log('modules finished')
-    if (modules.percentage == 1) console.log('finished')
+    if (modules?.percentage && modules?.percentage == 1) console.log('finished')
   }, [modules])
 
   return (

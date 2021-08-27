@@ -19,11 +19,16 @@ import { LoaderContext } from './context/LoadDashContext';
 import { LoaderDashboard } from './components/Main/Loader/index';
 import { ReactQueryDevtools } from 'react-query/devtools'
 import { queryClient } from './services/queryClient';
+import { WidgetComponent } from './components/Widget';
+import { Seed } from './seed';
+import { LogOut } from './services/firebaseAuth';
 
 const ThemeColor = createMuiTheme(themeColor);
 
+
 export const App = () => (
   <QueryClientProvider client={queryClient}>
+    {/* <Seed/> */}
     <MuiPickersUtilsProvider locale={ptBR} utils={DateFnsUtils}>
       <MuiThemeProvider theme={ThemeColor}>
         <ThemeProvider theme={ThemeColor}>
@@ -38,6 +43,7 @@ export const App = () => (
                           <RouteComponent key={route.path} {...route} />
                         ))}
                       </Switch>
+                      <WidgetComponent/>
                     </AuthProvider>
                   </Router>
                   <GlobalStyle />

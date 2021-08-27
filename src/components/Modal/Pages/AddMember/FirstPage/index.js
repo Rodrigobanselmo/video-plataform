@@ -271,8 +271,9 @@ export function FirstPageAddModal({setPosition,onEnd, isNewClient:isNew, update}
   // const {setLoad} = useLoaderScreen();
   const notification = useNotification();
 
+
   const [load, setLoad] = useState(false);
-  const [emails, setEmails] = useState(update?[]:['', '']);
+  const [emails, setEmails] = useState(update?[]:['']);
   const { isBilling, totalPrice, setCheckoutInfo, dataUser, setDataUser, cursos, setCursos, permissions, setPermissions, credit, prices, setPrices, fieldEdit, setFieldEdit } = useSellingData()
 
   function isCursoSelected(message) {
@@ -321,12 +322,12 @@ export function FirstPageAddModal({setPosition,onEnd, isNewClient:isNew, update}
         });
       }
 
-      if (!isSelected) {
-        return createError({
-          path,
-          message: message ?? 'selecione ao menos um curso para este membro',
-        });
-      }
+      // if (!isSelected) {
+      //   return createError({
+      //     path,
+      //     message: message ?? 'selecione ao menos um curso para este membro',
+      //   });
+      // }
 
       return true;
     });

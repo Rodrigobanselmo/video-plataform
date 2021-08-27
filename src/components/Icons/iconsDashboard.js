@@ -53,6 +53,7 @@ import CameraAltOutlinedIcon from '@material-ui/icons/CameraAltOutlined';
 import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import {FiUser as Avatar } from 'react-icons/fi';
+import ChatIcon from '@material-ui/icons/Chat';
 // import Avatar from '@material-ui/icons/PersonOutlineOutlined';
 import Facebook from '@material-ui/icons/Facebook';
 import WhatsApp from '@material-ui/icons/WhatsApp';
@@ -60,6 +61,9 @@ import YouTube from '@material-ui/icons/YouTube';
 import LinkedIn from '@material-ui/icons/LinkedIn';
 import Twitter from '@material-ui/icons/Twitter';
 import Instagram from '@material-ui/icons/Instagram';
+
+import EmailIcon from '@material-ui/icons/Email';
+
 
 import OfflineBoltTwoToneIcon from '@material-ui/icons/OfflineBoltTwoTone';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
@@ -76,6 +80,14 @@ import { BsCheckCircle,BsExclamationTriangle,BsXOctagon,BsInfoCircle } from 'rea
 
 export const Icons = ({ type, ...props }) => {
   switch (type) {
+
+
+    case 'Email':
+      return <EmailIcon {...props} />;
+    case 'Chat':
+      return <ChatIcon {...props} />;
+
+
     case 'Twitter':
       return <Twitter {...props} />;
     case 'Instagram':
@@ -123,6 +135,7 @@ export const Icons = ({ type, ...props }) => {
       return (<Erg  height="20px" width="20px"  {...props}/>);
     case 'Aci':
       return (<Aci  height="20px" width="20px" {...props} />);
+
 
 
     case 'Administrative':

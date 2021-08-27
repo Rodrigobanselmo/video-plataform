@@ -69,7 +69,7 @@ export const DivBar = styled.div`
       background-image: linear-gradient(130deg, #5bc0de, #4e91d4);
   `}
   ${props => props.type =='simple' && css`
-      background-image: linear-gradient(130deg, #f7600d, #b03f0b);
+      background-image: linear-gradient(130deg, #cb0535, #820924);
   `}
 
 `;

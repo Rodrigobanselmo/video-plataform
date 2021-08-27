@@ -33,7 +33,6 @@ function getActivity(docData) {
 export async function getUsers(companyId,limit) {
   const usersRef = db.collection('users');
   const invitesRef = db.collection('invites');
-  console.log('refresh')
 
   const inviteResponse = await invitesRef.where('companyId', '==', companyId).limit(limit?limit:5).get()
   const inviteData = [];

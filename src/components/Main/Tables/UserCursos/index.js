@@ -17,6 +17,29 @@ import Collapse from '@material-ui/core/Collapse';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { PERMISSIONS } from '../../../../constants/geral';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import { useDownloadCertification } from '../../../../services/hooks/http/useDownloadCertification';
+import CircularProgress from '@material-ui/core/CircularProgress';
+
+const Certification = styled.div`
+
+  display:flex;
+  width:fit-content;
+  min-width:fit-content;
+  gap:10px;
+  cursor:pointer;
+
+  p {
+    width:fit-content;
+    min-width:fit-content;
+  }
+
+  svg {
+    color: #999;
+    font-size: 1.1rem;
+  }
+`;
+
 
 const Table = styled.div`
   min-width:1100px;
@@ -109,17 +132,6 @@ const PercentageView = styled.div`
 
 `;
 
-
-
-const IconArrowDown = styled(KeyboardArrowDownIcon)`
-  color: ${({theme})=>theme.palette.text.secondary};
-  transform: rotate(${({close})=>close?0:180}deg);
-`;
-
-const IconDelete = styled(DeleteOutlineIcon)`
-  color: ${({theme})=>theme.palette.text.secondary};
-`;
-
 const cursosText = (curso) => {
   if (curso?.epi) {
     const epis = curso.epi.map(epi=>{
@@ -142,6 +154,7 @@ const setStatus = (status,isExpired) => {
   if (!status) return 'Não iniciado'
   if (isExpired) return 'Curso expirado'
   if (status === 'started') return 'Cursando'
+  if (status === 'finished') return 'Finalizado'
   // TODO ver o que fazer depois de finalizar
 }
 
@@ -155,6 +168,13 @@ const setPercentage = (percentage,isExpired) => {
 export function UserCursosTable({data}) {
 
   const DATA = data
+  const downloadCertificate = useDownloadCertification();
+
+  const handleDownloadCertificate = (studentId) => {
+    if (downloadCertificate.isLoading) return null
+    downloadCertificate.mutateAsync(studentId)
+  }
+
 
   return (
     <>
@@ -169,16 +189,27 @@ export function UserCursosTable({data}) {
           <TableBody>
             {data.map((curso) => {
               const isExpired = curso?.expireDate ? new Date().getTime() > (curso?.expireDate ?? 0) : false
+              const status = setStatus(curso?.status,isExpired)
+              const percentage = setPercentage(curso.percentage,isExpired)
 
               return (
                 <TableRow key={curso.id}>
                   <TableBComponent><span>{cursosText(curso)}</span></TableBComponent>
                   <TableBComponent><span>{curso?.expireDate?expireFormate(curso?.expireDate):'- - - - -'}</span></TableBComponent>
-                  <TableBComponent><span>{setStatus(curso?.status,isExpired)}</span></TableBComponent>
+                  <TableBComponent><span>{status}</span></TableBComponent>
                   <TableBComponent>
-                    <PercentageView percentage={setPercentage(curso.percentage,isExpired)}>
-                      <p>{setPercentage(curso.percentage,isExpired)}%</p>
+                    <PercentageView percentage={percentage}>
+                      <p>{percentage}%</p>
                       <div className='percentage'/>
+                      {status === 'Finalizado' &&
+                        <Certification onClick={()=>handleDownloadCertificate(curso.studentId)}>
+                          {downloadCertificate.isLoading?
+                          <CircularProgress size={18}/>
+                          :
+                          <GetAppIcon/>}
+                          <p>Certificado</p>
+                        </Certification>
+                      }
                     </PercentageView>
                   </TableBComponent>
                 </TableRow>

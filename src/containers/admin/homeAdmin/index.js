@@ -180,8 +180,9 @@ export default function Video() {
       console.log(1)
       saveAs(pdfBlob, 'newPdf.pdf');
     }).catch(async error=>{
-      const errorString = JSON.parse(await error.response.data.text());
-      console.log(errorString.message)
+      // const errorString = JSON.parse(await error.response.data.text());
+      // console.log(errorString.message)
+      console.log(error)
     })
   }
 

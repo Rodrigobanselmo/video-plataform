@@ -9,6 +9,18 @@ export const itemsProfile = [
       onClick: 'perfil'
     },
     {
+      text: "Central de e-mails",
+      icon: 'Email',
+      visible:['ea'],
+      onClick: 'email'
+    },
+    {
+      text: "Chat de Alunos",
+      visible:['ea','su'],
+      icon: 'Chat',
+      onClick: 'chat'
+    },
+    {
       text: "Fatura",
       icon: 'History',
       visible:['co'],

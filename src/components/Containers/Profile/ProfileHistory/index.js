@@ -28,7 +28,6 @@ export function ProfileHistory({user}) {
 
   const { data, isLoading } = useUserHistory(user)
 
-  console.log(data)
 
   return (
     <Container>

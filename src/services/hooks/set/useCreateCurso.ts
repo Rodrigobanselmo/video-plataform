@@ -28,13 +28,11 @@ export async function setCreateCurso(data: any) {
   const cursoRef = db.collection('curso');
   const batch = db.batch();
 
-  console.log('data', data);
   // upload image
   if (data?.main) batch.set(cursoRef.doc(data.main.id), data.main);
   if (data?.draft)
     batch.set(cursoRef.doc(`${data.main.id}-editorState`), data.draft);
 
-  console.log('setCreateCurso', data);
   await batch.commit();
 
   return data;
@@ -64,7 +62,6 @@ export function useCreateCurso() {
         if (!edited) newData.push(main);
         if (!edited) newData.push(draft);
 
-        console.log(`newData`, newData);
         return newData;
       });
       return data;

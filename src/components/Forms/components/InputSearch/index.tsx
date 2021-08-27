@@ -101,7 +101,6 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, IInputProps> = (
     onClearDebounce();
     setIsLoading(false);
     onClose();
-    console.log(23);
   }
 
   function onHandleSelect(item: IOptions) {

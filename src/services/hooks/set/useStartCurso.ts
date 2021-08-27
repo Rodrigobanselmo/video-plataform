@@ -22,8 +22,6 @@ export async function setStudent(data: any, currentUser: any) {
   const batch = db.batch();
   const userSnap = await userRef.get();
 
-  console.log('data student', data);
-
   async function onAddCurso({ cursos, index }: any) {
     // criar students e remover uma unidade de curso
     const today = new Date(new Date().setHours(23, 59, 0, 0));
@@ -103,7 +101,6 @@ export async function setStudent(data: any, currentUser: any) {
         if (cursos[index]?.status === 'finished') {
           return { cursoId: cursos[index].id };
         }
-        console.log('expired');
         const response = await onAddCurso({ cursos, index }); // se o curso existe e possui quantidade maior que 0 ele vai criar students e remover uma unidade de curso
         return response;
       }
@@ -112,7 +109,6 @@ export async function setStudent(data: any, currentUser: any) {
       }
       if (cursos[index]?.status === 'started') {
         // TODO: aqui vai ter que ver como fazer qunado finalizar curso
-        console.log('started');
         return { cursoId: cursos[index].id };
       }
       if (cursos[index]?.quantity) {
@@ -167,7 +163,6 @@ export function useStartCurso() {
       }
 
       setLoaderDash(false);
-      console.log('userMutation', { ...data });
     },
     onError: (error) => {
       console.log('error onError', error);

@@ -73,7 +73,6 @@ export async function CreateEmail(
 ) {
 
   try {
-    console.log('linkData',linkData)
     if (linkData !== false) {
       const linkRef = db.collection('links').doc(linkData.docId);
       await linkRef.update({email})

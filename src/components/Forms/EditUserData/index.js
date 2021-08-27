@@ -151,7 +151,6 @@ const Item = styled.button`
 const EditUserDataComponent = ({ formRef, emails, setEmails, isClient  }) => { //fieldEdit, setFieldEdit, setCursos, setPermissions, setDataUser
 
   const URL = 'link-url';
-  const location = `${window.location.origin}${SIGN}?code=`;
   const notification = useNotification()
   const {currentUser} = useAuth()
   const { fieldEdit, setFieldEdit, onCalcUserPrice, setCredit, setPrices, setCursos, setPermissions, setDataUser, dataUser, permissions, cursos } = useSellingData()
@@ -163,33 +162,7 @@ const EditUserDataComponent = ({ formRef, emails, setEmails, isClient  }) => { /
   }
 
   function handleChange(e, index) {
-    if (emails[index].includes(URL)) return;
-    if (!e.target.value) {
-      setDataUser(oldData => {
-        const newData = { ...oldData };
-        Object.keys(oldData).map((key) => {
-          if (key.split('--')[0] === index.toString()) delete newData[key];
-        });
-        return newData
-      });
-
-      setCursos(oldCursos => {
-        const newCursos = { ...oldCursos };
-        Object.keys(oldCursos).map((key) => {
-          if (key.split('--')[0] === index.toString()) delete newCursos[key];
-        });
-        return newCursos
-      });
-
-      setPermissions(oldPermissions => {
-        const newPermissions = { ...oldPermissions };
-        Object.keys(oldPermissions).map((key) => {
-          if (key.split('--')[0] === index.toString()) delete newPermissions[key];
-        });
-        return newPermissions
-      });
-    }
-    setFieldEdit((email) => ({ ...email, value: e.target.value }));
+    return
   }
 
   function handleDeleteMember(index) {
@@ -206,11 +179,9 @@ const EditUserDataComponent = ({ formRef, emails, setEmails, isClient  }) => { /
         // delete newData[key]
         const keySplit = key.split('--')
         const firstSplit = Number(keySplit.splice(0,1))
-        console.log('keySplit',keySplit,firstSplit)
         if (firstSplit < index.toString()) newData[key] = oldData[key];
         if (firstSplit > index.toString()) newData[[Number(firstSplit-1),...keySplit].join('--')] = oldData[key];
       });
-      console.log('newDataemailsemailsemailsemailsemailsemailsemails',oldData,newData)
       return newData
     });
 
@@ -219,7 +190,6 @@ const EditUserDataComponent = ({ formRef, emails, setEmails, isClient  }) => { /
       Object.keys(oldCursos).map((key) => {
         const keySplit = key.split('--')
         const firstSplit = Number(keySplit.splice(0,1))
-        console.log('keySplit',keySplit,firstSplit)
         if (firstSplit < index.toString()) newCursos[key] = oldCursos[key];
         if (firstSplit > index.toString()) newCursos[[Number(firstSplit-1),...keySplit].join('--')] = oldCursos[key];
       });
@@ -232,7 +202,6 @@ const EditUserDataComponent = ({ formRef, emails, setEmails, isClient  }) => { /
       Object.keys(oldPermissions).map((key) => {
         const keySplit = key.split('--')
         const firstSplit = Number(keySplit.splice(0,1))
-        console.log('keySplit',keySplit,firstSplit)
         if (firstSplit < index.toString()) newPermissions[key] = oldPermissions[key];
         if (firstSplit > index.toString()) newPermissions[[Number(firstSplit-1),...keySplit].join('--')] = oldPermissions[key];
       });
@@ -300,18 +269,13 @@ const EditUserDataComponent = ({ formRef, emails, setEmails, isClient  }) => { /
     setEmails(newEmail)
     setFieldEdit({ value:value.email, index: indexAdded.toString() });
     onClose()
-    console.log(value)
   }
-  console.log(permissions)
-
-
 
   const filter = async (data,search) => {
 
     // filter with server search
     if (isClient) {
       const newData = await mutationSearch.mutateAsync(search)
-      console.log('data',newData, search)
       return newData
     }
 

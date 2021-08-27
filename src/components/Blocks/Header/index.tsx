@@ -56,7 +56,7 @@ const Header = styled.div`
 `;
 
 interface IHeader {
-  video: boolean;
+  video?: boolean;
   title: string;
   subTitle?: string[] | string;
   path?: string;
@@ -65,7 +65,6 @@ interface IHeader {
 
 export const HeaderComponent = React.memo(
   ({ title, path, video = false, subTitle, icon }: IHeader) => {
-    console.log('header');
     const [open, setOpen] = React.useState(false); // dados dos email inseridos nos inputs
 
     return (

@@ -13,6 +13,9 @@ import { GiPartyPopper } from 'react-icons/gi';
 import { Rating } from 'react-simple-star-rating'
 import { db } from '../../../lib/firebase.prod.js';
 import { useAuth } from '../../../context/AuthContext';
+import { useDownloadCertification } from '../../../services/hooks/http/useDownloadCertification';
+import { useHistory } from 'react-router-dom';
+import { CURSOS } from '../../../routes/routesNames';
 
 const TestWrapper = styled.div`
   /* position: absolute; */
@@ -99,10 +102,13 @@ export function CertificadoView({
   // const mutation = useUpdateCurso(cursoId)
   // const [open, setOpen] = useState(false)
   const {currentUser} = useAuth();
+  const history = useHistory();
   const reviewsRef = db.collection('curso').doc(curso.id).collection('reviews');
 
   const [rating, setRating] = useState(0) // initial rating value
   const [textValue, setTextValue] = useState('') // initial rating value
+
+  const downloadCertificate = useDownloadCertification()
 
   // Catch Rating value
   const handleRating = (rate) => {
@@ -128,6 +134,11 @@ export function CertificadoView({
     link.parentNode?.removeChild(link);
   }
 
+  function handleDownloadCertificate() {
+
+    downloadCertificate.mutateAsync(student.id)
+  }
+
   const handleFinishedCourse = async () => {
 
     const data = {
@@ -143,7 +154,7 @@ export function CertificadoView({
       await reviewsRef.doc(currentUser.uid+'--'+student.id).set(data);
     }
 
-    return
+    return history.push(CURSOS)
 
   }
 
@@ -173,22 +184,36 @@ export function CertificadoView({
       </ButtonForm>
 
       <TextStars>Avaliar curso:</TextStars>
-      <Rating onClick={handleRating} ratingValue={rating}/>
+      <Rating emptyColor='#ffffff55' onClick={handleRating} ratingValue={rating}/>
       <TextArea
         onChange={(e)=>setTextValue(e.target.value)}
         value={textValue}
         placeholder='Descreva o motivo de sua nota'
       />
       <p>Qualquer dúvida entre em contato com nosso suporte</p>
-      <ButtonForm
-        // loading={mutation.isLoading}
-        onClick={handleFinishedCourse}
-        justify="flex-end"
-        primary="true"
-        style={{ width: '200px' }}
-      >
-        Concluir
-      </ButtonForm>
+      <div style={{display:'flex', justifyContent: 'flex-end'}}>
+
+        <ButtonForm
+          // loading={mutation.isLoading}
+          onClick={handleDownloadCertificate}
+          justify="flex-end"
+          primary="outlined"
+          loading={downloadCertificate.isLoading}
+          style={{ flex:100 }}
+          >
+          Baixar Certificado
+        </ButtonForm>
+        <ButtonForm
+          // loading={mutation.isLoading}
+          onClick={handleFinishedCourse}
+          justify="flex-end"
+          primary="true"
+          style={{ width: '100px',marginLeft:'10px', flex:0  }}
+          width='fit-content'
+          >
+          Concluir
+        </ButtonForm>
+      </div>
     </TestWrapper>
   )
 }

@@ -136,7 +136,7 @@ export default function Input({validation=false,status='normal',icon='Info',widt
     );
 }
 
-export function InputEnd({validation=false,iconStart,titleStart='',statusStart,option=false,marginTop=10,marginBottom=10,labelWidth,label,status='Normal',icon='Info',width='100%',title='OK',iconProps,...props}) {
+export function InputEnd({validation=false,iconStart=null,titleStart='',statusStart=null,option=false,marginTop=10,marginBottom=10,labelWidth=null,label=null,status='Normal',icon='Info',width='100%',title='OK',iconProps=null,...props}) {
 
   const startInd = statusStart?{
     startAdornment:(
@@ -226,7 +226,7 @@ export function SelectedEnd({selected,setData,sliceItems=false,label,data=[],mar
     );
 }
 
-export function InputUnform({formstyle,endComponent:EndComponent,startComponent:StartComponent,onChange,iconStart,statusStart,variant,positionIcon='end',name,validation=false,option=false,titleStart='',marginTop=0,marginBottom=0,labelWidth,label,status,icon,width='100%',title='',...props}) {
+export function InputUnform({formstyle=null,endComponent:EndComponent=null,startComponent:StartComponent=null,onChange=null,iconStart=null,statusStart=null,variant=null,positionIcon='end',name=null,validation=false,option=false,titleStart='',marginTop=0,marginBottom=0,labelWidth=null,label=null,status=null,icon=null,width='100%',title='',...props}) {
 
   const fieldRef = useRef()
   const inputRef = useRef()

@@ -87,7 +87,7 @@ export function SideEmail({ isNewClient }) {
 
   const isAdmin = currentUser?.access === 'admin'
   const isUrl = fieldEdit.value && fieldEdit.value.includes(SIGN);
-  const isCNPJ =  permissions[(`${fieldIndex}--co`)]
+  const isCNPJ =  permissions[(`${fieldIndex}--co`)] && !permissions[(`${fieldIndex}--coea`)]
 
   const price = prices[fieldIndex]
   // const price = isBilling ? prices[fieldIndex] : 0
@@ -111,12 +111,13 @@ export function SideEmail({ isNewClient }) {
             setDataUser={setDataUser}
           />
         )}
-        {isAdmin && <PermissionSelect
+        <PermissionSelect
           fieldEdit={fieldEdit}
           setPermissions={setPermissions}
           permissions={permissions}
           isNewClient={isNewClient}
-        />}
+          isAdmin={isAdmin}
+        />
           {/* {isAdmin && (
             <TitleSection isAddClient={isAddClient}>Cursos</TitleSection>
           )} */}

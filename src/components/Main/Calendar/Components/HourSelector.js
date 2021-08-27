@@ -21,8 +21,6 @@ export default function TimePickers({min,setMin,hour,setHour,text}) {
   const onTime = (value) => {
     setHour(parseInt(value.split(':')[0]))
     setMin(parseInt(value.split(':')[1]))
-    console.log(parseInt(value.split(':')[0]))
-    console.log(parseInt(value.split(':')[1]))
   }
 
   // console.log(`${hour.toString().length==1?'0':''}${hour}:${min.toString().length==1?'0':''}${min}`)

@@ -77,7 +77,6 @@ export async function setUser(user: any) {
         billId: doc.data()?.uid,
       };
     });
-    console.log('docId', docId);
     batch.delete(linksRef.doc(docId));
     // if (docId) batch.delete(linksRef.doc(docId));
   }
@@ -97,7 +96,6 @@ export function useCreateUser(setCurrentUser: any) {
     onSuccess: async (data: any) => {
       setCurrentUser(data);
       setLoaderDash(false);
-      console.log('userMutation', { ...data });
 
       if (data?.newUser) {
         setTimeout(() => {

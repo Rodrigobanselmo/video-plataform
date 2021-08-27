@@ -19,7 +19,7 @@ import {FormLabel,PoliticsContainer} from './styles'
 export default function PageWrapper({children, ...restProps }) {
     return (
         <Page {...restProps}>
-          <Container> 
+          <Container>
             {children}
           </Container>
         </Page>
@@ -50,24 +50,23 @@ PageWrapper.IconBack =  function Header({setPosition,setInfoModal}) {
 
 PageWrapper.Header =  function Header(props) {
   return(
-    <HeaderPage className={'center'}> 
-      {props.second ? 
+    <HeaderPage className={'center'}>
+      {props.second ?
         <Title>Politicas de Privacidade</Title>
-      : 
+      :
       <>
         <Title >Dados Pessoais</Title>
         <SubTitle>Preencha com seus dados pessoais para prosseguir</SubTitle>
       </>
     }
     </HeaderPage>
-    
+
   )
 }
 
 PageWrapper.Input =  function EmailInput({setData,data}) {
 
   const inputChange = (index) => (event) => {
-    console.log(event.target.value)
     let allData = [...data]
     if(index===2) {
         if(TotalNumVerification(event.target.value,11)) {
@@ -106,19 +105,19 @@ PageWrapper.Input =  function EmailInput({setData,data}) {
   return(
     <InputsContainer>
       {data.map((item,index)=>(
-        <Input 
-            key={index} 
-            status={item?.status && item.status} 
-            icon={item?.status && item.status}  
+        <Input
+            key={index}
+            status={item?.status && item.status}
+            icon={item?.status && item.status}
             required={item?.required?item.required:false}
-            onBlur={({target})=>check(index,target.value)} 
-            onChange={inputChange(index)} 
-            size={'small'} 
+            onBlur={({target})=>check(index,target.value)}
+            onChange={inputChange(index)}
+            size={'small'}
             inputProps={{style: {textTransform: 'capitalize'}}}
             label={item.name}
             title={item.message}
-            placeholder={item.placeholder} 
-            variant="outlined"  
+            placeholder={item.placeholder}
+            variant="outlined"
             validation={(item && item?.status && (item.status === 'Check' || item.status === 'Warn' || item.status === 'Load'))}
         />
       ))}
@@ -129,7 +128,7 @@ PageWrapper.Input =  function EmailInput({setData,data}) {
 PageWrapper.Continue =  function Continue({data,setPosition,second,onAddData,checked,position=false}) {
 
   function disable() {
-      
+
     let resp = false
     if (position) {
       resp = checked?false : true
@@ -147,7 +146,7 @@ PageWrapper.Continue =  function Continue({data,setPosition,second,onAddData,che
 
   return(
     <ContinueButton primary={'true'} onClick={second?onAddData:onClickContinue} size={'medium'} disable={`${disable()}`}>
-      {second ? 
+      {second ?
       <p>Confirmar</p>
       :
       <p>Continuar</p>
@@ -157,7 +156,7 @@ PageWrapper.Continue =  function Continue({data,setPosition,second,onAddData,che
 }
 
 PageWrapper.Politics =  function Continue({setChecked,checked}) {
-  
+
   const handleChange = (event) => {
     setChecked(event.target.checked);
   };

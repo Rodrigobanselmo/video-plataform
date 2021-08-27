@@ -5,9 +5,9 @@ import {DivItem,DivBar,DivItemModal,Icon} from './styles'
 
 const IconSimple = styled.img`
   height:26px;
-  width:26px;
   resize:cover;
   margin:13px;
+  object-fit: cover;
   align-self:center;
 `;
 
@@ -90,7 +90,7 @@ const Notification = props => {
     : props.type === 'warn' ?
     <IconWarn/>
     : props.type === 'simple' ?
-    <IconSimple src='/images/logoIcon.svg'/>
+    <IconSimple src='/images/iconRealiza.png'/>
     : null
     }
     <p>{props.message}</p>

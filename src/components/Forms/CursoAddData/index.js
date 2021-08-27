@@ -23,7 +23,7 @@ const Label = styled.p`
 export const FormLabel = styled(FormControlLabel)`
   color: ${({theme})=>theme.palette.text.primary};
   align-self: flex-start;
-  margin-bottom: 0px;
+  margin-bottom: 10px;
   margin-left: 20px;
 `;
 export const CursoAddData = ({initialData = {}, refInputData}) => {

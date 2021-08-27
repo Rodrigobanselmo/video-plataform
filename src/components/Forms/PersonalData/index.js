@@ -21,6 +21,7 @@ const AvatarInput = styled.div`
     height: 186px;
     border-radius: 50%;
     cursor: pointer;
+    object-fit: cover;
   }
   div {
     width: 186px;
@@ -110,7 +111,6 @@ export function PersonalData({ onUploadProfile,setUnform,unform,notification}) {
       if (!value) return true;
       let isCpfValidOrNull = false;
 
-      console.log('value',value)
       if (TestaCPF(keepOnlyNumbers(value)))
         isCpfValidOrNull = true;
 
@@ -138,7 +138,6 @@ export function PersonalData({ onUploadProfile,setUnform,unform,notification}) {
       if (isProfessional) return notification.warn({message:`Cadastre uma foto de perfil para continuar.`})
       if (!value||(value&&value.length<6)) return notification.warn({message:`Número de celular vazio ou inválido.`})
       setUnform({...unform,...formData,cell:value})
-      console.log('submitted: ', formData)
     } catch (error) {
       const errors = {}
       error?.inner?.forEach((err) => {
@@ -161,7 +160,6 @@ export function PersonalData({ onUploadProfile,setUnform,unform,notification}) {
   function onCLick() {
     document.getElementById('avatarInput').click();
   }
-  console.log(unform)
   return(
     <InputsContainer>
       <FormContainer

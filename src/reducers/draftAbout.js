@@ -6,7 +6,6 @@ export default (state = initialState, action) => {
 
     switch(action.type) {
         case 'DRAFT_ABOUT':
-          console.log(`action.payload`, action.payload)
         return action.payload;
 
         case 'DRAFT_ABOUT_RESET':

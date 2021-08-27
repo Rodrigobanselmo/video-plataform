@@ -20,7 +20,6 @@ function SignInPage() {
 
   React.useEffect(() => {
     setLoad(false)
-    console.log('diyuy')
   }, [])
 
   function name(params) {
@@ -33,7 +32,6 @@ function SignInPage() {
     })
     // notification.success({message:'Usuário criado com sucesso'})
   }
-    console.log('diyuy')
 
   return (
     <Div>

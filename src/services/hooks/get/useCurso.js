@@ -14,8 +14,6 @@ export async function getCurso(cursoId) {
     else array[0] = doc.data()
   })
 
-  console.log('refresh curso')
-
   return [...array]
 }
 

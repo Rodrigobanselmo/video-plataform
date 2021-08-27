@@ -10,12 +10,14 @@ import {
   CursoCreate,
   Perfil,
   Statement,
+  Chat,
 
   Download,
   Calendar,
   AllClients,
   CalendarConector,
   Profession,
+  Notifications
 } from '../containers';
 import {
   HOME_ADMIN,
@@ -37,6 +39,8 @@ import {
   ADMIN_PERFIL_EDIT,
   CALENDAR_CONECTOR,
   DOWNLOAD,
+  NOTIFICATIONS_EMAIL,
+  CHATS,
 } from './routesNames'
 
 const routes = [
@@ -87,6 +91,11 @@ const routes = [
     admin:true,
   },
   {
+    path: CHATS,
+    component: Chat,
+    admin:true,
+  },
+  {
     path: STATEMENT,
     component: Statement,
     exact:true,
@@ -108,6 +117,11 @@ const routes = [
   {
     path: ADMIN_PROFESSION,
     component: Profession,
+    admin:true,
+  },
+  {
+    path: NOTIFICATIONS_EMAIL,
+    component: Notifications,
     admin:true,
   },
   {

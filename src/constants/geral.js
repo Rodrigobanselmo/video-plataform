@@ -3,8 +3,9 @@ export const estados = [ "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "
 export const PERMISSIONS = [
   { name: 'Professor', id: '1', message:'Poderá ser instrutor dos cursos',per:['pr']},
   { name: 'Administrador', id: '2', message:'Terá acesso a todas as funcionalidades da plataforma',per:['ea']},
-  { name: 'Empresa', id: '4', message:'Terá permissões para criar e gerenciar membros',per:['co']},
   { name: 'Faturamento Mensal', id: 'fm', message:'Terá permissões para efetuar compras utilizando o faturamento mensal como forma de pagamento',per:['fm']},
+  { name: 'Empresa', id: '4', message:'Terá permissões para criar e gerenciar membros',per:['co']},
+  { name: 'Administrador', id: '5', message:'Terá permissões para criar e gerenciar membros', per:['co','coea']},
 ];
 
 export const COMBOS = [

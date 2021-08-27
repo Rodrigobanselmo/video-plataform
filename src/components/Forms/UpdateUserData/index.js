@@ -349,7 +349,6 @@ export const UpdateUserData = React.memo(({ email, isAddClient, cursos, setCurso
       if (isAddClient) { //se for pagina de addicionar clientes
         Object.keys(permissions).map((key) => { //`quantity--${email.index}--${curso.id}--${price}`
           const keyIsSameIndex = key.split('--')[1] == path; // `email.index--key`
-          console.log('permissions[key]',permissions)
           if (
             key.split('--').length == 4 &&
             keyIsSameIndex &&
@@ -367,12 +366,12 @@ export const UpdateUserData = React.memo(({ email, isAddClient, cursos, setCurso
         });
       }
 
-      if (!isSelected) {
-        return createError({
-          path,
-          message: message ?? 'selecione ao menos um curso para este membro',
-        });
-      }
+      // if (!isSelected) {
+      //   return createError({
+      //     path,
+      //     message: message ?? 'selecione ao menos um curso para este membro',
+      //   });
+      // }
 
       return true;
     });
@@ -386,7 +385,6 @@ export const UpdateUserData = React.memo(({ email, isAddClient, cursos, setCurso
       if (!data[`${path}--cpf`]) return true;
       let isCpfValidOrNull = false;
 
-      console.log('data[`${path}--cpf`]', data[`${path}--cpf`]);
       if (TestaCPF(keepOnlyNumbers(data[`${path}--cpf`])))
         isCpfValidOrNull = true;
 
@@ -420,10 +418,6 @@ export const UpdateUserData = React.memo(({ email, isAddClient, cursos, setCurso
       formRef.current.setErrors({});
 
       try {
-        console.log('submitted: formData', formData);
-        console.log('submitted: email');
-        console.log('submitted:cursos ', cursos);
-        console.log('submitted:data ', data);
         throw ''
         await validation.validate(formData, { abortEarly: false });
 
@@ -611,7 +605,6 @@ export const UpdateUserData = React.memo(({ email, isAddClient, cursos, setCurso
     setEmails(newEmail)
     setEmail({ value:value.email, index: indexAdded.toString() });
     onClose()
-    console.log(value)
   }
 
   const users = queryClient.getQueryData(['users', currentUser.uid]);

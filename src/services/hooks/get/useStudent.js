@@ -15,6 +15,21 @@ export async function getStudent(cursoId,currentUser) {
     array.push(doc.data())
   })
 
+  if (array.length === 0) {
+    const studentsFinished = await db
+      .collection('students')
+      .where('status', '==', 'finished')
+      .where('expireDate', '>', new Date().getTime())
+      .where('cursoId', '==', cursoId)
+      .where('uid', '==', currentUser.uid)
+      .get();
+
+      studentsFinished.forEach(doc=>{
+        array.push(doc.data())
+      })
+
+  }
+
   const responseStudent = [...array.sort((a, b) => - a.startDate + b.startDate)]
 
   let responseCurso = {}
@@ -43,8 +58,6 @@ export async function getStudent(cursoId,currentUser) {
       responseCurso = cursoData
     }
   })
-
-  console.log('refresh curso')
 
   // return [...array]
 

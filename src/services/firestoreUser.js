@@ -130,7 +130,6 @@ export function GetUserData(user, checkSuccess, checkError) {
   const date = new Date();
 
   function checkPendingUser() {
-    console.log('user.email', user.email);
     const usersEmailRef = db.collection('users').doc(user.email.toLowerCase());
     usersEmailRef
       .get()
@@ -194,7 +193,6 @@ export function GetUserData(user, checkSuccess, checkError) {
         checkError(errorCatch(err));
       });
   }
-  console.log('peding users');
   usersRef
     .get()
     .then((docSnapshot) => {
@@ -202,7 +200,6 @@ export function GetUserData(user, checkSuccess, checkError) {
         checkSuccess(docSnapshot.data(), user);
       } else {
         checkPendingUser();
-        console.log(2);
       }
     })
     .catch((error) => {
@@ -358,7 +355,6 @@ export async function InviteNewUsers(data, checkSuccess, checkError) {
     const unform = data.unform[item.email.toLowerCase()]
       ? data.unform[item.email.toLowerCase()]
       : {};
-    console.log('unform', unform);
     if (item?.id && item.id) {
       const pendingUsers = db.collection('users').doc(item.id);
       batch.update(pendingUsers, {

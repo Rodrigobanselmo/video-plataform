@@ -8,7 +8,6 @@ export default (state = initialState, action) => {
         case 'MODULE_WRITE':
           var newState = {...state}
           newState[action.payload.id] = action.payload
-          console.log('newStatenewState',newState,action.payload.id)
         return {...newState};
 
         case 'MODULE_UPDATE':

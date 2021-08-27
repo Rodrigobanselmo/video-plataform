@@ -1,6 +1,6 @@
 // export { default as HomeAdmin } from './admin/home';
-export { default as HomeAdmin } from './admin/video';
-export { default as AllVideo } from './admin/video';
+export { default as HomeAdmin } from './admin/homeAdmin';
+export { default as AllVideo } from './admin/homeAdmin';
 export { default as Download } from './admin/download';
 export { default as Calendar } from './admin/calendar/Pessoal';
 export { default as CalendarConector } from './admin/calendar/Conector';
@@ -10,6 +10,8 @@ export { default as Profession } from './admin/database/Profession';
 export { default as Perfil } from './admin/profile/Perfil';
 export { default as Client } from './admin/profile/Client';
 export { default as CursoCreate } from './admin/curso/create';
+export { default as Notifications } from './admin/notifications';
+export { default as Chat } from './admin/chat';
 
 
 export { default as Cursos } from './client/cursos';

@@ -40,12 +40,6 @@ export async function setUser({ type, user }: any) {
 
   try {
     const time = new Date().getTime();
-    console.log(
-      'jumped',
-      user?.lastView,
-      time,
-      user?.lastView + 1000 * 60 * 60 * 2 <= time,
-    );
     if (!user?.lastView || user?.lastView + 1000 * 60 * 60 * 2 <= time) {
       const res = await axios.get('https://geolocation-db.com/json/');
       const { country_code, city, state, IPv4 }: any = res.data;
@@ -59,7 +53,6 @@ export async function setUser({ type, user }: any) {
         time: new Date().getTime(),
       };
       batch.set(usersRef.collection('history').doc(), data);
-      console.log(data);
     } else console.log('jumped');
   } catch {
     const data = {

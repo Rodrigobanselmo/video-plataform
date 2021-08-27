@@ -49,18 +49,16 @@ export default function RouteComponent({ component: Component,privateRoute, ...r
 
   function isToInputData() {
 
-    const HAS_COMPANY = currentUser?.permission && Array.isArray(currentUser.permission) && currentUser.permission.includes('co'); //company
+    const HAS_COMPANY = currentUser?.permission && Array.isArray(currentUser.permission) && currentUser.permission.includes('co') && !currentUser.permission.includes('coea'); //company
     const HAS_PROFESSION = currentUser?.permission && Array.isArray(currentUser.permission) && currentUser.permission.includes('pr'); //professional
 
     const PERSONAL_DATA = currentUser?.name && currentUser?.cpf && currentUser?.cell;
     const COMPANY_DATA = !currentUser?.company?.juridica || (currentUser?.company?.juridica && currentUser?.company?.cpfOrCnpj);
-    const PROFESSION_DATA = currentUser?.resume;
+    const PROFESSION_DATA = currentUser?.resume && currentUser?.signatureURL;
 
     const NEED_DATA = !PERSONAL_DATA || ( HAS_COMPANY && !COMPANY_DATA) || (HAS_PROFESSION && !PROFESSION_DATA) || !currentUser.initialized
     const ROUTE_IS_REQUEST_DATA = rest.location.pathname == REQUEST_DATA
 
-    console.log('route',currentUser)
-    console.log('route data', currentUser.permission,PERSONAL_DATA,HAS_COMPANY,COMPANY_DATA,!!NEED_DATA)
     if ( NEED_DATA && ROUTE_IS_REQUEST_DATA ) {
       return true
     } else if ( NEED_DATA && !ROUTE_IS_REQUEST_DATA ) {
@@ -77,8 +75,8 @@ export default function RouteComponent({ component: Component,privateRoute, ...r
   function isVerification() {
 
     const ROUTE_IS_VERIFY_EMAIL = rest?.location?.pathname === VERIFY_EMAIL
-    const IS_EMAIL_VERIFY = currentUser.emailVerified
-    // const IS_EMAIL_VERIFY = true
+    // const IS_EMAIL_VERIFY = currentUser.emailVerified || currentUser.permission.includes('master')
+    const IS_EMAIL_VERIFY = true
 
 
     if (!IS_EMAIL_VERIFY && !ROUTE_IS_VERIFY_EMAIL) { //verification screen if not verified

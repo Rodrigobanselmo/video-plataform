@@ -119,7 +119,6 @@ export const InputMaterial = ({
       onHandleSelect(event.target.files[0]);
     }
   };
-  console.log(materialURL);
   function onDownload() {
     if (!name || !url) return null;
     const link = document.createElement('a');

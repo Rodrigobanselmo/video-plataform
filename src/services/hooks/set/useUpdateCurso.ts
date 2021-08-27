@@ -165,7 +165,7 @@ export async function setUpdateCurso(
     userData.studentId = newStudent.id;
     newStudent.finishedDate = now;
 
-    const id = v4();
+    const { id } = newStudent;
     batch.set(certificationsRef.doc(id), {
       ...certificationData,
       id,
@@ -180,26 +180,27 @@ export async function setUpdateCurso(
 
   dispatch({ type: 'MODULE_WRITE', payload: newStudent }); // salva no module dispacth para caso caiu internet ele posso recuperar
 
+  const newCurso = [
+    ...currentUser.cursos.map((curso: any) =>
+      curso.id === newStudent.cursoId &&
+      (curso.status === 'started' || curso.status === 'finished')
+        ? { ...curso, percentage: newStudent.percentage, ...userData }
+        : curso,
+    ),
+  ];
+
   batch.set(studentsRef.doc(newStudent.id), newStudent);
   batch.update(userRef, {
     // para editar porcetagem do curso e enviar para back
-    cursos: [
-      ...currentUser.cursos.map((curso: any) =>
-        curso.id === newStudent.cursoId && curso.status === 'started'
-          ? { ...curso, percentage: newStudent.percentage, ...userData }
-          : curso,
-      ),
-    ],
+    cursos: newCurso,
   });
   await batch.commit();
-  console.log('newStudent', newStudent);
-  console.log('userMutation', data);
-  return { newStudent, data };
+  return { newStudent, data, newCurso };
 }
 
 export function useUpdateCurso(cursoId: string) {
   const dispatch = useDispatch();
-  const { currentUser } = useAuth();
+  const { currentUser, setCurrentUser } = useAuth();
   const student = queryClient.getQueryData<any>([
     'student',
     cursoId,
@@ -211,12 +212,15 @@ export function useUpdateCurso(cursoId: string) {
       setUpdateCurso(data, student.student[0], currentUser, dispatch),
     {
       onSuccess: (data: any) => {
-        console.log('onSuccess', data);
         const newStudent = { ...student };
         newStudent.student[0] = data.newStudent;
         queryClient.setQueryData(['student', cursoId, currentUser.uid], () => ({
           ...newStudent,
         }));
+
+        if (data.newCurso) {
+          setCurrentUser((user: any) => ({ ...user, curso: data.newCurso }));
+        }
       },
       onError: (error) => {
         console.log('onError', error);

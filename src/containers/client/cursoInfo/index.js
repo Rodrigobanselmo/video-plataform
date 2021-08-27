@@ -47,6 +47,7 @@ if (!data || (data && !data[0])) return null
     if (userCursoIndex === -1) return false
     if (currentUser.cursos[userCursoIndex]?.expireDate && currentUser.cursos[userCursoIndex]?.expireDate < new Date().getTime()) return false
     if (!currentUser.cursos[userCursoIndex]?.expireDate && currentUser.cursos[userCursoIndex].status == 'finished') return true
+    if (currentUser.cursos[userCursoIndex]?.expireDate && currentUser.cursos[userCursoIndex].status == 'finished' && currentUser.cursos[userCursoIndex]?.expireDate > new Date().getTime()) return true
     if (currentUser.cursos[userCursoIndex].status == 'started') return true
   }
 
@@ -132,10 +133,11 @@ if (!data || (data && !data[0])) return null
       </div>
 
       <h2>Informaões</h2>
-      <CursoTabs
+      {data && <CursoTabs
         style={{gridArea:'bt'}}
         data={data}
-      />
+        cursoId={cursoId}
+      />}
 
       <h3>Módulos</h3>
       <SideVideoBarTry style={{gridArea:'bs'}}>

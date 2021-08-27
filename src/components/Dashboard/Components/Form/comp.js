@@ -65,11 +65,11 @@ export const AddAnotherForm = styled.div`
 const Button = styled(ContinueButton)`
 `;
 
-export function ButtonForm({children,loading,justify='flex-end',mt=10,...props}) {
+export function ButtonForm({children,width='100%',loading=false,justify='flex-end',mt=10,...props}) {
   const theme = React.useContext(ThemeContext)
 
   return(
-    <div style={{display:'flex',width:'100%',justifyContent:justify,marginTop:mt}} >
+    <div style={{display:'flex',width,justifyContent:justify,marginTop:mt}} >
       <div style={{position: 'relative'}}>
         <Button disable={String(loading)} style={{width:200}} {...props} >{children}</Button>
         {loading && <CircularProgress size={24} style={{color: theme.palette.primary.main,position: 'absolute',top: '50%',left: '50%',marginTop: -12,marginLeft: -12,}} />}

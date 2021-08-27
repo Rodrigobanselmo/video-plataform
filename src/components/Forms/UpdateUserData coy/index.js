@@ -265,7 +265,6 @@ function appendData(formData,cursos,permissions,data,user,isAddClient) {
 
     if (DATA?.cursos) array.push(DATA)
     if (DATA?.availableCursos) array.push(DATA)
-    console.log('DATA',DATA)
 
   });
   return array
@@ -289,7 +288,6 @@ export const AddUserData = React.memo(({ isAddClient, cursos, setCursos, setEmai
       let isEPIMissing = false;
 
       Object.keys(cursos).map((key) => {
-        console.log('key', key, cursos[key]);
 
         const keyIsSameIndex = key.split('--')[0] == path; // `email.index--key`
 
@@ -307,7 +305,6 @@ export const AddUserData = React.memo(({ isAddClient, cursos, setCursos, setEmai
       if (isAddClient) { //se for pagina de addicionar clientes
         Object.keys(permissions).map((key) => { //`quantity--${email.index}--${curso.id}--${price}`
           const keyIsSameIndex = key.split('--')[1] == path; // `email.index--key`
-          console.log('permissions[key]',permissions)
           if (
             key.split('--').length == 4 &&
             keyIsSameIndex &&
@@ -325,12 +322,12 @@ export const AddUserData = React.memo(({ isAddClient, cursos, setCursos, setEmai
         });
       }
 
-      if (!isSelected) {
-        return createError({
-          path,
-          message: message ?? 'selecione ao menos um curso para este membro',
-        });
-      }
+      // if (!isSelected) {
+      //   return createError({
+      //     path,
+      //     message: message ?? 'selecione ao menos um curso para este membro',
+      //   });
+      // }
 
       return true;
     });

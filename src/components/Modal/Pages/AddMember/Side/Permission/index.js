@@ -52,15 +52,21 @@ const Check = styled(Checkbox)`
 `;
 
 
-export function PermissionSelect({ fieldEdit, setPermissions, permissions, isNewClient }) {
+export function PermissionSelect({ fieldEdit, setPermissions, permissions, isNewClient, isAdmin }) {
 
-  const permissionsArray = !isNewClient
+  const permissionsArray = (!isNewClient && isAdmin)
   ? PERMISSIONS.filter(i=>!(i.per.includes('co') || i.per.includes('fm')))
-  : PERMISSIONS.filter(i=>(i.per.includes('co') || i.per.includes('fm')))
+  : (isNewClient && isAdmin)
+    ? PERMISSIONS.filter(i=>(i.per.includes('co') || i.per.includes('fm')))
+    : PERMISSIONS.filter(i=>(i.per.includes('coea')))
 
   const handlePermissions = (event, permission) => {
     const newData = { ...permissions };
-    newData[`${fieldEdit.index}--${permission.per}`] = event.target.checked;
+
+    permission.per.map(pr => {
+      newData[`${fieldEdit.index}--${pr}`] = event.target.checked;
+      newData[`${fieldEdit.index}--${pr}`] = event.target.checked;
+    })
 
     setPermissions(newData);
 
@@ -74,7 +80,7 @@ export function PermissionSelect({ fieldEdit, setPermissions, permissions, isNew
         Permissões
       </TitleSection>
       {permissionsArray.map((permission,index) => {
-        const checkPer = Boolean(permissions[`${fieldEdit.index}--${permission.per}`]);
+        const checkPer = permission.per.map(per=>Boolean(permissions[`${fieldEdit.index}--${per}`])).filter(i=>!i).length === 0;
         if (!isCompany && permission.per == 'fm') return null
         const isLast = (index===permissionsArray.length-1) || (!isCompany && `${fieldEdit.index+1}--fm` in permissions && index===permissionsArray.length-2)
         return (

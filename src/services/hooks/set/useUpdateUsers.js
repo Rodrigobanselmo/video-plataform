@@ -53,10 +53,6 @@ export async function setUsers(checkoutInfo,actualUser) { //data = array of user
   const docIdStatement = v4()
   const newCurrentUser = newUser(currentUser,total,actualUser,docIdStatement)
 
-  console.log('onMutate',data)
-  console.log('newUser',newUser(currentUser,total,actualUser,docIdStatement))
-
-
   const reduceData = []
 
   //Add statement
@@ -67,7 +63,7 @@ export async function setUsers(checkoutInfo,actualUser) { //data = array of user
       return {
         type:'updatedUser',
         cursos: user.cursos,
-        value: user.statement[0].value,
+        value: user.statement[0] && user.statement[0]?.value ? user.statement[0]?.value : 0,
         shared: user?.email ?? user?.link,
         data: {
           name:user?.name ? user.name : '',
@@ -100,7 +96,6 @@ export async function setUsers(checkoutInfo,actualUser) { //data = array of user
   //create docs
   const newData = [];
   data.map(user => {
-    console.log('user.uid',user.uid)
 
     const thisUser = users.find(i=>i.uid == user.uid)
     const cursos = (thisUser && thisUser?.cursos) ? thisUser.cursos : []

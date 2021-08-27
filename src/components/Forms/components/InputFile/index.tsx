@@ -128,7 +128,6 @@ export const InputFile = ({
       },
     }
     const {rows, errors} = await readXlsxFile(file,{schema});
-    console.log(errors,'errors')
     const moduleData = rows.find((i:any)=>i?.module).module
     const questionsData = rows.map((i:any)=>{
       return {
@@ -143,7 +142,6 @@ export const InputFile = ({
   };
 
   const onInputFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.files);
 
     const modules: IModule[] = [];
 
@@ -186,7 +184,6 @@ export const InputFile = ({
             modules[moduleIndex].classes[courseIndex].private = true;
 
             if (isExcel && !slashFilePath[2].includes('~') && !slashFilePath[2].includes('$')) {
-              console.log(slashFilePath,courseIndex,modules[moduleIndex].classes[courseIndex])
               const { moduleData, questionsData } = await resolveExcelFile(file);
               const percentage = moduleData.percentageToPass === 'number'
                 ? moduleData.percentageToPass
@@ -206,7 +203,6 @@ export const InputFile = ({
 
           return 'video file';
         }));
-        console.log('modules',modules)
         handleSelectModules(modules);
       }
     } catch (error) {

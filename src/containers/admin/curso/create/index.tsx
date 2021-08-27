@@ -36,6 +36,10 @@ import { ModuleData } from '../../../../components/Forms/ModuleData';
 import { InputMaterial } from '../../../../components/Forms/components/InputMaterial';
 import { useUploadFile } from '../../../../services/hooks/set/useUploadFile';
 import { useDeleteCurso } from '../../../../services/hooks/del/useDeleteCurso';
+import { useUsers } from '../../../../services/hooks/get/useUsers';
+import { InstructorData } from '../../../../components/Forms/InstructorData';
+import { ProfessionalSelect } from '../../../../components/Forms/ProfessionalSelect';
+import { SetProfessionsData } from '../../../../services/firestoreData';
 
 const ButtonsContainer = styled.div`
   display: grid;
@@ -65,6 +69,7 @@ const BackButton = styled.button`
 const Container = styled.div`
   max-width: 1200px;
   margin: auto;
+  padding-right: 40px;
 `;
 
 const Title = styled.h2`
@@ -105,6 +110,7 @@ const Team: React.FC = () => {
   const uploadImage = useUploadImage();
   const uploadFile = useUploadFile();
   const mutationDelete = useDeleteCurso();
+  const { data } = useUsers({ currentUser });
 
   // const [draftPublic, setDraftPublic] = useState<RawDraftContentState | null>(
   //   null,
@@ -114,11 +120,13 @@ const Team: React.FC = () => {
   // );
 
   const refInputData = useRef({} as any);
+  const refProfessional = useRef({} as any);
   const [open, setOpen] = useState(true);
   const [saving, setSaving] = useState(false);
   const [initialData, setInitialData] = useState<any>({});
   const [cursoData, setCursoData] = useState<any>({});
   const [imageURL, setImageURL] = useState('');
+  const [professionalsArray, setProfessionals] = useState([]);
   const [materialURL, setMaterialURL] = useState<[name: string, url: string]>([
     '',
     '',
@@ -193,6 +201,7 @@ const Team: React.FC = () => {
       answerEmail: curso.answerEmail,
       certificationEmail: curso.certificationEmail,
     });
+    setProfessionals(curso?.professionals ? curso.professionals : []);
     setModules([...curso.modules]);
     setOpen(false);
     setCombos(curso?.combos || []);
@@ -211,6 +220,7 @@ const Team: React.FC = () => {
       dispatch({ type: 'DRAFT_ABOUT_RESET' });
       dispatch({ type: 'SAVED' });
       setImageURL('');
+      setProfessionals([]);
       setModules([]);
       setCombos([]);
       setSubCursos([]);
@@ -226,7 +236,39 @@ const Team: React.FC = () => {
 
   const onSubmit = async (event: any): Promise<void> => {
     event.preventDefault();
-    console.log('refInputData.current', refInputData.current);
+    console.log('refProfessional.current', refProfessional.current);
+
+    if (!refProfessional.current)
+      return notification.warn({
+        message: 'Insira ao menos um profissional responsavel pelo curso.',
+      });
+
+    const professionals = refProfessional.current.users.map(
+      (user: any, index: number) => {
+        const occupation = refProfessional.current.occupation[index];
+        const professionalData = {
+          userId: user.uid,
+          occupation,
+          sendEmail: user?.sendEmail,
+        };
+
+        return professionalData;
+      },
+    );
+
+    if (professionals.length === 0)
+      return notification.warn({
+        message: 'Insira ao menos um profissional responsavel pelo curso.',
+      });
+
+    if (
+      professionals.length > 0 &&
+      professionals.some((i: any) => !i.occupation)
+    )
+      return notification.warn({
+        message: 'Insira o cargo dos profissionais responsaveis pelo curso.',
+      });
+
     const {
       accessTimeAfter: ata,
       daysToExpire: dte,
@@ -325,6 +367,7 @@ const Team: React.FC = () => {
       main: {
         ...cursoData.main,
         name,
+        professionals,
         modules,
         daysToExpire: Number(daysToExpire),
         duration: Number(duration),
@@ -436,6 +479,10 @@ const Team: React.FC = () => {
           </ButtonForm>
         </ButtonsContainer>
         <CursoAddData initialData={initialData} refInputData={refInputData} />
+        <ProfessionalSelect
+          professionalsArray={professionalsArray}
+          refProfessional={refProfessional}
+        />
         <InputMaterial
           materialURL={material}
           onHandleSelect={onHandleSelectMaterial}
@@ -453,12 +500,14 @@ const Team: React.FC = () => {
             setSubCursos={setSubCursos}
           />
         )}
-        {/* <div>
-          <p>Módulo 1</p>
-          <div>
-
-          </div>
-        </div> */}
+        <InstructorData
+          modules={modules}
+          setModules={setModules}
+          setCombos={setCombos}
+          combos={combos}
+          subCursos={subCursos}
+          setSubCursos={setSubCursos}
+        />
         <HeaderBlock
           title="Público Alvo"
           text="Aqui você deve inserir quem é o público alvo do curso"

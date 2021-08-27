@@ -100,7 +100,6 @@ export const DraftWrite = ({
     handleChange(
       EditorState.push(editorState, contentState, 'insert-characters'),
     );
-    console.log('event', e);
   };
 
   return (

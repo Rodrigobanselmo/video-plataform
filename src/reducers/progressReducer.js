@@ -19,7 +19,6 @@ export default (state = initialState, action) => {
           } else {
             data[action.payload.key] = action.payload.insert
           }
-          console.log('reducer data',data)
         return {...state};
 
         case 'PROGRESS_LOGOUT':

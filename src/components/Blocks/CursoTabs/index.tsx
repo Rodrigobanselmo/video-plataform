@@ -11,6 +11,8 @@ import styled, { css } from 'styled-components';
 import { Container } from './styles';
 import usePersistedState from '../../../hooks/usePersistedState';
 import { db } from '../../../lib/firebase.prod';
+import { useProfessionals } from '../../../services/hooks/get/useProfessionals';
+import { ProfessionalLayout } from '../ProfessionalLayout';
 
 interface TabProps {
   active: boolean;
@@ -93,9 +95,13 @@ interface Props extends React.ComponentPropsWithoutRef<typeof Container> {
   data: any;
 }
 
-export const CursoTabs = ({ data, ...rest }: Props): JSX.Element => {
+export const CursoTabs = ({ data, cursoId, ...rest }: Props): JSX.Element => {
   const [tabValue, setTabValue] = React.useState(0);
   const tabsLabel = ['Sobre o curso', 'Público Alvo', 'Professores'];
+  const { data: professionals, isLoading: isProfLoading } = useProfessionals(
+    data[0] ? data[0]?.professionals : null,
+    cursoId,
+  );
 
   const handleTabChange = (event: React.SyntheticEvent, index: number) => {
     event.preventDefault();
@@ -143,6 +149,11 @@ export const CursoTabs = ({ data, ...rest }: Props): JSX.Element => {
             wrapperClassName="wrapper-class"
             editorClassName="editor-class"
           />
+        )}
+      </TabSection>
+      <TabSection hide={tabValue !== 2}>
+        {tabValue === 2 && professionals && data[0]?.professionals && (
+          <ProfessionalLayout professionals={professionals} />
         )}
       </TabSection>
     </Container>

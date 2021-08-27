@@ -31,7 +31,7 @@ import {useStyles,DarkModeSwitch as DarkModeSwitchMui} from './styles'
 import {onLogout} from './func'
 import {Icons} from '../../Icons/iconsDashboard'
 
-import {DASHBOARD,ADMIN_PERFIL, PROFILE, STATEMENT} from '../../../routes/routesNames'
+import {DASHBOARD,ADMIN_PERFIL, PROFILE, STATEMENT, NOTIFICATIONS_EMAIL, CHATS} from '../../../routes/routesNames'
 import {AbreviarNome,InitialsName} from '../../../helpers/StringHandle'
 import usePersistedState from '../../../hooks/usePersistedState.js';
 import {useLoaderDashboard} from '../../../context/LoadDashContext'
@@ -306,6 +306,18 @@ const NavBar = ({open,setOpen}) => {
     if (action === 'statement') {
       if (pathname.includes(STATEMENT)) return
       history.push(STATEMENT)
+      setOpenProfile(false)
+      setLoaderDash(true)
+    }
+    if (action === 'email') {
+      if (pathname.includes(NOTIFICATIONS_EMAIL)) return
+      history.push(NOTIFICATIONS_EMAIL)
+      setOpenProfile(false)
+      setLoaderDash(true)
+    }
+    if (action === 'chat') {
+      if (pathname.includes('app/admin/chats')) return
+      history.push('/app/admin/chats')
       setOpenProfile(false)
       setLoaderDash(true)
     }

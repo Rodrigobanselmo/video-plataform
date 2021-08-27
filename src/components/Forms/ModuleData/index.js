@@ -117,7 +117,6 @@ export const ModuleData = ({modules = {}, setModules, setCombos, combos, subCurs
   }
 
   const onExcelTestJson = (dataClass) => {
-    console.log('dataClass',dataClass)
     if (!dataClass?.questions) return null
     return dataClass.questions?.map((question, index) => {
       console.log('question',question)
