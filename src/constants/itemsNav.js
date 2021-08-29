@@ -10,8 +10,9 @@ export const navList = [
   {
     text: "Precisando de Ajuda?",
     icon: 'Help',
-    id:Math.random(),
+    id:'help',
     visible:'all',
+    onClick:()=>{},
   },
   // {
   //   text: "Ultimos Acessos",

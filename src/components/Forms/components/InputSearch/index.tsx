@@ -51,6 +51,7 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, IInputProps> = (
     label,
     error = null,
     pr = 0,
+    style,
     isTeam,
     ...rest
   },
@@ -111,7 +112,7 @@ const InputBase: ForwardRefRenderFunction<HTMLInputElement, IInputProps> = (
 
   return (
     <ClickAwayListener onClickAway={onClose}>
-      <FormControl isInvalid={!!error}>
+      <FormControl style={style} isInvalid={!!error}>
         {!!label && <FormLabel htmlFor={name}>{label}</FormLabel>}
 
         <InputContainer>

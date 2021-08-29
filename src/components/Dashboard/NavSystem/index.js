@@ -41,6 +41,7 @@ import { menuList } from '../../../constants/menuList';
 import styled, {css} from "styled-components";
 import { AvatarView } from '../../Main/Avatar';
 import { useDebounce } from '../../../hooks/useDebounceJs';
+import { toggleWidget } from 'react-chat-widget';
 
 const MenuButton = styled.button`
   position: absolute;
@@ -323,6 +324,22 @@ const NavBar = ({open,setOpen}) => {
     }
   };
 
+  const IconClick = (id) => {
+    if (id === 'help') {
+      toggleWidget()
+    } else {
+      notification.modal({
+        title: 'Notifição',
+        type:'inform',
+        icon:'success',
+        text:'Notifição padrão do sistema',
+        open:true,
+        onClick:()=>console.log('notification confirm')
+      })
+    }
+  }
+
+
   return (
       <AppBar
         elevation={2}
@@ -389,7 +406,7 @@ const NavBar = ({open,setOpen}) => {
             {navList.map((item, index) => (
               <div key={item.text}>
               { item.visible === 'all' || (currentUser?.access && item.visible.includes(currentUser.access)) ?
-                <ReactLink onClick={item?.onClick ?()=>notification.modal({title: 'Notifição',type:'inform',icon:'success',text:'Notifição padrão do sistema',open:true,onClick:()=>console.log('notification confirm')}):()=>notification.success({message:'Em construção'})} to={item.to} style={{margin:'0px 5px'}}>
+                <ReactLink onClick={()=>IconClick(item.id)} to={item.to} style={{margin:'0px 5px'}}>
                   <BootstrapTooltip placement="bottom" TransitionProps={{ timeout: {enter:500, exit: 50} }} title={item.text} styletooltip={{transform: 'translateY(10px)'}}>
                     <IconButton aria-label={item.text}>
                       <Badge badgeContent={0} color="secondary">

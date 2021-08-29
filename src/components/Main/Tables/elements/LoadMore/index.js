@@ -30,7 +30,7 @@ const VisualizeMore = styled.p`
   }
 `;
 
-export function LoadMoreTableCells({shown,total,handleMore}) {
+export function LoadMoreTableCells({shown=0,total=0,handleMore=false}) {
   const [load, setLoad] = React.useState(false)
 
   function handleMoreCells() {

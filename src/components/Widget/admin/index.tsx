@@ -82,7 +82,7 @@ export const WidgetComponent: React.FC = () => {
         else if (message.type !== 'user' && !valueRef.current)
           addUserMessage(message.msg);
       });
-      setBadgeCount(notifications?.missing ?? 0);
+      setBadgeCount(0);
 
       valueRef.current = doc.data() as INotifications;
     });

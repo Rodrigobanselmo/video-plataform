@@ -71,6 +71,7 @@ const ProfileContainer = styled.div`
   cursor: pointer;
   transform: scale(0.9);
   background-color: transparent;
+  align-items: center;
 
   ${props => props.navbar && css`
     margin:0;
@@ -116,7 +117,7 @@ function stringToColor(string) {
 }
 
 
-export function AvatarView({user, navbar, borderApplied, forwardRef, ...props}) {
+export function AvatarView({user={}, navbar=false, borderApplied=false, forwardRef=null, ...props}) {
 
   const isPhoto = user?.photoURL;
   const isPending = user?.status && (user.status === 'Pendente' || user.status === 'Autenticando');

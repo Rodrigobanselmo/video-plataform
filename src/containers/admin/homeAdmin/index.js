@@ -99,7 +99,7 @@ const CursoCard = styled.div`
 
 
 
-export default function Video() {
+export default function HomeAdmin() {
 
   const { setLoaderDash } = useLoaderDashboard();
   const notification = useNotification();

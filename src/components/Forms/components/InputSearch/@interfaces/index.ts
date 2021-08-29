@@ -1,11 +1,15 @@
 import { ButtonHTMLAttributes, InputHTMLAttributes } from 'react';
 import { FieldError } from 'react-hook-form';
+import { CSSProperties } from 'styled-components';
 
 export interface IOptions {
   uid: string;
   name: string;
   cpf: string;
   email: string;
+  razao?: string;
+  cnpj?: string;
+  link?: string;
 }
 
 export interface IRow extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -22,6 +26,7 @@ export interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: FieldError;
   pr?: number;
   isTeam?: boolean;
+  style?: CSSProperties;
   row: (data: IRow) => JSX.Element;
 }
 
