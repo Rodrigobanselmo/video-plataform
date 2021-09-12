@@ -32,7 +32,7 @@ export function Comment({ curso, textRef }) {
   useEffect(() => {});
 
   const chatRef = db
-    .collection('comments')
+    .collection('curso')
     .doc(curso?.id)
     .collection('notifications')
     .doc('chat');
