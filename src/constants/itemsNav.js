@@ -8,11 +8,11 @@ export const navList = [
   //   visible:'all',
   // },
   {
-    text: "Precisando de Ajuda?",
+    text: 'Precisando de Ajuda?',
     icon: 'Help',
-    id:'help',
-    visible:'all',
-    onClick:()=>{},
+    id: 'help',
+    visible: 'all',
+    onClick: () => {},
   },
   // {
   //   text: "Ultimos Acessos",
@@ -20,18 +20,18 @@ export const navList = [
   //   id:Math.random(),
   //   visible:'all',
   // },
-/*   {
+  /*   {
     text: "Gerenciar Usuários",
     icon: 'Admin',
     visible:['admin','master'],
     id:Math.random(),
     to: TEAM
   }, */
-  {
-    text: "Notificações",
-    icon: 'Notifications',
-    id:Math.random(),
-    onClick:()=>{},
-    visible:'all',
-  },
+  // {
+  //   text: "Notificações",
+  //   icon: 'Notifications',
+  //   id:Math.random(),
+  //   onClick:()=>{},
+  //   visible:'all',
+  // },
 ];

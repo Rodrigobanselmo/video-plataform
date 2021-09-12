@@ -1,6 +1,5 @@
 // export { default as HomeAdmin } from './admin/home';
 export { default as HomeAdmin } from './admin/homeAdmin';
-export { default as AllVideo } from './admin/homeAdmin';
 export { default as Download } from './admin/download';
 export { default as Calendar } from './admin/calendar/Pessoal';
 export { default as CalendarConector } from './admin/calendar/Conector';
@@ -12,8 +11,10 @@ export { default as Client } from './admin/profile/Client';
 export { default as CursoCreate } from './admin/curso/create';
 export { default as Notifications } from './admin/notifications';
 export { default as Chat } from './admin/chat';
+export { default as Comments } from './admin/comments';
 export { default as Certification } from './admin/certification';
 export { default as StatementAdmin } from './admin/statement';
+export { default as VideoAdmin } from './admin/modules';
 
 export { default as Cursos } from './client/cursos';
 export { default as CursoInfo } from './client/cursoInfo';

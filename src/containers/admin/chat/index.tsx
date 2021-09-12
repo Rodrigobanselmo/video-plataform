@@ -188,14 +188,14 @@ const Chat: React.FC = () => {
             />
           </>
         )}
-        <ButtonForm
+        {/* <ButtonForm
           onClick={() => handleChatOpen('7qxxF86PE1W1AzK4xzIEB5jLyhE3')}
           type="button"
           primary="true"
           style={{ width: 'fit-content' }}
         >
           Salvar
-        </ButtonForm>
+        </ButtonForm> */}
       </ChatContainer>
       <div style={{ display: userId ? 'flex' : 'none' }}>
         <WidgetComponent />

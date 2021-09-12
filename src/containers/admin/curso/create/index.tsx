@@ -500,14 +500,14 @@ const Team: React.FC = () => {
             setSubCursos={setSubCursos}
           />
         )}
-        <InstructorData
+        {/* <InstructorData
           modules={modules}
           setModules={setModules}
           setCombos={setCombos}
           combos={combos}
           subCursos={subCursos}
           setSubCursos={setSubCursos}
-        />
+        /> */}
         <HeaderBlock
           title="Público Alvo"
           text="Aqui você deve inserir quem é o público alvo do curso"

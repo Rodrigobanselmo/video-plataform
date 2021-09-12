@@ -317,6 +317,12 @@ const NavBar = ({ open, setOpen }) => {
       setOpenProfile(false);
       setLoaderDash(true);
     }
+    if (action === 'comment') {
+      if (pathname.includes('app/admin/comment')) return;
+      history.push('/app/admin/comment');
+      setOpenProfile(false);
+      setLoaderDash(true);
+    }
     if (action === 'certification') {
       if (pathname.includes('app/admin/certification')) return;
       history.push('/app/admin/certification');

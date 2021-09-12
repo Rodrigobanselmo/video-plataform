@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useImperativeHandle } from 'react';
 import { useParams } from 'react-router';
 import styled from 'styled-components';
+import { v4 } from 'uuid';
 import { useAuth } from '../../../../context/AuthContext';
 import { db, fb } from '../../../../lib/firebase.prod';
 import { AvatarView } from '../../Avatar';
@@ -31,41 +32,28 @@ export function Comment({ curso, textRef }) {
 
   useEffect(() => {});
 
-  const chatRef = db
-    .collection('curso')
-    .doc(curso?.id)
-    .collection('notifications')
-    .doc('chat');
+  const commentsRef = db.collection('comments');
 
   const onSendMessage = async () => {
+    const uuid = v4();
     if (!data.trim()) return null;
     const chatData = {
       name: currentUser.name,
       email: currentUser.email,
       uid: currentUser.uid,
+      id: uuid,
       photoURL: currentUser?.photoURL,
       msg: data,
-      classId,
-      moduleId,
+      cursoName: curso.name,
+      certificationEmail: curso.certificationEmail,
       response: false,
+      cursoId: curso.id,
+      moduleId,
+      classId,
       created_at: new Date().getTime(),
     };
-    console.log(curso?.id);
-    try {
-      await chatRef.update({
-        email: curso.certificationEmail,
-        name: curso.name,
-        id: curso.id,
-        data: fb.firestore.FieldValue.arrayUnion(chatData),
-      });
-    } catch (e) {
-      await chatRef.set({
-        email: curso.certificationEmail,
-        name: curso.name,
-        id: curso.id,
-        data: [chatData],
-      });
-    }
+
+    await commentsRef.doc(uuid).set(chatData);
     setData('');
   };
 
@@ -78,7 +66,8 @@ export function Comment({ curso, textRef }) {
         uid: currentUser.uid,
         photoURL: currentUser.photoURL,
         msg: data.trim(),
-        response: '',
+        response: false,
+        created_at: new Date().getTime(),
       },
     };
   });

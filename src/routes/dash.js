@@ -1,10 +1,10 @@
 import {
   HomeAdmin,
   Home,
+  Comments,
   Team,
   Client,
   Video,
-  AllVideo,
   Cursos,
   CursoInfo,
   CursoCreate,
@@ -19,6 +19,7 @@ import {
   Profession,
   Notifications,
   StatementAdmin,
+  VideoAdmin,
 } from '../containers';
 import {
   HOME_ADMIN,
@@ -26,7 +27,6 @@ import {
   TEAM,
   CLIENTS,
   VIDEO,
-  ALL_VIDEO,
   CURSOS,
   CURSO_INFO,
   CURSOS_CREATE,
@@ -43,6 +43,8 @@ import {
   NOTIFICATIONS_EMAIL,
   CHATS,
   FINANCE,
+  COMMENTS,
+  VIDEO_ADMIN,
 } from './routesNames';
 
 const routes = [
@@ -67,14 +69,15 @@ const routes = [
     exact: true,
   },
   {
-    path: ALL_VIDEO,
-    component: AllVideo,
-    exact: true,
-  },
-  {
     path: VIDEO,
     component: Video,
     exact: true,
+  },
+  {
+    path: VIDEO_ADMIN,
+    component: VideoAdmin,
+    exact: true,
+    admin: true,
   },
   {
     path: HOME_ADMIN,
@@ -95,6 +98,11 @@ const routes = [
   {
     path: CHATS,
     component: Chat,
+    admin: true,
+  },
+  {
+    path: COMMENTS,
+    component: Comments,
     admin: true,
   },
   {

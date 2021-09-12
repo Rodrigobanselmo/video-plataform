@@ -9,8 +9,11 @@ export const CLIENT_ADMIN = `${ADMIN}/client`;
 export const CURSOS_CREATE = `${ADMIN}/cursos/create`;
 export const NOTIFICATIONS_EMAIL = `${ADMIN}/notificacoes-email`;
 export const CHATS = `${ADMIN}/chats/:userId?`;
+export const COMMENTS = `${ADMIN}/comment`;
 export const CERTIFICATION = `${ADMIN}/certification`;
 export const FINANCE = `${ADMIN}/finance`;
+export const VIDEO_ADMIN_ROUTE = `${ADMIN}/video`;
+export const VIDEO_ADMIN = `${VIDEO_ADMIN_ROUTE}/:cursoId/:moduleId?/:classId?`;
 
 export const CURSOS = `${DASHBOARD}/cursos`;
 export const CURSO_INFO = `${DASHBOARD}/cursos/:cursoId`;
@@ -21,7 +24,6 @@ export const PROFILE = `${DASHBOARD}/perfil`;
 export const STATEMENT = `${DASHBOARD}/fatura`;
 
 export const TEAM_ADMIN = `${ADMIN}/equipe`;
-export const ALL_VIDEO = `${ADMIN}/video`;
 export const DOWNLOAD = `${ADMIN}/download`;
 export const CALENDAR_ADMIN = `${ADMIN}/calendar`;
 export const CALENDAR_CONECTOR = `${ADMIN}/calendar-conector`;

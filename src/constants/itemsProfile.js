@@ -26,6 +26,12 @@ export const itemsProfile = [
     onClick: 'chat',
   },
   {
+    text: 'Comentários',
+    visible: ['ea', 'su'],
+    icon: 'Chat',
+    onClick: 'comment',
+  },
+  {
     text: 'Finanças',
     visible: ['ea', 'fi'],
     icon: 'Money',
