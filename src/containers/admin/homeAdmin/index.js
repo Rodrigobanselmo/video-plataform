@@ -167,13 +167,32 @@ export default function HomeAdmin() {
     console.log(0)
     axios({
       method:'post',
-      url:'http://localhost:3333/pdf',
+      // url:'http://localhost:5000/reconecta-dev/us-central1/pdfRoute/pdf',
+      // url:'https://us-central1-reconecta-dev.cloudfunctions.net/pdfRoute/pdf',
+      url:'http://localhost:5001/reconecta-dev/us-central1/pdfRoute/pdf',
+      // url:'http://localhost:3333/pdf',
       responseType: 'blob',
       data:{
-        name: 'Rodrigo Barbosa Anselmo',
-        cpf:'401.951.858-03',
-        date:'26 de agosto de 2021',
-        cursoName:'Curso de EPI (NR 1)',
+        "name": "Rodrigo Barbosa Anselmo",
+        "cpf":"401.951.858-03",
+        "date":"26 de agosto de 2021",
+        "professionals":[
+          {
+            "signature":"https://image.flaticon.com/icons/png/512/4636/4636109.png",
+            "job":"TI",
+            "name":"Rodrigo Barbosa"
+          }
+        ],
+        "id":"Curso de EPI (NR 1)",
+        "cursoName":"Curso de EPI (NR 1)",
+        "course": {
+            "initial_date": "11/11/11",
+            "final_date":"22/22/22",
+            "course_hours":"26",
+            "attendance":"99%",
+            "grade":"9/10"
+        },
+        "contents": ["1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1","1"]
       }
     }).then((res) => {
       const pdfBlob = new Blob([res.data], { type: 'application/pdf' });
@@ -182,7 +201,8 @@ export default function HomeAdmin() {
     }).catch(async error=>{
       // const errorString = JSON.parse(await error.response.data.text());
       // console.log(errorString.message)
-      console.log(error)
+      notification.error({message:'Erro ao gerar certificado'})
+      console.log('error',error.response)
     })
   }
 

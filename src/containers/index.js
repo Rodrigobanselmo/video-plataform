@@ -12,7 +12,8 @@ export { default as Client } from './admin/profile/Client';
 export { default as CursoCreate } from './admin/curso/create';
 export { default as Notifications } from './admin/notifications';
 export { default as Chat } from './admin/chat';
-
+export { default as Certification } from './admin/certification';
+export { default as StatementAdmin } from './admin/statement';
 
 export { default as Cursos } from './client/cursos';
 export { default as CursoInfo } from './client/cursoInfo';

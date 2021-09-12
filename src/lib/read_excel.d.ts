@@ -3,3 +3,9 @@ declare module 'read-excel-file' {
 
   export default readXlsxFile;
 }
+
+declare module 'write-excel-file' {
+  declare const writeXlsxFile: (data: any, options: any) => Promise<void>;
+
+  export default writeXlsxFile;
+}

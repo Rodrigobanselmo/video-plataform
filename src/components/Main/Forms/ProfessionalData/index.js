@@ -1,13 +1,15 @@
-import React, {useState} from 'react';
-import {InputsContainer} from '../../../Dashboard/Components/Standard/PageCarousel'
-import {InputUnform} from '../../MuiHelpers/Input'
-import {FormContainer,ButtonForm} from '../../../Dashboard/Components/Form/comp'
-import * as Yup from 'yup'
-import 'react-phone-number-input/style.css'
-import {keepOnlyNumbers} from '../../../../helpers/StringHandle';
-import styled from "styled-components";
+import React, { useState } from 'react';
+import { InputsContainer } from '../../../Dashboard/Components/Standard/PageCarousel';
+import { InputUnform } from '../../MuiHelpers/Input';
+import {
+  FormContainer,
+  ButtonForm,
+} from '../../../Dashboard/Components/Form/comp';
+import * as Yup from 'yup';
+import 'react-phone-number-input/style.css';
+import { keepOnlyNumbers } from '../../../../helpers/StringHandle';
+import styled from 'styled-components';
 import { BsInfoCircle } from 'react-icons/bs';
-import { TextArea } from '../../MuiHelpers/TextArea';
 import { BootstrapTooltip } from '../../MuiHelpers/Tooltip';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
@@ -18,82 +20,103 @@ const EndIcon = styled.div`
   justify-content: center;
   width: 20px;
   height: 20px;
-  /* background-color: ${({theme})=> theme.palette.text.primary }; */
-  color: ${({theme})=> theme.palette.status.successD };
+  /* background-color: ${({ theme }) => theme.palette.text.primary}; */
+  color: ${({ theme }) => theme.palette.status.successD};
 
   &:hover {
     filter: brightness(0.95);
   }
 
-  cursor:pointer;
+  cursor: pointer;
 `;
 
-
 export const IconEnd = styled(BsInfoCircle)`
-    cursor:pointer;
-    color: ${({theme})=> theme.palette.text.primary };
-    /* ${props => props.status === 'Normal' && css`
-        color: ${({theme})=> theme.palette.text.primary };
+  cursor: pointer;
+  color: ${({ theme }) => theme.palette.text.primary};
+  /* ${(props) =>
+    props.status === 'Normal' &&
+    css`
+      color: ${({ theme }) => theme.palette.text.primary};
     `} */
 `;
 
 export const Delete = styled(DeleteOutlineIcon)`
-    color: ${({theme})=> theme.palette.status.failD };
+  color: ${({ theme }) => theme.palette.status.failD};
 `;
 
-export function ProfessionalData({ setUnform,unform}) {
+export function ProfessionalData({ setUnform, unform }) {
+  const [curriculum, setCurriculum] = useState(
+    unform?.curriculum ? unform.curriculum : [''],
+  );
 
-  const [curriculum, setCurriculum] = useState(unform?.curriculum?unform.curriculum:[''])
-
-  const formRef = React.useRef()
+  const formRef = React.useRef();
 
   const validation = Yup.object({
     resume: Yup.string().required('Nome não pode estar em branco.'),
     // rg: Yup.string().trim().required('RG não pode estar em branco.'),
-  })
+  });
 
-  const handleSubmit = React.useCallback(async (formData) => {
-    formRef.current.setErrors({})
-    try {
-      await validation.validate(formData, { abortEarly: false })
-      const array = []
-      Object.keys(formData).sort((a, b) => a - b).map(key=>{
-        !['LinkedIn','Instagram','Facebook','social','resume'].includes(key) && formData[key] && array.push(formData[key])
-      })
-      setUnform({...unform,resume:formData.resume,curriculum:array})
-      console.log('submitted: ', formData,{resume:formData.resume,curriculum:array})
-    } catch (error) {
-      const errors = {}
-      error?.inner?.forEach((err) => {
-        errors[err.path] = err.message
-      })
-      formRef.current?.setErrors(errors)
-    }
-  }, [unform])
-
+  const handleSubmit = React.useCallback(
+    async (formData) => {
+      formRef.current.setErrors({});
+      try {
+        await validation.validate(formData, { abortEarly: false });
+        const array = [];
+        Object.keys(formData)
+          .sort((a, b) => a - b)
+          .map((key) => {
+            !['LinkedIn', 'Instagram', 'Facebook', 'social', 'resume'].includes(
+              key,
+            ) &&
+              formData[key] &&
+              array.push(formData[key]);
+          });
+        setUnform({ ...unform, resume: formData.resume, curriculum: array });
+        console.log('submitted: ', formData, {
+          resume: formData.resume,
+          curriculum: array,
+        });
+      } catch (error) {
+        const errors = {};
+        error?.inner?.forEach((err) => {
+          errors[err.path] = err.message;
+        });
+        formRef.current?.setErrors(errors);
+      }
+    },
+    [unform],
+  );
 
   function handleAddCurriculum() {
-    const array = []
+    const array = [];
     const allData = formRef.current.getData();
-    Object.keys(allData).sort((a, b) => a - b).map(key=>{
-      !['LinkedIn','Instagram','Facebook','social','resume'].includes(key) && array.push(allData[key])
-    })
-    setCurriculum([...array,''])
+    Object.keys(allData)
+      .sort((a, b) => a - b)
+      .map((key) => {
+        !['LinkedIn', 'Instagram', 'Facebook', 'social', 'resume'].includes(
+          key,
+        ) && array.push(allData[key]);
+      });
+    setCurriculum([...array, '']);
   }
 
   function handleDeleteCurriculum(index) {
     const allData = formRef.current.getData();
 
-    const array = []
-    Object.keys(allData).sort((a, b) => a - b).map(key=>{
-      !['LinkedIn','Instagram','Facebook','social','resume'].includes(key) && array.push(allData[key])
-    })
+    const array = [];
+    Object.keys(allData)
+      .sort((a, b) => a - b)
+      .map((key) => {
+        !['LinkedIn', 'Instagram', 'Facebook', 'social', 'resume'].includes(
+          key,
+        ) && array.push(allData[key]);
+      });
 
     array.splice(index, 1);
-    setCurriculum([...array])
+    setCurriculum([...array]);
   }
 
-  return(
+  return (
     <InputsContainer>
       <FormContainer
         noValidate
@@ -109,18 +132,27 @@ export function ProfessionalData({ setUnform,unform}) {
           defaultValue={unform?.resume}
           multiline
           variant="outlined"
-          inputProps={{style: {textTransform: 'capitalize',color:'#000'}}}
+          inputProps={{ style: { textTransform: 'capitalize', color: '#000' } }}
         />
-        <div style={{display:'flex',alignItems:'center',gap:20}}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           <p>Curriculo Adcional</p>
-          <BootstrapTooltip placement="bottom" TransitionProps={{ timeout: {enter:500, exit: 50} }} title={'Inserir formação profissional, cursos de relevância, certificações...'} styletooltip={{transform: 'translateY(0px)'}}>
+          <BootstrapTooltip
+            placement="bottom"
+            TransitionProps={{ timeout: { enter: 500, exit: 50 } }}
+            title={
+              'Inserir formação profissional, cursos de relevância, certificações...'
+            }
+            styletooltip={{ transform: 'translateY(0px)' }}
+          >
             <div>
-                <IconEnd/>
+              <IconEnd />
             </div>
           </BootstrapTooltip>
         </div>
-        <div style={{display:'flex',flexDirection:'column',width:'100%'}}>
-          {curriculum.map((item,index)=>{
+        <div
+          style={{ display: 'flex', flexDirection: 'column', width: '100%' }}
+        >
+          {curriculum.map((item, index) => {
             return (
               <InputUnform
                 width={'100%'}
@@ -130,25 +162,36 @@ export function ProfessionalData({ setUnform,unform}) {
                 labelWidth={80}
                 label={'Curriculum'}
                 variant="outlined"
-                inputProps={{style: {color:'#000'}}}
-                endComponent={()=>
-                  <EndIcon onClick={index==curriculum.length-1?handleAddCurriculum:()=>handleDeleteCurriculum(index)}>
-                    {index==curriculum.length-1?
-                      <AddIcon style={{fontSize:20}}/>
-                    :
-                      <Delete style={{fontSize:20}}/>
+                inputProps={{ style: { color: '#000' } }}
+                endComponent={() => (
+                  <EndIcon
+                    onClick={
+                      index == curriculum.length - 1
+                        ? handleAddCurriculum
+                        : () => handleDeleteCurriculum(index)
                     }
+                  >
+                    {index == curriculum.length - 1 ? (
+                      <AddIcon style={{ fontSize: 20 }} />
+                    ) : (
+                      <Delete style={{ fontSize: 20 }} />
+                    )}
                   </EndIcon>
-                }
+                )}
               />
-            )
+            );
           })}
         </div>
-        <div style={{display:'flex',alignItems:'center',gap:20}}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           <p>Redes Sociais</p>
-          <BootstrapTooltip placement="bottom" TransitionProps={{ timeout: {enter:500, exit: 50} }} title={'Inserir URL das redes sociais que deseja disponibilizar.'} styletooltip={{transform: 'translateY(0px)'}}>
+          <BootstrapTooltip
+            placement="bottom"
+            TransitionProps={{ timeout: { enter: 500, exit: 50 } }}
+            title={'Inserir URL das redes sociais que deseja disponibilizar.'}
+            styletooltip={{ transform: 'translateY(0px)' }}
+          >
             <div>
-                <IconEnd/>
+              <IconEnd />
             </div>
           </BootstrapTooltip>
         </div>
@@ -160,7 +203,10 @@ export function ProfessionalData({ setUnform,unform}) {
           label={'Facebook'}
           statusStart={'Facebook'}
           variant="outlined"
-          inputProps={{placeholder:'https://www.facebook.com/realiza.conecta',style: {color:'#000'}}}
+          inputProps={{
+            placeholder: 'https://www.facebook.com/realiza.conecta',
+            style: { color: '#000' },
+          }}
           iconStart={'Facebook'}
         />
         <InputUnform
@@ -172,7 +218,10 @@ export function ProfessionalData({ setUnform,unform}) {
           label={'Instagram'}
           iconStart={'Instagram'}
           variant="outlined"
-          inputProps={{placeholder:'https://www.instagram.com/realiza.conecta',style: {color:'#000'}}}
+          inputProps={{
+            placeholder: 'https://www.instagram.com/realiza.conecta',
+            style: { color: '#000' },
+          }}
         />
         <InputUnform
           width={'100%'}
@@ -183,12 +232,20 @@ export function ProfessionalData({ setUnform,unform}) {
           label={'LinkedIn'}
           iconStart={'LinkedIn'}
           variant="outlined"
-          inputProps={{placeholder:'https://www.linkedin.com/in/realiza/',style: {color:'#000'}}}
+          inputProps={{
+            placeholder: 'https://www.linkedin.com/in/realiza/',
+            style: { color: '#000' },
+          }}
         />
-        <ButtonForm type='submit' jusify='center' primary={'true'} style={{width:'fit-content'}}>
+        <ButtonForm
+          type="submit"
+          jusify="center"
+          primary={'true'}
+          style={{ width: 'fit-content' }}
+        >
           Proximo
         </ButtonForm>
       </FormContainer>
     </InputsContainer>
-  )
+  );
 }

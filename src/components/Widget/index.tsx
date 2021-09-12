@@ -148,15 +148,17 @@ export const WidgetComponent: React.FC = () => {
       {/* <button type="button" onClick={sendMessage}>
         okuhuihuihuihiuhui
       </button> */}
-      <div onClick={handleWidgetClick}>
-        <Widget
-          handleNewUserMessage={handleNewUserMessage}
-          profileAvatar="/images/iconRealiza.png"
-          title="Suporte"
-          subtitle="Fale com nosso suporte e tire suas dúvidas"
-          showTimeStamp={false}
-        />
-      </div>
+      {!currentUser?.manager && (
+        <div onClick={handleWidgetClick}>
+          <Widget
+            handleNewUserMessage={handleNewUserMessage}
+            profileAvatar="/images/iconRealiza.png"
+            title="Suporte"
+            subtitle="Fale com nosso suporte e tire suas dúvidas"
+            showTimeStamp={false}
+          />
+        </div>
+      )}
     </>
   );
 };

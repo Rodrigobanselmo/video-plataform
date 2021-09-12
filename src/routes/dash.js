@@ -11,13 +11,14 @@ import {
   Perfil,
   Statement,
   Chat,
-
+  Certification,
   Download,
   Calendar,
   AllClients,
   CalendarConector,
   Profession,
-  Notifications
+  Notifications,
+  StatementAdmin,
 } from '../containers';
 import {
   HOME_ADMIN,
@@ -32,7 +33,7 @@ import {
   CLIENT_ADMIN,
   PROFILE,
   STATEMENT,
-
+  CERTIFICATION,
   CALENDAR_ADMIN,
   ADMIN_PERFIL,
   ADMIN_PROFESSION,
@@ -41,108 +42,114 @@ import {
   DOWNLOAD,
   NOTIFICATIONS_EMAIL,
   CHATS,
-} from './routesNames'
+  FINANCE,
+} from './routesNames';
 
 const routes = [
   {
     path: DASHBOARD,
     component: Home,
-    exact:true,
+    exact: true,
   },
   {
     path: CURSOS,
     component: Cursos,
-    exact:true,
+    exact: true,
   },
   {
     path: CURSO_INFO,
     component: CursoInfo,
-    exact:true,
+    exact: true,
   },
   {
     path: CURSOS_CREATE,
     component: CursoCreate,
-    exact:true,
+    exact: true,
   },
   {
     path: ALL_VIDEO,
     component: AllVideo,
-    exact:true,
+    exact: true,
   },
   {
     path: VIDEO,
     component: Video,
-    exact:true,
+    exact: true,
   },
   {
     path: HOME_ADMIN,
     component: HomeAdmin,
-    admin:true,
+    admin: true,
   },
   {
     path: CLIENT_ADMIN,
     component: Client,
-    admin:true,
+    admin: true,
   },
   {
     path: PROFILE,
     component: Perfil,
-    exact:true,
-    admin:true,
+    exact: true,
+    admin: true,
   },
   {
     path: CHATS,
     component: Chat,
-    admin:true,
+    admin: true,
+  },
+  {
+    path: CERTIFICATION,
+    component: Certification,
+    admin: true,
   },
   {
     path: STATEMENT,
     component: Statement,
-    exact:true,
-    admin:true,
+    exact: true,
+    admin: true,
   },
-
-
-
-
-
-
+  {
+    path: FINANCE,
+    component: StatementAdmin,
+    exact: true,
+    admin: true,
+  },
 
   {
     path: ADMIN_PERFIL_EDIT,
     component: Perfil,
-    exact:true,
-    admin:true,
+    exact: true,
+    admin: true,
   },
   {
     path: ADMIN_PROFESSION,
     component: Profession,
-    admin:true,
+    admin: true,
   },
   {
     path: NOTIFICATIONS_EMAIL,
     component: Notifications,
-    admin:true,
+    admin: true,
   },
   {
     path: CALENDAR_ADMIN,
     component: Calendar,
-    admin:true,
+    admin: true,
   },
   {
     path: CALENDAR_CONECTOR,
     component: CalendarConector,
-    admin:true,
+    admin: true,
   },
   {
     path: DOWNLOAD,
     component: Download,
-    admin:true,
+    admin: true,
   },
   {
     path: TEAM,
     component: Team,
-    exact:true,
+    exact: true,
     //isPrivate:true,
     //privateRoute:DASHBOARD,
     //infoUser:['access'],
@@ -152,7 +159,7 @@ const routes = [
   {
     path: CLIENTS,
     component: AllClients,
-    exact:true,
+    exact: true,
     //isPrivate:true,
     //privateRoute:DASHBOARD,
     //infoUser:['access'],
@@ -161,6 +168,4 @@ const routes = [
   },
 ];
 
-
-export default routes
-
+export default routes;

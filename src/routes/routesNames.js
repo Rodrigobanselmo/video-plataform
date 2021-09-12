@@ -9,6 +9,8 @@ export const CLIENT_ADMIN = `${ADMIN}/client`;
 export const CURSOS_CREATE = `${ADMIN}/cursos/create`;
 export const NOTIFICATIONS_EMAIL = `${ADMIN}/notificacoes-email`;
 export const CHATS = `${ADMIN}/chats/:userId?`;
+export const CERTIFICATION = `${ADMIN}/certification`;
+export const FINANCE = `${ADMIN}/finance`;
 
 export const CURSOS = `${DASHBOARD}/cursos`;
 export const CURSO_INFO = `${DASHBOARD}/cursos/:cursoId`;

@@ -52,7 +52,7 @@ import MoreVertRoundedIcon from '@material-ui/icons/MoreVertRounded';
 import CameraAltOutlinedIcon from '@material-ui/icons/CameraAltOutlined';
 import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import {FiUser as Avatar } from 'react-icons/fi';
+import { FiUser as Avatar } from 'react-icons/fi';
 import ChatIcon from '@material-ui/icons/Chat';
 // import Avatar from '@material-ui/icons/PersonOutlineOutlined';
 import Facebook from '@material-ui/icons/Facebook';
@@ -63,7 +63,8 @@ import Twitter from '@material-ui/icons/Twitter';
 import Instagram from '@material-ui/icons/Instagram';
 
 import EmailIcon from '@material-ui/icons/Email';
-
+import NoteIcon from '@material-ui/icons/Note';
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 
 import OfflineBoltTwoToneIcon from '@material-ui/icons/OfflineBoltTwoTone';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
@@ -76,17 +77,23 @@ import { ReactComponent as Erg } from './risk/erg.svg';
 
 import LottieAnimation from '../../lib/lottie';
 import { AiOutlineClose } from 'react-icons/ai';
-import { BsCheckCircle,BsExclamationTriangle,BsXOctagon,BsInfoCircle } from 'react-icons/bs';
+import {
+  BsCheckCircle,
+  BsExclamationTriangle,
+  BsXOctagon,
+  BsInfoCircle,
+} from 'react-icons/bs';
 
 export const Icons = ({ type, ...props }) => {
   switch (type) {
-
-
     case 'Email':
       return <EmailIcon {...props} />;
     case 'Chat':
       return <ChatIcon {...props} />;
-
+    case 'Certification':
+      return <NoteIcon {...props} />;
+    case 'Money':
+      return <MonetizationOnIcon {...props} />;
 
     case 'Twitter':
       return <Twitter {...props} />;
@@ -121,22 +128,34 @@ export const Icons = ({ type, ...props }) => {
     case 'Info':
       return <BsInfoCircle {...props} />;
     case 'Infos':
-      return (<Logo style={{marginTop:3,opacity:0.7,cursor:'pointer'}} height="20px" width="20px"  {...props}/>);
+      return (
+        <Logo
+          style={{ marginTop: 3, opacity: 0.7, cursor: 'pointer' }}
+          height="20px"
+          width="20px"
+          {...props}
+        />
+      );
     case 'InfoShade':
-      return (<Logo style={{marginTop:3,opacity:0.4,cursor:'pointer'}} height="20px" width="20px"  {...props}/>);
+      return (
+        <Logo
+          style={{ marginTop: 3, opacity: 0.4, cursor: 'pointer' }}
+          height="20px"
+          width="20px"
+          {...props}
+        />
+      );
 
     case 'Fis':
-      return (<Fis  height="20px" width="20px"  {...props}/>);
+      return <Fis height="20px" width="20px" {...props} />;
     case 'Qui':
-      return (<Qui  height="20px" width="20px" {...props} />);
+      return <Qui height="20px" width="20px" {...props} />;
     case 'Bio':
-      return (<Bio  height="20px" width="20px"  {...props}/>);
+      return <Bio height="20px" width="20px" {...props} />;
     case 'Erg':
-      return (<Erg  height="20px" width="20px"  {...props}/>);
+      return <Erg height="20px" width="20px" {...props} />;
     case 'Aci':
-      return (<Aci  height="20px" width="20px" {...props} />);
-
-
+      return <Aci height="20px" width="20px" {...props} />;
 
     case 'Administrative':
       return <FileCopyIcon {...props} />;

@@ -131,6 +131,7 @@ export async function setUpdateCurso(
   const batch = db.batch();
 
   const userData: any = {};
+  const now = new Date().getTime();
   // *finished
   if (newStudent.status === 'finished') {
     const cursoData = await cursoRef.get();
@@ -140,10 +141,13 @@ export async function setUpdateCurso(
 
     const certificationData: any = {};
     certificationData.validDate = 0;
+    certificationData.email = currentUser.email;
     let cursoName = '';
+    const course = {} as any;
     if (cursoData.exists) {
       const curso = cursoData.data();
       cursoName = curso?.name;
+
       if (curso?.accessTimeAfter) {
         const expireDate = new Date(
           today.setDate(today.getDate() + Number(curso.accessTimeAfter)),
@@ -159,8 +163,68 @@ export async function setUpdateCurso(
         newStudent.validDate = cursoValidation;
         userData.validDate = cursoValidation;
       }
+
+      course.initial_date = stateStudent.startDate;
+      course.final_date = now;
+      course.course_hours = curso?.duration;
+      course.attendance = '100%';
+
+      // dar a nota para o usuário 'Grade'
+      course.grade = '10/10';
+      certificationData.certificationEmail = curso?.certificationEmail;
+      certificationData.validSignature = !!curso?.validSignature;
+      certificationData.fileURL = false;
+      certificationData.professionals = await Promise.all(
+        curso?.professionals?.map(async (professional: any) => {
+          const prof = await db
+            .collection('users')
+            .doc(professional.userId)
+            .get();
+
+          const userProf = prof.data();
+          return {
+            id: professional.userId,
+            signature: userProf?.signatureURL,
+            name: userProf?.name,
+            job: professional.occupation,
+          };
+        }),
+      );
+      const arrayWatchedIds: string[] = [];
+
+      Object.entries(stateStudent.watched).map(
+        ([key, classes]: [string, any]) => {
+          const array: string[] = [];
+          array.push(key);
+          classes.map((cls: string) => {
+            array.push(cls);
+          });
+
+          if (array.length > 1) arrayWatchedIds.push(...array);
+        },
+      );
+
+      const contents = [] as any;
+      curso?.modules.map((module: any) => {
+        const array = [];
+        if (arrayWatchedIds.find((i) => i === module.id))
+          array.push({
+            id: module.name,
+            type: 'module',
+          });
+
+        module.classes.map((classes: any) => {
+          if (arrayWatchedIds.find((i) => i === classes.id))
+            array.push({
+              name: classes.name,
+              type: 'class',
+            });
+        });
+
+        if (array.length > 1) contents.push(...array);
+      });
+      certificationData.contents = contents;
     }
-    const now = new Date().getTime();
     userData.finishedDate = now;
     userData.studentId = newStudent.id;
     newStudent.finishedDate = now;
@@ -172,8 +236,9 @@ export async function setUpdateCurso(
       finishedDate: now,
       userId: currentUser.uid,
       name: currentUser.name,
-      cpf: currentUser?.cpf,
+      cpf: currentUser.cpf,
       cursoName,
+      course,
       studentId: newStudent.id,
     });
   }

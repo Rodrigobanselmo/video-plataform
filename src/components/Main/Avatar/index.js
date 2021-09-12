@@ -1,8 +1,8 @@
 import * as React from 'react';
 import Avatar from '@material-ui/core/Avatar';
-import styled, {css} from "styled-components";
+import styled, { css } from 'styled-components';
 import { InitialsName } from '../../../helpers/StringHandle';
-import { darken } from "@material-ui/core/styles";
+import { darken } from '@material-ui/core/styles';
 
 const ProfileImage = styled.div`
   height: 45px;
@@ -13,56 +13,54 @@ const ProfileImage = styled.div`
   display: flex;
   flex-shrink: 0;
 
-  background-image: url(${({photoURL})=>photoURL});
+  background-image: url(${({ photoURL }) => photoURL});
   background-position: center center;
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
 `;
 
-
 const ProfileName = styled.p`
   font-size: 22px;
-  font-weight:600;
+  font-weight: 600;
   /* letter-spacing:2px; */
   /* padding-top: 3px; */
   padding-left: 1px;
-  color: ${({theme})=>theme.palette.primary.contrastText};
+  color: ${({ theme }) => theme.palette.primary.contrastText};
 
-  ${props => props.navbar && css`
-    letter-spacing: 0px;
-    padding-top: 0px;
-    padding-left: 0px;
-    font-size:18px;
-  `}
+  ${(props) =>
+    props.navbar &&
+    css`
+      letter-spacing: 0px;
+      padding-top: 0px;
+      padding-left: 0px;
+      font-size: 18px;
+    `}
 
-  ${props => props.borderApplied && css`
-    letter-spacing: 0px;
-    padding-top: 0px;
-    padding-left: 0px;
-    font-size: 20px;
-  `}
+  ${(props) =>
+    props.borderApplied &&
+    css`
+      letter-spacing: 0px;
+      padding-top: 0px;
+      padding-left: 0px;
+      font-size: 20px;
+    `}
 `;
 
-
 const Profile = styled.div`
-  background-color: ${({theme})=>theme.palette.primary.main};
-  display:flex;
-  flex:1;
+  background-color: ${({ theme }) => theme.palette.primary.main};
+  display: flex;
+  flex: 1;
   border-radius: 40px;
   justify-content: center;
   box-sizing: border-box;
   align-items: center;
   display: flex;
-  flex-shrink: 0;
-
-
-
+  flex-shrink: 1;
 `;
-
 
 const ProfileContainer = styled.div`
   display: flex;
-  margin:5px 0;
+  margin: 5px 0;
   height: 55px;
   width: 55px;
   border-radius: 30px;
@@ -71,29 +69,30 @@ const ProfileContainer = styled.div`
   cursor: pointer;
   transform: scale(0.9);
   background-color: transparent;
-  align-items: center;
 
-  ${props => props.navbar && css`
-    margin:0;
-    margin-left:15px;
-    height:53px;
-    width: 53px;
-    padding:2px;
-    border: 2px solid ${({theme})=> theme.palette.text.primaryNav };
+  ${(props) =>
+    props.navbar &&
+    css`
+      margin: 0;
+      margin-left: 15px;
+      height: 53px;
+      width: 53px;
+      padding: 2px;
+      border: 2px solid ${({ theme }) => theme.palette.text.primaryNav};
 
+      @media screen and (max-width: 900px) {
+        transform: scale(0.8);
+      }
+    `}
 
-    @media screen and (max-width: 900px) {
-      transform: scale(0.8)
-    }
-
-  `}
-
-  ${props => props.borderApplied && css`
-    height:55px;
-    width: 55px;
-    padding:2px;
-    border: 2px solid ${({theme})=> theme.palette.text.primaryNav };
-  `}
+  ${(props) =>
+    props.borderApplied &&
+    css`
+      height: 55px;
+      width: 55px;
+      padding: 2px;
+      border: 2px solid ${({ theme }) => theme.palette.text.primaryNav};
+    `}
 `;
 
 function stringToColor(string) {
@@ -116,24 +115,51 @@ function stringToColor(string) {
   return color;
 }
 
-
-export function AvatarView({user={}, navbar=false, borderApplied=false, forwardRef=null, ...props}) {
-
+export function AvatarView({
+  user = {},
+  randomColor = false,
+  navbar = false,
+  borderApplied = false,
+  forwardRef = null,
+  ...props
+}) {
   const isPhoto = user?.photoURL;
-  const isPending = user?.status && (user.status === 'Pendente' || user.status === 'Autenticando');
+  const isPending =
+    user?.status &&
+    (user.status === 'Pendente' || user.status === 'Autenticando');
 
   return (
-    <ProfileContainer ref={forwardRef} borderApplied={borderApplied && !(!isPhoto && isPending)} navbar={navbar} {...props}>
-    {!isPhoto && !isPending ? (
-      <Profile style={navbar?{}:{backgroundColor:darken(stringToColor(user?.name??'Rp'),0.06)}}>
-        <ProfileName borderApplied={borderApplied} navbar={navbar}>
-          {user?.name ? InitialsName(user.name,22) : 'PE'}
-        </ProfileName>
-      </Profile>
-    ) : ( !isPhoto && isPending
-      ? <ProfileImage style={{borderRadius:0,opacity:0.9}} photoURL={'/images/pendente.png'}/>
-      : <ProfileImage photoURL={user.photoURL}/>
-    )}
-  </ProfileContainer>
+    <ProfileContainer
+      ref={forwardRef}
+      borderApplied={borderApplied && !(!isPhoto && isPending)}
+      navbar={navbar}
+      {...props}
+    >
+      {!isPhoto && !isPending ? (
+        <Profile
+          style={
+            navbar && !randomColor
+              ? {}
+              : {
+                  backgroundColor: darken(
+                    stringToColor(user?.name ?? 'Rp'),
+                    0.06,
+                  ),
+                }
+          }
+        >
+          <ProfileName borderApplied={borderApplied} navbar={navbar}>
+            {user?.name ? InitialsName(user.name, 22) : 'PE'}
+          </ProfileName>
+        </Profile>
+      ) : !isPhoto && isPending ? (
+        <ProfileImage
+          style={{ borderRadius: 0, opacity: 0.9 }}
+          photoURL={'/images/pendente.png'}
+        />
+      ) : (
+        <ProfileImage photoURL={user.photoURL} />
+      )}
+    </ProfileContainer>
   );
 }

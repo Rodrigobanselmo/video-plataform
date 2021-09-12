@@ -73,6 +73,7 @@ export async function setStudent(data: any, currentUser: any) {
       expireDate: data.daysToExpire ? expireDate : 0,
       finishedDate: false,
       cursoId: curso.id,
+      validSignature: curso?.validSignature,
       modules: 'all',
       watched: {},
       classes: cursoClasses,
@@ -90,27 +91,52 @@ export async function setStudent(data: any, currentUser: any) {
   if (userSnap.data()?.cursos) {
     const cursos = userSnap.data()?.cursos;
 
-    const index = cursos.findIndex((i: any) => i.id === data.id);
+    // verifica se curso existe e -- se existe expiração ou iniciado ou nao esta expirado
+    const index = cursos.findIndex(
+      (i: any, idx: number) =>
+        i.id === data.id &&
+        (!cursos[idx]?.expireDate ||
+          cursos[idx]?.status === 'started' ||
+          (cursos[idx]?.expireDate &&
+            cursos[idx].expireDate > new Date().getTime())),
+    );
     if (index >= 0) {
-      // se index existir
+      // se curso existir (sempre tem que existir para começar)
       if (
-        // curso expirado
+        // curso não expirado
         cursos[index]?.expireDate &&
         cursos[index].expireDate > new Date().getTime()
       ) {
-        if (cursos[index]?.status === 'finished') {
-          return { cursoId: cursos[index].id };
-        }
+        // if (cursos[index]?.status === 'finished') {
+        return { cursoId: cursos[index].id };
+        // }
+        // const response = await onAddCurso({ cursos, index }); // se o curso existe e possui quantidade maior que 0 ele vai criar students e remover uma unidade de curso
+        // return response;
+      }
+
+      if (
+        // curso expirado
+        cursos[index]?.status === 'started' &&
+        cursos[index]?.expireDate &&
+        cursos[index].expireDate < new Date().getTime()
+      ) {
         const response = await onAddCurso({ cursos, index }); // se o curso existe e possui quantidade maior que 0 ele vai criar students e remover uma unidade de curso
         return response;
+        // if (cursos[index]?.status === 'finished') {
+        // return { cursoId: cursos[index].id };
+        // }
+        // const response = await onAddCurso({ cursos, index }); // se o curso existe e possui quantidade maior que 0 ele vai criar students e remover uma unidade de curso
+        // return response;
       }
+
       if (cursos[index]?.status === 'finished' && !cursos[index]?.expireDate) {
         return { cursoId: cursos[index].id };
       }
+
       if (cursos[index]?.status === 'started') {
-        // TODO: aqui vai ter que ver como fazer qunado finalizar curso
         return { cursoId: cursos[index].id };
       }
+
       if (cursos[index]?.quantity) {
         // se possui quantidade maior que 0 de cursos
         const response = await onAddCurso({ cursos, index }); // se o curso existe e possui quantidade maior que 0 ele vai criar students e remover uma unidade de curso
@@ -119,22 +145,6 @@ export async function setStudent(data: any, currentUser: any) {
       return { error: 'Você não possui este curso.' };
     }
   }
-
-  // pega o curso comprado // TODO preciso averiguar como vou fazer para adicionar cursos com availableCursos sem epi definido
-  // if (userSnap.data()?.availableCursos) {
-  //   const cursos = userSnap.data()?.availableCursos;
-
-  //   const index = cursos.findIndex((i: any) => i.id === data.id);
-  //   if (index >= 0) {
-  //     // se index existir
-  //     if (cursos[index]?.quantity) {
-  //       // se possui quantidade maior que 0 de cursos
-  //       const response = await onAddCurso({ cursos, index }); // se o curso existe e possui quantidade maior que 0 ele vai criar students e remover uma unidade de curso
-  //       return response;
-  //     }
-  //     return { error: 'Você não possui este curso.' };
-  //   }
-  // }
 
   return { error: 'Você não possui este curso.' };
 }

@@ -407,28 +407,28 @@ export function VideoPlayer({curso}) {
   };
 
   const onEndVideo = async () => {
-    if (autoplay) {
-      handleNextVideo('endNext')
-      setLoading(true)
-    } else {
-      handleMouseMove()
-      handlePlayPause()
-    }
-    if ((
-        modules[`${cursoId}//${moduleId}//${classId}`]
-      &&
-        modules[`${cursoId}//${moduleId}//${classId}`]?.percentage == 100
-      )
-      ||
-      (
-        modules[moduleId]
-      &&
-        modules[moduleId].includes(moduleId)
-      )
-    ) return null
+    // if (autoplay) {
+    //   handleNextVideo('endNext')
+    //   setLoading(true)
+    // } else {
+    //   handleMouseMove()
+    //   handlePlayPause()
+    // }
+    // if ((
+    //     modules[`${cursoId}//${moduleId}//${classId}`]
+    //   &&
+    //     modules[`${cursoId}//${moduleId}//${classId}`]?.percentage == 100
+    //   )
+    //   ||
+    //   (
+    //     modules[moduleId]
+    //   &&
+    //     modules[moduleId].includes(moduleId)
+    //   )
+    // ) return null
 
     await mutation.mutateAsync({cursoId,moduleId,classId,nextModule,nextClass,classIndex:nextClassIndex,moduleIndex:nextModuleIndex})
-    dispatch({ type: 'PROGRESS_DONE', payload: `${cursoId}//${moduleId}//${classId}` }) //PROGRESS_DISPATCH
+    // dispatch({ type: 'PROGRESS_DONE', payload: `${cursoId}//${moduleId}//${classId}` }) //PROGRESS_DISPATCH
 
     // dispatch({ type: 'MODULE_DONE', payload: {cursoId,moduleId,classId,nextModule,nextClass,classIndex:nextClassIndex,moduleIndex:nextModuleIndex} }) //PROGRESS_DISPATCH
   };
