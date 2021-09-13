@@ -52,7 +52,6 @@ const TotalDiv = styled.div`
 const Button = styled.button`
   display: flex;
   border: none;
-  width: fit-content;
   font-size: 18px;
   height: 100px;
   padding-right: 0.5rem;
@@ -79,11 +78,10 @@ const Button = styled.button`
 `;
 
 const CheckoutContainer = styled.div`
+  z-index: 11000012002120021021;
   display: flex;
   width: 100%;
-  position: relative;
-  grid-column: 2 / 3;
-  grid-row: 2 / 3;
+  height: 50px;
   -webkit-box-shadow: 3px 3px 11px 1px rgba(0, 0, 0, 0.23);
   box-shadow: 3px 3px 11px 1px rgba(0, 0, 0, 0.23);
   align-items: center;
@@ -95,8 +93,6 @@ const CheckoutContainer = styled.div`
     ${({ theme }) => theme.palette.primary.main},
     ${({ theme }) => theme.palette.primary.light}
   );
-  overflow: hidden;
-  /* background-color: ${({ theme }) => theme.palette.background.paper}; */
 
   &:hover ${TotalDiv} {
     margin-right: 30px;

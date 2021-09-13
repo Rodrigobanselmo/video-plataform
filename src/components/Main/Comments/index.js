@@ -65,6 +65,7 @@ export function Comments({ curso }) {
 
   const isAdmin =
     (curso &&
+      curso.professionals &&
       curso.professionals.some(
         (profile) => profile.userId === currentUser.uid,
       )) ||

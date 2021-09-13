@@ -595,7 +595,6 @@ export const UpdateUserData = React.memo(
       newEmails[index] = '';
       formRef.current.setFieldValue(index.toString(), '');
 
-      //deletar name e cpf
       const newCursos = { ...cursos };
       Object.keys(cursos).map((key) => {
         if (key.split('--')[0] === index.toString()) delete newCursos[key];

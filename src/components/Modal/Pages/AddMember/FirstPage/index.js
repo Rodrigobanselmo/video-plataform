@@ -56,9 +56,10 @@ const GridContainer = styled(Form)`
   min-height: 85vh;
 
   @media screen and (max-width: 800px) {
+    padding-right: 20px;
     gap: 20px;
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 50px;
     grid-template-areas:
       'email'
       'side'

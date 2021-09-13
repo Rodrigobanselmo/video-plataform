@@ -62,24 +62,13 @@ export default function Video() {
 
   return (
     <Container>
-      {curso && student && student[0] && !isLoading ? (
-        <>
-          <Shadow>
-            <Title>EPI</Title>
-            <ProgressContainer></ProgressContainer>
-            <ContainerPlayer>
-              <VideoPlayer curso={curso} />
-
-              <SideVideoBarTry>
-                <SideVideoBar curso={curso} notLock />
-              </SideVideoBarTry>
-            </ContainerPlayer>
-          </Shadow>
-          <Shadow style={{ marginTop: 20 }}>
-            <Comments curso={curso} />
-          </Shadow>
-        </>
-      ) : null}
+      <Shadow>
+        <Title>EPI</Title>
+        <ProgressContainer></ProgressContainer>
+      </Shadow>
+      <Shadow style={{ marginTop: 20 }}>
+        <Comments curso={curso} />
+      </Shadow>
     </Container>
   );
 }

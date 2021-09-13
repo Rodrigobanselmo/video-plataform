@@ -51,7 +51,6 @@ export function AddBillModal({ editData, open, onCloseModalAdd }) {
   const [data, setData] = useState(
     editData?.openValue < 0 ? Number(editData?.openValue) * -1 : '0',
   );
-  console.log(Number(editData?.openValue) * -1);
   const [checked, setChecked] = useState(true);
   const notification = useNotification();
   const { currentUser } = useAuth();

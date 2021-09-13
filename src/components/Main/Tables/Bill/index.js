@@ -242,11 +242,13 @@ export function BillTable({ isLoading, data }) {
       ) : (
         <LoadTable rows={5} columns={5} />
       )}
-      <AddBillModal
-        onCloseModalAdd={onCloseModalAdd}
-        open={open}
-        editData={editData}
-      />
+      {open && (
+        <AddBillModal
+          onCloseModalAdd={onCloseModalAdd}
+          open={open}
+          editData={editData}
+        />
+      )}
     </ContainerTable>
   );
 }
