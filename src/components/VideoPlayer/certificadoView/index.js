@@ -132,7 +132,7 @@ export function CertificadoView({ curso, student }) {
   }
 
   function handleDownloadCertificate() {
-    downloadCertificate.mutateAsync(student.id);
+    downloadCertificate.mutateAsync({ certificationId: student.id });
   }
 
   const handleFinishedCourse = async () => {

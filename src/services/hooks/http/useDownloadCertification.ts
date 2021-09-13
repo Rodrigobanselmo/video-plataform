@@ -43,7 +43,7 @@ export async function onFunction({
   const certificationRef = db.collection('certifications').doc(certificationId);
   const docSnapshotCertification = await certificationRef.get();
   const dateProvider = new DateProvider();
-
+  console.log(certificationId);
   if (!docSnapshotCertification.exists) {
     throw 'Você não possui o certificado deste curso ainda, finalize-o para obter.';
   }

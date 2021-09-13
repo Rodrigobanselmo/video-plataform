@@ -169,7 +169,7 @@ export function UserCursosTable({ data }) {
 
   const handleDownloadCertificate = (studentId) => {
     if (downloadCertificate.isLoading) return null;
-    downloadCertificate.mutateAsync(studentId);
+    downloadCertificate.mutateAsync({ certificationId: studentId });
   };
 
   return (

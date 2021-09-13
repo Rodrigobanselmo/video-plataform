@@ -19,134 +19,122 @@ import { fade } from '@material-ui/core/styles';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
+const TotalDiv = styled.div`
+  background-color: ${({ theme }) => theme.palette.background.paper};
+  padding: 0 20px;
+  border-radius: 20px;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  align-items: center;
+  width: 100%;
+  transition: all 0.3s linear;
+  min-width: fit-content;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+  overflow: hidden;
+  margin-right: 10px;
+  p {
+    font-size: 18px;
+    color: ${({ theme }) => theme.palette.text.secondary};
+    font-weight: bold;
+
+    span {
+      font-size: 20px;
+      margin-left: 0.5rem;
+      color: ${({ theme }) => theme.palette.text.primary};
+      opacity: 0.8;
+    }
+  }
+`;
+
+const Button = styled.button`
+  display: flex;
+  border: none;
+  width: fit-content;
+  font-size: 18px;
+  height: 100px;
+  padding-right: 0.5rem;
+  flex: 1;
+  align-items: center;
+  background-color: transparent;
+  /* background-color: ${({ theme }) => theme.palette.primary.main}; */
+  font-weight: bold;
+  color: ${({ theme }) => theme.palette.primary.contrastText};
+  justify-content: flex-end;
+  cursor: pointer;
+
+  p {
+    padding-right: 10px;
+  }
+
+  svg {
+    font-size: 30px;
+  }
+
+  &:hover {
+    filter: brightness(0.8);
+  }
+`;
+
 const CheckoutContainer = styled.div`
-  display:flex;
-  width:100%;
-  max-height:50px;
-  min-height:50px;
+  display: flex;
+  width: 100%;
+  position: relative;
   grid-column: 2 / 3;
   grid-row: 2 / 3;
-  -webkit-box-shadow: 3px 3px 11px 1px rgba(0,0,0,0.23);
-    box-shadow: 3px 3px 11px 1px rgba(0,0,0,0.23);
-  align-items:center;
+  -webkit-box-shadow: 3px 3px 11px 1px rgba(0, 0, 0, 0.23);
+  box-shadow: 3px 3px 11px 1px rgba(0, 0, 0, 0.23);
+  align-items: center;
   justify-content: space-between;
-  border-radius:18px;
-  background-color: ${({theme})=>theme.palette.primary.main};
-  background-image: linear-gradient(-10deg,${({ theme }) => theme.palette.primary.main},${({ theme }) => theme.palette.primary.light});
-  overflow:hidden;
-  /* background-color: ${({theme})=>theme.palette.background.paper}; */
+  border-radius: 18px;
+  background-color: ${({ theme }) => theme.palette.primary.main};
+  background-image: linear-gradient(
+    -10deg,
+    ${({ theme }) => theme.palette.primary.main},
+    ${({ theme }) => theme.palette.primary.light}
+  );
+  overflow: hidden;
+  /* background-color: ${({ theme }) => theme.palette.background.paper}; */
 
-
-  > div {
-    background-color: ${({theme})=>theme.palette.background.paper};
-    padding:0 20px;
-    border-radius:20px;
-    height:100%;
-    display:flex;
-    justify-content: space-between;
-
-    align-items:center;
-  }
-
-  &:hover  {
-      & div.total {
-        margin-right:30px;
-      }
-    }
-
-
-  > div.total {
-    width:100%;
-    transition: all 0.3s linear;
-    margin-right:0px;
-    min-width:fit-content;
-    border-top-right-radius:50px;
-    border-bottom-right-radius:50px;
-    p {
-      font-size: 18px;
-      color: ${({theme})=>theme.palette.text.secondary};
-      font-weight: bold;
-
-      span {
-        font-size: 20px;
-        margin-left:0.5rem;
-        color: ${({theme})=>theme.palette.text.primary};
-        opacity:0.8;
-      }
-    }
-  }
-
-  > button {
-
-    border:none;
-    width:fit-content;
-    font-size: 20px;
-    width: 75%;
-    padding-right:0.5rem;
-    display:flex;
-    align-items:center;
-    background-color: transparent;
-    /* background-color: ${({theme})=>theme.palette.primary.main}; */
-    font-weight: bold;
-    color: ${({theme})=>theme.palette.primary.contrastText};
-    justify-content:flex-end;
-    cursor: pointer;
-
-    p {
-      padding-right:10px;
-    }
-
-    svg {
-      font-size: 30px;
-    }
-
-    &:hover {
-      filter: brightness(0.80)
-    }
-
-
-
-
+  &:hover ${TotalDiv} {
+    margin-right: 30px;
   }
 
   @media screen and (max-width: 800px) {
-    grid-area:check;
+    grid-area: check;
   }
-
 `;
 
-
-const CheckoutComponent = ({load, totalPrice }) => {
-
+const CheckoutComponent = ({ load, totalPrice }) => {
   // const { currentUser } = useAuth();
   // const isAdmin = currentUser?.access === 'admin'
 
   return (
     <CheckoutContainer>
-      <div className='total'>
-        <p>TOTAL:
+      <TotalDiv className="total">
+        <p>
+          TOTAL:
           <span>
-            {new Intl.NumberFormat("pt-BR", {
-              style: "currency",
-              currency: "BRL",
+            {new Intl.NumberFormat('pt-BR', {
+              style: 'currency',
+              currency: 'BRL',
             }).format(totalPrice)}
           </span>
         </p>
-      </div>
+      </TotalDiv>
 
-      <button disabled={load} type='submit'>
+      <Button disabled={load} type="submit">
         <p>CONTINUAR</p>
-        {load ?
-          <CircularProgress
-            size={24}
-            style={{color: '#fff'}}
-          />
-        :
-          <KeyboardArrowRightIcon/>
-        }
-      </button>
+        {load ? (
+          <CircularProgress size={24} style={{ color: '#fff' }} />
+        ) : (
+          <KeyboardArrowRightIcon />
+        )}
+      </Button>
     </CheckoutContainer>
   );
 };
 
-export const CheckoutButton = React.memo(CheckoutComponent)
+export const CheckoutButton = React.memo(CheckoutComponent);

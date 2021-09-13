@@ -17,31 +17,29 @@ import { GlobalStyle } from './styles/global';
 import { AuthProvider } from './context/AuthContext';
 import { LoaderContext } from './context/LoadDashContext';
 import { LoaderDashboard } from './components/Main/Loader/index';
-import { ReactQueryDevtools } from 'react-query/devtools'
+import { ReactQueryDevtools } from 'react-query/devtools';
 import { queryClient } from './services/queryClient';
 import { WidgetComponent } from './components/Widget';
 import { Seed } from './seed';
 import { LogOut } from './services/firebaseAuth';
-import {ErrorBoundary} from 'react-error-boundary'
+import { ErrorBoundary } from 'react-error-boundary';
 
 const ThemeColor = createMuiTheme(themeColor);
 
-function ErrorFallback({error, resetErrorBoundary}) {
+function ErrorFallback({ error, resetErrorBoundary }) {
   return (
     <div role="alert">
       <p>Something went wrong:</p>
       <pre>{error.message}</pre>
       <button onClick={resetErrorBoundary}>Try again</button>
     </div>
-  )
+  );
 }
 
 export const App = () => (
-   <ErrorBoundary
-    FallbackComponent={ErrorFallback}
-  >
+  <ErrorBoundary FallbackComponent={ErrorFallback}>
     <QueryClientProvider client={queryClient}>
-      {/* <Seed/> */}
+      {/* <Seed /> */}
       <MuiPickersUtilsProvider locale={ptBR} utils={DateFnsUtils}>
         <MuiThemeProvider theme={ThemeColor}>
           <ThemeProvider theme={ThemeColor}>
@@ -56,7 +54,7 @@ export const App = () => (
                             <RouteComponent key={route.path} {...route} />
                           ))}
                         </Switch>
-                        <WidgetComponent/>
+                        <WidgetComponent />
                       </AuthProvider>
                     </Router>
                     <GlobalStyle />
@@ -67,7 +65,7 @@ export const App = () => (
           </ThemeProvider>
         </MuiThemeProvider>
       </MuiPickersUtilsProvider>
-      <ReactQueryDevtools/>
+      <ReactQueryDevtools />
     </QueryClientProvider>
   </ErrorBoundary>
 );

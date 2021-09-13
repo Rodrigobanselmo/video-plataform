@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable camelcase */
 /* eslint-disable react/jsx-curly-newline */

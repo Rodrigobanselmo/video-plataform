@@ -29,11 +29,11 @@ export function Comments({ curso }) {
   const { moduleId, classId } = useParams();
 
   const { data } = useQuery(
-    ['comments', moduleId, classId],
+    ['comments', moduleId, classId ? classId : moduleId],
     async () => {
       const data = await commentsRef
         .where('moduleId', '==', moduleId)
-        .where('classId', '==', classId)
+        .where('classId', '==', classId ? classId : moduleId)
         .get();
 
       const array = [];
@@ -57,10 +57,10 @@ export function Comments({ curso }) {
   const onSendMessage = () => {
     ref.current.onSendMessage();
     if (ref.current.data.msg)
-      queryClient.setQueryData(['comments', moduleId, classId], (dt) => [
-        ref.current.data,
-        ...dt,
-      ]);
+      queryClient.setQueryData(
+        ['comments', moduleId, classId ? classId : moduleId],
+        (dt) => [ref.current.data, ...dt],
+      );
   };
 
   const isAdmin =
@@ -85,7 +85,7 @@ export function Comments({ curso }) {
       {data &&
         data.map((item, index) => {
           return (
-            <>
+            <div key={item.id}>
               <TextComment
                 isAdmin={isAdmin}
                 curso={curso}
@@ -106,7 +106,7 @@ export function Comments({ curso }) {
                   }}
                 />
               )}
-            </>
+            </div>
           );
         })}
     </div>

@@ -8,7 +8,6 @@ import { useNotification } from '../../../../../../context/NotificationContext';
 import { EPIs } from '../../../../../../constants/geral';
 import { useSellingData } from '../../../../../../context/data/SellingContext';
 
-
 const EpiView = styled.div`
   display: flex;
   flex-direction: row;
@@ -27,13 +26,13 @@ const EpiView = styled.div`
   }
 
   &.group {
-    padding-top:20px;
+    padding-top: 20px;
     border-bottom: 1px solid ${({ theme }) => theme.palette.background.line};
-    margin-bottom:1px;
-    padding-bottom:5px;
+    margin-bottom: 1px;
+    padding-bottom: 5px;
     p {
-      color:${({ theme }) => theme.palette.text.secondary};
-      font-size:13px;
+      color: ${({ theme }) => theme.palette.text.secondary};
+      font-size: 13px;
     }
   }
 
@@ -48,20 +47,26 @@ const Check = styled(Checkbox)`
 `;
 
 const SubCursosSideBarComponent = ({ hasSubCurso, check, isAdmin, curso }) => {
+  const notification = useNotification();
+  const {
+    fieldEdit,
+    cursos,
+    setCursos,
+    setPrices,
+    onCalcUserPrice,
+  } = useSellingData();
 
-  const notification  = useNotification();
-  const { fieldEdit, cursos, setCursos, setPrices, onCalcUserPrice } = useSellingData()
+  const EPIs = curso?.subs;
+  const EPI = EPIs && EPIs.sort((a, b) => AscendentObject(a, b, 'name'));
 
-
-  const EPIs  = curso?.subs
-  const EPI  = EPIs.sort((a, b) => AscendentObject(a, b, 'name'));
-
-  const handleEPICheck = (event, cursoId, epi,) => {
-
-
+  const handleEPICheck = (event, cursoId, epi) => {
     const newData = { ...cursos };
 
-    newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`] = newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`] ? newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`] : []
+    newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`] = newData[
+      `${fieldEdit.index}--${cursoId}--${curso.name}--epi`
+    ]
+      ? newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`]
+      : [];
 
     if (event.target.checked)
       newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`] = [
@@ -70,9 +75,19 @@ const SubCursosSideBarComponent = ({ hasSubCurso, check, isAdmin, curso }) => {
       ];
 
     if (!event.target.checked) {
-      if (newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`].find((i) => i.id === epi.id)?.lock) return notification.warn({message:'Você não pode remover um curso que já foi iniciado pelo aluno'})
+      if (
+        newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`].find(
+          (i) => i.id === epi.id,
+        )?.lock
+      )
+        return notification.warn({
+          message:
+            'Você não pode remover um curso que já foi iniciado pelo aluno',
+        });
       newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`] = [
-        ...newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`].filter((i) => i.id !== epi.id),
+        ...newData[`${fieldEdit.index}--${cursoId}--${curso.name}--epi`].filter(
+          (i) => i.id !== epi.id,
+        ),
       ];
     }
 
@@ -80,10 +95,9 @@ const SubCursosSideBarComponent = ({ hasSubCurso, check, isAdmin, curso }) => {
     setCursos(newData);
   };
 
-
   return (
     <>
-      {hasSubCurso &&
+      {hasSubCurso && (
         <Collapse unmountOnExit in={check}>
           {/* {[1,2,3].map(price => {
 
@@ -125,41 +139,42 @@ const SubCursosSideBarComponent = ({ hasSubCurso, check, isAdmin, curso }) => {
                 <EpiView className={'group'}>
                   <p>Grupo {price} (unidades: {itemQuantity})</p>
                 </EpiView> */}
-                {EPI.map((epi) => {
-                    const checkEPI = Boolean(
-                      cursos[`${fieldEdit.index}--${curso.id}--${curso.name}--epi`] &&
-                        cursos[`${fieldEdit.index}--${curso.id}--${curso.name}--epi`].findIndex(i=>i.id==epi.id) != -1,
-                    );
+          {EPI.map((epi) => {
+            const checkEPI = Boolean(
+              cursos[`${fieldEdit.index}--${curso.id}--${curso.name}--epi`] &&
+                cursos[
+                  `${fieldEdit.index}--${curso.id}--${curso.name}--epi`
+                ].findIndex((i) => i.id == epi.id) != -1,
+            );
 
-                    return (
-                      <EpiView
-                        key={String(epi.id)}
-                        onClick={() =>
-                          handleEPICheck(
-                            { target: { checked: !checkEPI } },
-                            curso.id,
-                            epi,
-                          )
-                        }
-                      >
-                        <p>{epi.name}</p>
-                        <Check
-                          size="small"
-                          checked={checkEPI}
-                          // onChange={(e) => handleEPICheck(e, curso.id, epi, itemQuantity)}
-                          color="primary"
-                        />
-                      </EpiView>
-                    );
-                  },
-                )}
-              {/* </div>
+            return (
+              <EpiView
+                key={String(epi.id)}
+                onClick={() =>
+                  handleEPICheck(
+                    { target: { checked: !checkEPI } },
+                    curso.id,
+                    epi,
+                  )
+                }
+              >
+                <p>{epi.name}</p>
+                <Check
+                  size="small"
+                  checked={checkEPI}
+                  // onChange={(e) => handleEPICheck(e, curso.id, epi, itemQuantity)}
+                  color="primary"
+                />
+              </EpiView>
+            );
+          })}
+          {/* </div>
             )
           })} */}
         </Collapse>
-      }
+      )}
     </>
   );
 };
 
-export const SubCursosSideBar = React.memo(SubCursosSideBarComponent)
+export const SubCursosSideBar = React.memo(SubCursosSideBarComponent);

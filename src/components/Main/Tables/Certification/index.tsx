@@ -161,6 +161,7 @@ export const CertificationTable = ({
   const uploadCertificate = useUploadCertification();
 
   const handleDownloadCertificate = (studentId: string): void => {
+    console.log(`studentId`, studentId);
     if (downloadCertificate.isLoading) return;
     downloadCertificate.mutateAsync({
       isAdmin: true,

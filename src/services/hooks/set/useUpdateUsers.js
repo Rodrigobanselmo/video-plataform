@@ -31,15 +31,8 @@ function newUser(currentUser, total, actualUser, docIdStatement) {
   return { ...user, statement };
 }
 
-function later(delay) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, delay);
-  });
-}
-
 export async function setUsers(checkoutInfo, actualUser) {
   //data = array of users {}
-
   // return later(9000)
   const currentUser = checkoutInfo.user;
   const usersRef = db.collection('users');
@@ -111,7 +104,7 @@ export async function setUsers(checkoutInfo, actualUser) {
     user.cursos.map((i) => {
       const hasCursoAlreadyInUser = cursos.find((fi) => fi.id == i.id);
       if (hasCursoAlreadyInUser) {
-        newCurso.push({ ...hasCursoAlreadyInUser, epi: i.epi });
+        newCurso.push({ ...hasCursoAlreadyInUser, epi: i?.epi ?? false });
       } else {
         newCurso.push(i);
       }
@@ -129,6 +122,7 @@ export async function setUsers(checkoutInfo, actualUser) {
       newUser.isPrimaryAccount = user.isPrimaryAccount;
     if (user?.type) newUser.type = user.type;
     newData.push({ ...newUser, uid: user.uid });
+    console.log('commit', newUser);
     batch.update(usersRef.doc(user.uid), newUser);
   });
 

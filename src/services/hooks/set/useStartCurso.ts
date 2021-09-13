@@ -63,6 +63,9 @@ export async function setStudent(data: any, currentUser: any) {
       cursos: newCursos,
     });
 
+    const cursoQuery: any = queryClient.getQueryData(['curso', curso.id]);
+    const cursoData: any = cursoQuery[0] ? cursoQuery[0] : {};
+
     const uniqueId = v4();
     batch.set(studentsRef.doc(uniqueId), {
       uid: userId,
@@ -73,7 +76,7 @@ export async function setStudent(data: any, currentUser: any) {
       expireDate: data.daysToExpire ? expireDate : 0,
       finishedDate: false,
       cursoId: curso.id,
-      validSignature: curso?.validSignature,
+      validSignature: cursoData?.validSignature,
       modules: 'all',
       watched: {},
       classes: cursoClasses,

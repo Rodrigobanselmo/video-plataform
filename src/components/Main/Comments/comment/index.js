@@ -45,11 +45,11 @@ export function Comment({ curso, textRef }) {
       photoURL: currentUser?.photoURL,
       msg: data,
       cursoName: curso.name,
-      certificationEmail: curso.certificationEmail,
+      answerEmail: curso.answerEmail,
       response: false,
       cursoId: curso.id,
       moduleId,
-      classId,
+      classId: classId ? classId : moduleId,
       created_at: new Date().getTime(),
     };
 

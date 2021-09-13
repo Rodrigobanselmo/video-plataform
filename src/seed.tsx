@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { db, auth, fb } from './lib/firebase.prod';
 import { LogOut } from './services/firebaseAuth';
 
-const emailAdmin = 'realiza@gmail.com';
+// const emailAdmin = 'realiza@gmail.com';
+const emailAdmin = 'rodrigobanselmo@gmail.com';
 
 export const Seed: React.FC = () => {
   const data = async (): Promise<void> => {
@@ -42,7 +43,7 @@ export const Seed: React.FC = () => {
 
     const userData = await auth.createUserWithEmailAndPassword(
       emailAdmin,
-      'realizaconsultoria012',
+      'qweqwe',
     );
 
     const userRef = db.collection('users').doc(userData?.user?.uid);
